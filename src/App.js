@@ -1,7 +1,6 @@
 //modules
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-import mockData from "./mockData.json";
 
 //styling
 import "./App.css";
@@ -17,6 +16,7 @@ import { Rewards } from "./Pages/Rewards";
 import { Navbar } from "./Components/Navbar";
 import { Sidebar } from "./Components/Sidebar";
 import { Page } from "./Pages/Wishlist";
+import { Test } from "./Pages/Test";
 
 library.add(faHome, faBars, faGift);
 
@@ -29,7 +29,7 @@ class App extends Component {
             <Navbar />
             <Sidebar />
             <div id="page-wrap">
-              <Route exact path="/" component={Home} />
+              <Route exact path="/" component={Test} />
               <Route path="/admin" component={Admin} />
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/wishlist" component={Page} />

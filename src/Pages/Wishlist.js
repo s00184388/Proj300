@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import "./CssPages/Wishlist.css";
 import mockData from "../mockData.json";
 
@@ -83,18 +82,14 @@ export class Page extends Component {
     this.state = { products: mockData };
   }
   render() {
-    let products = this.props.productList;
+    //let products = this.props.productList;
 
     const listProducts = this.state.products.map((product, index) => (
-      <div className="col-md-4" key={index}>
+      <div key={index}>
         <Product product={product} />
       </div>
     ));
-    return (
-      <div className="container">
-        <div className="row ">{listProducts}</div>
-      </div>
-    );
+    return <div className="container">{listProducts}</div>;
   }
 }
 export default Page;
