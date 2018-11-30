@@ -3,6 +3,22 @@ import mockData from "../mockData.json";
 import "./CssPages/Test.css";
 
 {
+  /*Picture component-fixed */
+}
+
+class Picture extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    const productPicture = this.props.url;
+    const productName = this.props.name;
+    return (
+      <img width="100" height="100" src={productPicture} alt={productName} />
+    );
+  }
+}
+{
   /*Status component-fixed */
 }
 class Status extends React.Component {
@@ -22,7 +38,7 @@ class Status extends React.Component {
 }
 
 {
-  /*Status component-fixed */
+  /*Products component */
 }
 
 class Products extends React.Component {
@@ -41,8 +57,27 @@ class Products extends React.Component {
       <div className="row py-4">
         <div className="col-md-12">
           <div className="card card-primary">
-            <div className="card-header">{productName}</div>
-            <div className="card-body" />
+            <div class="card">
+              <div class="card-body">
+                <div className="col-md-4">
+                  <h6 class="card-title mb-2 text-muted d-flex justify-content-left">
+                    {productName}
+                  </h6>
+                  <hr />
+                  <div className="row d-flex justify-content-left py-3">
+                    <Picture
+                      className="productPicture"
+                      url={picURL}
+                      name={productName}
+                    />
+                    <div className="">{price}</div>
+                  </div>
+                  <p class="card-text d-flex justify-content-left py-2 ">
+                    {productDescription}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
