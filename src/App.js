@@ -1,6 +1,7 @@
 //modules
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import mockData from "./mockData.json";
 
 //styling
 import "./App.css";
@@ -12,10 +13,10 @@ import { faHome, faBars, faGift } from "@fortawesome/free-solid-svg-icons";
 import { Home } from "./Pages/Home";
 import { Admin } from "./Pages/Admin";
 import { Dashboard } from "./Pages/Dashboard";
-import { Wishlist } from "./Pages/Wishlist";
 import { Rewards } from "./Pages/Rewards";
 import { Navbar } from "./Components/Navbar";
 import { Sidebar } from "./Components/Sidebar";
+import { Page } from "./Pages/Wishlist";
 
 library.add(faHome, faBars, faGift);
 
@@ -31,7 +32,7 @@ class App extends Component {
               <Route exact path="/" component={Home} />
               <Route path="/admin" component={Admin} />
               <Route path="/dashboard" component={Dashboard} />
-              <Route path="/wishlist" component={Wishlist} />
+              <Route path="/wishlist" component={Page} />
               <Route path="/rewards" component={Rewards} />
             </div>
           </div>
