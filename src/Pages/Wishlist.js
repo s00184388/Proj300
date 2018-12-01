@@ -15,6 +15,41 @@ class Picture extends React.Component {
   }
 }
 
+class ProductProgressbar extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    const quantity = this.props.quantity;
+    const remaining = this.props.remaining;
+    const percent = (remaining * 100) / quantity;
+    const progressStyle = {
+      width: percent + "%"
+    };
+    return (
+      <div className="progress">
+        <div
+          className={
+            "progress-bar progress-bar-striped progress-bar-animated " +
+            (percent < 60
+              ? percent < 30
+                ? "bg-danger"
+                : "bg-warning"
+              : "bg-success")
+          }
+          role="progressbar"
+          aria-valuenow={percent}
+          aria-valuemin="0"
+          aria-valuemax="100"
+          style={progressStyle}
+        >
+          {remaining + "/" + quantity}
+        </div>
+      </div>
+    );
+  }
+}
+
 class ProductPrice extends React.Component {
   constructor(props) {
     super(props);

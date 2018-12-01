@@ -2,6 +2,41 @@ import React from "react";
 import mockData from "../mockData.json";
 import "./CssPages/Test.css";
 
+class ProductProgressbar extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    const quantity = this.props.quantity;
+    const remaining = this.props.remaining;
+    const percent = (remaining * 100) / quantity;
+    const progressStyle = {
+      width: percent + "%"
+    };
+    return (
+      <div className="progress">
+        <div
+          className={
+            "progress-bar progress-bar-striped progress-bar-animated " +
+            (percent < 60
+              ? percent < 30
+                ? "bg-danger"
+                : "bg-warning"
+              : "bg-success")
+          }
+          role="progressbar"
+          aria-valuenow={percent}
+          aria-valuemin="0"
+          aria-valuemax="100"
+          style={progressStyle}
+        >
+          {remaining + "/" + quantity}
+        </div>
+      </div>
+    );
+  }
+}
+
 {
   /*Picture component-fixed */
 }
@@ -18,6 +53,20 @@ class Picture extends React.Component {
     );
   }
 }
+
+class BrandPicture extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    const productPicture = this.props.url;
+    const productName = this.props.name;
+    return (
+      <img width="35" height="35" src={productPicture} alt={productName} />
+    );
+  }
+}
+
 {
   /*Status component-fixed */
 }
@@ -58,23 +107,44 @@ class Products extends React.Component {
         <div className="col-md-12">
           <div className="card card-primary">
             <div class="card">
+              <div className="card-header bg-primary  ">
+                <div className="row d-flex justify-content-right">
+                  <h6 className="mr-4 pt-0">{brandName}</h6>
+                  <BrandPicture
+                    className="brandPicture"
+                    url={brandURL}
+                    name={brandName}
+                  />
+                </div>
+              </div>
               <div class="card-body">
-                <div className="col-md-4">
-                  <h6 class="card-title mb-2 text-muted d-flex justify-content-left">
-                    {productName}
-                  </h6>
-                  <hr />
-                  <div className="row d-flex justify-content-left py-3">
-                    <Picture
-                      className="productPicture"
-                      url={picURL}
-                      name={productName}
-                    />
-                    <div className="">{price}</div>
+                <div className="row">
+                  <div className="col-md-4">
+                    <h6 class="card-title mb-2 text-muted d-flex justify-content-left">
+                      {productName}
+                    </h6>
+                    <div className="row d-flex justify-content-left py-2">
+                      <Picture
+                        className="productPicture"
+                        url={picURL}
+                        name={productName}
+                      />
+                      <div className="">{price}</div>
+                    </div>
+                    <p class="card-text d-flex justify-content-left py-2 ">
+                      {productDescription}
+                    </p>
                   </div>
-                  <p class="card-text d-flex justify-content-left py-2 ">
-                    {productDescription}
-                  </p>
+                  <div className="col-md-5 ">
+                    <div className="pb-4">
+                      <ProductProgressbar />
+                    </div>
+                    <div className="pb-4">
+                      <ProductProgressbar />
+                    </div>
+
+                    <ProductProgressbar />
+                  </div>
                 </div>
               </div>
             </div>
