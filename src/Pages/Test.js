@@ -1,6 +1,8 @@
 import React from "react";
 import mockData from "../mockData.json";
 import "./CssPages/Test.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
 
 class ProductProgressbar extends React.Component {
   constructor(props) {
@@ -10,11 +12,13 @@ class ProductProgressbar extends React.Component {
     const quantity = this.props.quantity;
     const remaining = this.props.remaining;
     const percent = (remaining * 100) / quantity;
+    const label = this.props.label;
     const progressStyle = {
       width: percent + "%"
     };
     return (
       <div className="progress">
+        <p>{label}</p>
         <div
           className={
             "progress-bar progress-bar-striped progress-bar-animated " +
@@ -49,8 +53,38 @@ class Picture extends React.Component {
     const productPicture = this.props.url;
     const productName = this.props.name;
     return (
-      <img width="100" height="100" src={productPicture} alt={productName} />
+      <img
+        className="rounded imag d-block"
+        width="100"
+        height="100"
+        src={productPicture}
+        alt={productName}
+      />
     );
+  }
+}
+
+class DeleteButton extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (
+      <a>
+        <Link to="/dashboard">
+          <FontAwesomeIcon icon="trash" className="fa-lg" />
+        </Link>
+      </a>
+    );
+  }
+}
+
+class TrackingButton extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return <button className="btn btn-primary btn-sm">Tracking</button>;
   }
 }
 
@@ -62,7 +96,13 @@ class BrandPicture extends React.Component {
     const productPicture = this.props.url;
     const productName = this.props.name;
     return (
-      <img width="35" height="35" src={productPicture} alt={productName} />
+      <img
+        className="rounded imag d-block"
+        width="35"
+        height="35"
+        src={productPicture}
+        alt={productName}
+      />
     );
   }
 }
@@ -97,53 +137,78 @@ class Products extends React.Component {
   render() {
     const product = this.props.product;
     const productName = product.name;
+    const quantity = product.quantity;
+    const remaining = product.remaining;
     const productDescription = product.description;
     const picURL = product.picURL;
     const brandURL = product.brand.picURL;
     const brandName = product.brand.name;
     const price = product.price;
+    const label = "";
     return (
       <div className="row py-4">
         <div className="col-md-12">
           <div className="card card-primary">
             <div class="card">
               <div className="card-header bg-primary  ">
-                <div className="row d-flex justify-content-right">
-                  <h6 className="mr-4 pt-0">{brandName}</h6>
-                  <BrandPicture
-                    className="brandPicture"
-                    url={brandURL}
-                    name={brandName}
-                  />
+                <div className="row d-flex align-items-center">
+                  <div className="col-md-3 d-flex justify-content-start">
+                    <h6>{productName}</h6>
+                  </div>
+                  <div className="col-md-6 h6 text-white ">{price}</div>
+                  <div className="col-md-2 d-flex justify-content-end">
+                    <h6>{brandName}</h6>
+                  </div>
+                  <div className="col-md-1 d-flex justify-content-end ">
+                    <BrandPicture
+                      className="brandPicture"
+                      url={brandURL}
+                      name={brandName}
+                    />
+                  </div>
                 </div>
               </div>
-              <div class="card-body">
+              <div class="card-body mb-0">
                 <div className="row">
                   <div className="col-md-4">
-                    <h6 class="card-title mb-2 text-muted d-flex justify-content-left">
-                      {productName}
-                    </h6>
-                    <div className="row d-flex justify-content-left py-2">
+                    <div className="row ml-0 mt-1">
                       <Picture
                         className="productPicture"
                         url={picURL}
                         name={productName}
                       />
-                      <div className="">{price}</div>
                     </div>
-                    <p class="card-text d-flex justify-content-left py-2 ">
+                    <p className="strong d-flex justify-content-left mt-2">
+                      Description
+                    </p>
+                  </div>
+                  <div className="col-md-5">
+                    <p className="text-left mb-1">Remaining</p>
+                    <div className="pb-2">
+                      <ProductProgressbar />
+                    </div>
+                    <p className="text-left mb-1">Average of competitors</p>
+                    <div className="pb-2">
+                      <ProductProgressbar
+                        quantity={quantity}
+                        remaining={remaining}
+                      />
+                    </div>
+                    <p className="text-left mb-1">Your progress</p>
+                    <ProductProgressbar />
+                  </div>
+                  <div className="col-md-3 text-right">
+                    <DeleteButton />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-10">
+                    <p className="d-flex justify-content-left align-content-center">
                       {productDescription}
                     </p>
                   </div>
-                  <div className="col-md-5 ">
-                    <div className="pb-4">
-                      <ProductProgressbar />
-                    </div>
-                    <div className="pb-4">
-                      <ProductProgressbar />
-                    </div>
-
-                    <ProductProgressbar />
+                  <div className="col-md-2">
+                    <TrackingButton />
                   </div>
                 </div>
               </div>
