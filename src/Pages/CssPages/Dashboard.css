@@ -1,0 +1,9 @@
+.row {
+    max-width: 500px;
+    clear: both;
+  }
+  
+    .formRow {
+    width: 100%;
+    clear: both;
+  }
