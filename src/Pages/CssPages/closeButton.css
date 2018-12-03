@@ -1,0 +1,28 @@
+.closeButton {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+  }
+  .closeButton:hover {
+    opacity: 1;
+  }
+  .closeButton:before, .closeButton:after {
+    position: absolute;
+    top:-2px;
+    right: 12px;
+    content: ' ';
+    height: 33px;
+    width: 2px;
+    background-color: #333;
+    color:white;
+  }
+  .closeButton:before {
+    transform: rotate(45deg);
+  }
+  .closeButton:after {
+    transform: rotate(-45deg);
+  }
+  
