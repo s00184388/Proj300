@@ -1,9 +1,9 @@
-.row {
+.formRow {
     max-width: 500px;
     clear: both;
   }
   
-    .formRow {
+    .formRowContainer {
     width: 100%;
     clear: both;
   }

@@ -18,7 +18,7 @@ export class Sidebar extends React.Component {
         </Link>
 
         <Link to="/wishlist" className="menu-item">
-          <i class="fa fa-tachometer" />
+          <i className="fa fa-tachometer" />
           <span>Wishlist</span>
         </Link>
 
