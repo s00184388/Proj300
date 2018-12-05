@@ -16,12 +16,14 @@ import {
 //components
 import { Home } from "./Pages/Home";
 import { Admin } from "./Pages/Admin";
+import { Login } from "./Pages/Login";
 import { Dashboard } from "./Pages/Dashboard";
 import { Rewards } from "./Pages/Rewards";
 import { Navbar } from "./Components/Navbar";
 import { Sidebar } from "./Components/Sidebar";
 import { Page } from "./Pages/Wishlist";
 import { Test } from "./Pages/Test";
+import { Register } from "./Pages/Register";
 
 library.add(faHome, faBars, faGift, faTrash);
 
@@ -34,11 +36,13 @@ class App extends Component {
             <Navbar />
             <Sidebar />
             <div id="page-wrap">
-              <Route exact path="/" component={Test} />
+              <Route exact path="/" component={Home} />
               <Route path="/admin" component={Admin} />
               <Route path="/dashboard" component={Dashboard} />
-              <Route path="/wishlist" component={Page} />
+              <Route path="/wishlist" component={Test} />
               <Route path="/rewards" component={Rewards} />
+              <Route path="/login" component={Login} />
+              <Route path="/register" component={Register} />
             </div>
           </div>
         </div>
