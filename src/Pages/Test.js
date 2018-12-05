@@ -147,7 +147,6 @@ class Products extends React.Component {
     const brandURL = product.brand.picURL;
     const brandName = product.brand.name;
     const price = product.price;
-    const label = "";
     return (
       <div className="row py-4">
         <div className="col-md-12">
