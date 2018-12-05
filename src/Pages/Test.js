@@ -3,6 +3,9 @@ import mockData from "../mockData.json";
 import "./CssPages/Test.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
+import FirebaseServices from "../firebase/services";
+
+const firebaseServices = new FirebaseServices();
 
 class ProductProgressbar extends React.Component {
   constructor(props) {
@@ -223,11 +226,26 @@ class Products extends React.Component {
 export class Test extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { products: mockData };
+    this.subscriptions = [];
+    this.state = {
+      products: []
+    };
   }
+  componentDidMount() {
+    this.subscriptions.push(
+      firebaseServices
+        .getWishListItems("LXCYHelb75dWxPRZhhB5")
+        .subscribe(prod => this.setState({ products: prod }))
+    );
+  }
+
+  componentWillUnmount() {
+    this.subscriptions.forEach(obs => obs.unsubscribe());
+  }
+
   render() {
-    const listProd = this.state.products.map((product, index) => (
-      <Products product={product} />
+    const listProd = this.state.products.map(product => (
+      <Products product={product} key={product.key} />
     ));
     return (
       <div className="container">
