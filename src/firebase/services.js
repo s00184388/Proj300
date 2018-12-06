@@ -135,4 +135,8 @@ export default class FirebaseServices {
   addProduct = product => {
     this.productsCollection.add(product);
   };
+
+  deleteProduct = product => {
+    this.productsCollection.doc(product.key).delete();
+  };
 }

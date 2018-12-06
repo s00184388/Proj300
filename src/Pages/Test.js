@@ -1,5 +1,4 @@
 import React from "react";
-import mockData from "../mockData.json";
 import "./CssPages/Test.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
@@ -24,7 +23,7 @@ class ProductProgressbar extends React.Component {
         <p>{label}</p>
         <div
           className={
-            "progress-bar progress-bar-striped progress-bar-animated " +
+            "progress-bar progress-bar-striped" +
             (percent < 60
               ? percent < 30
                 ? "bg-danger"
@@ -71,13 +70,15 @@ class DeleteButton extends React.Component {
   constructor(props) {
     super(props);
   }
+  deleteProduct(product) {
+    firebaseServices.deleteProduct(product);
+  }
   render() {
+    const prod = this.props.product;
     return (
-      <a>
-        <Link to="/dashboard">
-          <FontAwesomeIcon icon="trash" className="fa-lg" />
-        </Link>
-      </a>
+      <Link to="/rewards" onClick={this.deleteProduct(prod)}>
+        <FontAwesomeIcon icon="trash" className="fa-lg" />
+      </Link>
     );
   }
 }
@@ -185,9 +186,12 @@ class Products extends React.Component {
                     </p>
                   </div>
                   <div className="col-md-5">
-                    <p className="text-left mb-1">Remaining</p>
+                    <p className="text-left mb-1">Remaining Stock</p>
                     <div className="pb-2">
-                      <ProductProgressbar />
+                      <ProductProgressbar
+                        quantity={quantity - 2}
+                        remaining={remaining - 1}
+                      />
                     </div>
                     <p className="text-left mb-1">Average of competitors</p>
                     <div className="pb-2">
@@ -197,10 +201,13 @@ class Products extends React.Component {
                       />
                     </div>
                     <p className="text-left mb-1">Your progress</p>
-                    <ProductProgressbar />
+                    <ProductProgressbar
+                      quantity={quantity - 1}
+                      remaining={remaining - 2}
+                    />
                   </div>
                   <div className="col-md-3 text-right">
-                    <DeleteButton />
+                    <DeleteButton product={product} />
                   </div>
                 </div>
                 <div className="row">
@@ -238,6 +245,10 @@ export class Test extends React.Component {
     );
   }
 
+  deleteProduct(product) {
+    firebaseServices.deleteProduct(product);
+  }
+
   componentWillUnmount() {
     this.subscriptions.forEach(obs => obs.unsubscribe());
   }
@@ -250,9 +261,6 @@ export class Test extends React.Component {
       <div className="container">
         <div className="row">
           <div className="col-md-8 py-4">{listProd}</div>
-          <div className="col-md-4 py-5">
-            <Status />
-          </div>
         </div>
       </div>
     );
