@@ -510,7 +510,7 @@ class Product extends React.Component{
       return(
         
         <div className="container">
-        <button className="btn btn-primary" type="button" onClick={this.addFirebaseData}>Add data to Firebase</button>
+        {/*<button className="btn btn-primary" type="button" onClick={this.addFirebaseData}>Add data to Firebase</button>*/}
         Hello, {userName}, you have {userCoins} Coins
           <Filters user={user} wishlist={wishlist}
             productList={products} 
