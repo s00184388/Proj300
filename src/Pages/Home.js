@@ -5,16 +5,16 @@ import "./CssPages/Home.css";
 export class Home extends Component {
   render() {
     return (
-      <div className="container">
+      <div className="container py-5">
         <div className="jumbotron">
-          <h6 className="h4 strong text-center">
+          <h6 className="h5 strong text-center">
             We are a Corporate Health Engagement Platform
           </h6>
-          <p className="text-center">
+          <h6 className="text-center py-3">
             Create monthly health related competitions for your teams,
             departments and sites to compete against each other, in a few
             minutes.
-          </p>
+          </h6>
           <p className="text-center strong">
             Protect Your Most Valuable Asset!
           </p>
@@ -23,7 +23,7 @@ export class Home extends Component {
           </Link>
           <div class="push" />
         </div>
-        <footer className="page-footer font-small blue pt-4 ">
+        <footer className="footer blue pt-4 ">
           <div className="row">
             <div className="col-lg-4">
               <img
