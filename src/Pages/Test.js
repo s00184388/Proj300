@@ -171,7 +171,7 @@ class Products extends React.Component {
                   </div>
                 </div>
               </div>
-              <div class="card-body mb-0">
+              <div className="card-body mb-0">
                 <div className="row">
                   <div className="col-md-4">
                     <div className="row ml-0 mt-1">
