@@ -21,7 +21,7 @@ export class Home extends Component {
           <Link to="/rewards">
             <button className="btn btn-sm btn-primary">Explore</button>
           </Link>
-          <div class="push" />
+          <div className="push" />
         </div>
         <footer className="footer blue pt-4 ">
           <div className="row">
