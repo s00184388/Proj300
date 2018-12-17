@@ -97,6 +97,7 @@ export default class FirebaseServices {
                   remaining
                 });
               });
+              console.log("observer called");
               observer.next(products);
             });
         });
@@ -137,6 +138,10 @@ export default class FirebaseServices {
   };
 
   deleteProduct = product => {
-    this.productsCollection.doc(product.key).delete();
+    this.wishlistCollection.where("product_id", "==", product.key)
+      .get()
+      .then(querySnapshot=>{
+        querySnapshot.forEach(doc=>doc.ref.delete())
+      });
   };
 }

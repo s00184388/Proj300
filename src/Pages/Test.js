@@ -69,16 +69,17 @@ class Picture extends React.Component {
 class DeleteButton extends React.Component {
   constructor(props) {
     super(props);
+    this.deleteProduct = this.deleteProduct.bind(this);
   }
-  deleteProduct(product) {
-    firebaseServices.deleteProduct(product);
+  deleteProduct() {
+    firebaseServices.deleteProduct(this.props.product);
   }
   render() {
     const prod = this.props.product;
     return (
-      <Link to="/rewards" onClick={this.deleteProduct(prod)}>
+      <button className="btn btn-danger" onClick={this.deleteProduct}>
         <FontAwesomeIcon icon="trash" className="fa-lg" />
-      </Link>
+      </button>
     );
   }
 }
@@ -88,7 +89,7 @@ class TrackingButton extends React.Component {
     super(props);
   }
   render() {
-    return <button className="btn btn-primary btn-sm">Tracking</button>;
+    return <button className="btn btn-primary btn-sm">Track</button>;
   }
 }
 
@@ -152,7 +153,7 @@ class Products extends React.Component {
       <div className="row py-4">
         <div className="col-md-12">
           <div className="card card-primary">
-            <div class="card">
+            <div className="card">
               <div className="card-header bg-primary  ">
                 <div className="row d-flex align-items-center">
                   <div className="col-md-3 d-flex justify-content-start">
@@ -243,10 +244,6 @@ export class Test extends React.Component {
         .getWishListItems("LXCYHelb75dWxPRZhhB5")
         .subscribe(prod => this.setState({ products: prod }))
     );
-  }
-
-  deleteProduct(product) {
-    firebaseServices.deleteProduct(product);
   }
 
   componentWillUnmount() {
