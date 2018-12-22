@@ -3,19 +3,15 @@ import { Link } from "react-router-dom";
 import { DropdownList } from 'react-widgets'
 import "./CssPages/Dashboard.css";
 import FirebaseServices from "../firebase/services";
+import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+
+library.add(faArrowDown);
 
 //constant
 const fs = new FirebaseServices();
 //components
-class FormLabel extends Component {
-  constructor() {
-    super();
-  }
-
-  render() {
-    return <label htmlFor={this.props.htmlFor}>{this.props.title}</label>;
-  }
-}
 
 class ProductForm extends Component {
   constructor() {
@@ -200,9 +196,58 @@ class ProductForm extends Component {
   }
 }
 
-export class CompanyInfo extends Component {
+class TableRow extends Component{
+  render(){
+    const row = this.props.row;
+    const index = this.props.index;
+    return(
+      <tr>
+        <td key={index}>{index}</td>
+        <td key={row.name}>{row.name}</td>
+        <td key={row.coins}>{row.coins}</td>
+      </tr>
+    );
+  }
+}
+
+class CompanyInfo extends Component {
+  constructor(props){
+    super(props);
+    this.state={
+      employees: []
+    }
+  }
+
+  componentDidMount(){
+    this.employeesSubscr = fs.getEmployees(this.props.company.name)
+    .subscribe(employees=>this.setState({employees: employees}));
+  }
+  componentWillUnmount(){
+    this.employeesSubscr.unsubscribe();
+  }
   render() {
-    return <h4 className="text-center py-5"> Company Dashboard </h4>;
+    const employees = this.state.employees;
+    const employeesList = employees.map((emp, index) => 
+      <TableRow row={emp} index={++index} key={emp.key}/>
+    );
+    return(
+      <div className="infoContainer">
+        <h2 className="text-center py-5"> Company Dashboard </h2>
+        <h4>Employee list</h4>
+        <table className="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Coins <FontAwesomeIcon icon="arrow-down"/></th>
+            </tr>
+          </thead>
+          <tbody>
+            {employeesList}
+          </tbody>
+        </table>
+      </div>
+    );
   }
 }
 
@@ -218,7 +263,7 @@ export class Dashboard extends Component {
             <ProductForm/>
           </div>
           <div className="col-md">
-            <CompanyInfo/>
+            <CompanyInfo company={{name: 'Overstock'}}/>
           </div>
         </div>
       </div>

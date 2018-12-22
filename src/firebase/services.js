@@ -124,6 +124,22 @@ export default class FirebaseServices {
     });
   };
 
+  getEmployees = (companyName) => {
+    return new Observable(observer => {
+      this.usersCollection
+      .orderBy("coins")
+      .where("company", "==", companyName)
+      .onSnapshot(querySnapshot => {
+        const employees = [];
+        querySnapshot.forEach(doc => {
+          const {name, coins } = doc.data();
+          employees.push({key: doc.id, doc, name, coins });
+        });
+        observer.next(employees.reverse());
+      });
+    });
+  };
+
   addToWishlist = (productId, userId) => {
     var item = {
       product_id: productId,

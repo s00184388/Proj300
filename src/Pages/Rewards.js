@@ -422,7 +422,7 @@ class Product extends React.Component{
         }
       }
 
-      const listProducts = products.map((product)=>
+      const listProducts = products.map((product) =>
         <div className="col-md-4" key={product.key}>
           <Product product={product} user={user} wishlist={wishlist}></Product>
         </div>
@@ -430,7 +430,7 @@ class Product extends React.Component{
       return(
         <div className="container">
           <div className="row ">
-              {listProducts}
+            {listProducts}
           </div>
         </div>
       );
