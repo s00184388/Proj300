@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { DropdownList } from 'react-widgets'
 import "./CssPages/Dashboard.css";
 import FirebaseServices from "../firebase/services";
 
@@ -32,7 +33,7 @@ class ProductForm extends Component {
       remaining: 0,
       category: "",
 
-      categoryOptions: ["Clothing", "Electronics", "Other"]
+      categoryOptions: ['Electronics', 'Shoes', 'Sports', 'Others']
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -81,118 +82,119 @@ class ProductForm extends Component {
   };
 
   render() {
+    const categories = ['Electronics', 'Shoes', 'Sports', 'Others'];
     return (
-      <form className="formRowContainer" onSubmit={this.handleSubmit}>
-        <div className="form-group-row">
-          <label className="col-form-label row">
+      <form onSubmit={this.handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="formBrandName">
             Brand Name:
-            <input
-              id="formBrandName"
-              className="form-control"
-              name="brandName"
-              type="text"
-              placeholder="Enter Brand Name"
-              onChange={this.handleChange}
-              value={this.state.brandName}
-            />
           </label>
-          <label className="col-form-label row">
-            Brand Image:
-            <input
-              id="formBrandPic"
-              className="form-control"
-              name="brandPic"
-              type="text"
-              placeholder="Enter Brand Image URL (e.g. https://)"
-              onChange={this.handleChange}
-              value={this.state.brandPic}
-            />
-          </label>
-          <label className="col-form-label row">
-            Product Name:
-            <input
-              id="formName"
-              className="form-control"
-              name="name"
-              type="text"
-              placeholder="Enter Product Name"
-              onChange={this.handleChange}
-              value={this.state.name}
-            />
-          </label>
-          <label className="col-form-label row">
-            Product Description:
-            <input
-              id="formDescription"
-              className="form-control"
-              name="description"
-              type="text"
-              placeholder="Enter Product Description"
-              onChange={this.handleChange}
-              value={this.state.description}
-            />
-          </label>
-          <label className="col-form-label row">
-            Product Image:
-            <input
-              id="formPicture"
-              className="form-control"
-              name="picURL"
-              type="text"
-              placeholder="Enter Product Image URL (e.g. https://)"
-              onChange={this.handleChange}
-              value={this.state.picURL}
-            />
-          </label>
-          <label className="col-form-label row">
-            Product Price:
-            <input
-              id="formPrice"
-              className="form-control"
-              name="price"
-              type="number"
-              placeholder="Enter Product Price"
-              onChange={this.handleChange}
-              value={this.state.price}
-            />
-          </label>
-          <label className="col-form-label row">
-            Product Quantity:
-            <input
-              id="formQuantity"
-              className="form-control"
-              name="quantity"
-              type="number"
-              placeholder="Enter Product Quantity"
-              onChange={this.handleChange}
-              value={this.state.quantity}
-            />
-          </label>
-          <label className="col-form-label row">
-            Product Category:
-            <select
-              id="formCategory"
-              className="form-control"
-              name="category"
-              placeholder="Please Select a Category"
-              onChange={this.handleChange}
-              value={this.state.category}
-            >
-              <option value="" disabled selected>
-                Select a Category
-              </option>
-              <option value="sports">Clothing</option>
-              <option value="electronics">Electronics</option>
-              <option value="shoes">Shoes</option>
-              <option value="other">Other</option>
-            </select>
-          </label>
-          <Link to="/rewards">
-            <button className="btn btn-primary" id="formSubmit" type="submit">
-              Submit Product
-            </button>
-          </Link>
+          <input
+            id="formBrandName"
+            className="form-control"
+            name="brandName"
+            type="text"
+            placeholder="Enter Brand Name"
+            onChange={this.handleChange}
+            value={this.state.brandName}
+          />
         </div>
+        <div className="form-group">
+          <label htmlFor="formBrandPic">
+            Brand Image:
+          </label>
+          <input
+            id="formBrandPic"
+            className="form-control"
+            name="brandPic"
+            type="text"
+            placeholder="Enter Brand Image URL (e.g. https://)"
+            onChange={this.handleChange}
+            value={this.state.brandPic}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="categoryList">
+            Product Category:
+          </label>
+          <DropdownList id="categoryList" data={categories} onChange={this.handleChange}
+            value={this.state.category} placeholder="Select a category"/>
+        </div>
+        <div className="form-group">
+          <label htmlFor="formName">
+            Product Name:
+          </label>
+          <input
+            id="formName"
+            className="form-control"
+            name="name"
+            type="text"
+            placeholder="Enter Product Name"
+            onChange={this.handleChange}
+            value={this.state.name}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="formDescription">
+            Product Description:
+          </label>
+          <input
+            id="formDescription"
+            className="form-control"
+            name="description"
+            type="text"
+            placeholder="Enter Product Description"
+            onChange={this.handleChange}
+            value={this.state.description}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="formPicture">
+            Product Image:
+          </label>
+          <input
+            id="formPicture"
+            className="form-control"
+            name="picURL"
+            type="text"
+            placeholder="Enter Product Image URL (e.g. https://)"
+            onChange={this.handleChange}
+            value={this.state.picURL}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="formPrice">
+            Product Price:
+          </label>
+          <input
+            id="formPrice"
+            className="form-control"
+            name="price"
+            type="number"
+            placeholder="Enter Product Price"
+            onChange={this.handleChange}
+            value={this.state.price}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="formQuantity">
+            Product Quantity:
+          </label>
+          <input
+            id="formQuantity"
+            className="form-control"
+            name="quantity"
+            type="number"
+            placeholder="Enter Product Quantity"
+            onChange={this.handleChange}
+            value={this.state.quantity}
+          />
+        </div>
+        <Link to="/rewards">
+          <button className="btn btn-primary" id="formSubmit" type="submit">
+            Submit Product
+          </button>
+        </Link>
       </form>
     );
   }
@@ -210,15 +212,13 @@ export class Dashboard extends Component {
   }
   render() {
     return (
-      <div className="">
-        <div className="">
-          <CompanyInfo />
-          <div className="container panel">
-            <div className="row ">
-              <div className="">
-                <ProductForm />
-              </div>
-            </div>
+      <div className="container">
+        <div className="row">
+          <div className="col-md">
+            <ProductForm/>
+          </div>
+          <div className="col-md">
+            <CompanyInfo/>
           </div>
         </div>
       </div>
