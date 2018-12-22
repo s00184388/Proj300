@@ -64,32 +64,52 @@ class ProductProgressbar extends React.Component {
         />
       );
     }
-  } 
-  
-  class DeleteButton extends React.Component {
-    constructor(props) {
-      super(props);
-      this.deleteProduct = this.deleteProduct.bind(this);
-    }
-    deleteProduct() {
-      firebaseServices.deleteProduct(this.props.product);
-    }
-    render() {
-      const prod = this.props.product;
-      return (
-        <button className="btn btn-danger" onClick={this.deleteProduct}>
-          <FontAwesomeIcon icon="trash" className="fa-lg" />
-        </button>
-      );
-    }
   }
   
-  class TrackingButton extends React.Component {
-    constructor(props) {
+  class WishlistButton extends React.Component{
+    productKey="";
+    userKey="";
+    wishlist=[];
+    constructor(props){
       super(props);
+      this.subscriptions = [];
+      this.addToWishlist = this.addToWishlist.bind(this);
+      this.isInWishlist = this.isInWishlist.bind(this);
+      this.state = {
+        isInWishlist: false
+      }
     }
-    render() {
-      return <button className="btn btn-primary btn-sm">Track</button>;
+    componentDidMount(){
+      this.productKey = this.props.productKey;
+      this.userKey = this.props.userKey;
+      this.subscriptions.push(firebaseServices.getWishlist(this.userKey).subscribe(items =>{
+        this.setState({isInWishlist: false});
+        this.wishlist = items;
+        this.isInWishlist();
+      }));
+    }
+
+    componentWillUnmount(){
+      this.subscriptions.forEach(obs => obs.unsubscribe());
+    }
+
+    addToWishlist(event){
+      firebaseServices.addToWishlist(this.productKey, this.userKey);
+      event.stopPropagation();
+    }
+    isInWishlist(){
+      if(this.wishlist.includes(this.productKey)){
+        this.setState({isInWishlist: true});
+      }
+    }
+    render(){
+      const inWishlist = this.state.isInWishlist;
+      return(
+        <button className="wishlistButton btn btn-primary" 
+          role="button" onClick={this.addToWishlist} disabled={inWishlist}> 
+          {inWishlist ? "Item in Wishlist" : "Add to Wishlist"}
+        </button>
+      )
     }
   }
   
@@ -112,30 +132,7 @@ class ProductProgressbar extends React.Component {
     }
   }
   
-  {
-    /*Status component-fixed */
-  }
-  class Status extends React.Component {
-    constructor(props) {
-      super(props);
-    }
-    render() {
-      return (
-        <div className="card card-primary status col-md-3">
-          <div className="card-header">Status</div>
-          <div className="card-body">
-            This is the status component body for each element from the wishlist!
-          </div>
-        </div>
-      );
-    }
-  }
-  
-  {
-    /*Products component */
-  }
-  
-  class Products extends React.Component {
+  class ProductModal extends React.Component {
     constructor(props) {
       super(props);
     }
@@ -149,8 +146,10 @@ class ProductProgressbar extends React.Component {
       const brandURL = product.brand.picURL;
       const brandName = product.brand.name;
       const price = product.price;
+      const user = this.props.user;
+      const userKey = user.key;
       return (
-        <div className="row py-4">
+        <div className="row">
           <div className="col-md-12">
             <div className="card card-primary">
               <div className="card">
@@ -207,18 +206,15 @@ class ProductProgressbar extends React.Component {
                         remaining={remaining - 2}
                       />
                     </div>
-                    <div className="col-md-3 text-right">
-                      <DeleteButton product={product} />
-                    </div>
                   </div>
                   <div className="row">
-                    <div className="col-md-10">
+                    <div className="col-md-8">
                       <p className="d-flex justify-content-left align-content-center">
                         {productDescription}
                       </p>
                     </div>
-                    <div className="col-md-2">
-                      <TrackingButton />
+                    <div className="col-md-4">
+                      <WishlistButton productKey={product.key} userKey={userKey} />
                     </div>
                   </div>
                 </div>
@@ -230,38 +226,4 @@ class ProductProgressbar extends React.Component {
     }
   }
 
-export class Test extends React.Component {
-  constructor(props) {
-    super(props);
-    this.subscriptions = [];
-    this.state = {
-      products: []
-    };
-  }
-  componentDidMount() {
-    this.subscriptions.push(
-      firebaseServices
-        .getWishListItems("LXCYHelb75dWxPRZhhB5")
-        .subscribe(prod => this.setState({ products: prod }))
-    );
-  }
-
-  componentWillUnmount() {
-    this.subscriptions.forEach(obs => obs.unsubscribe());
-  }
-
-  render() {
-    const listProd = this.state.products.map(product => (
-      <Products product={product} key={product.key} />
-    ));
-    return (
-      <div className="container">
-        <div className="row">
-          <div className="col-md-8 py-4">{listProd}</div>
-        </div>
-      </div>
-    );
-  }
-}
-
-export default Test;
+export default ProductModal;

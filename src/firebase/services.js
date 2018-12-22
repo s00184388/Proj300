@@ -97,7 +97,6 @@ export default class FirebaseServices {
                   remaining
                 });
               });
-              console.log("observer called");
               observer.next(products);
             });
         });

@@ -6,3 +6,7 @@
 .pos {
   position: fixed;
 }
+
+.logoImg:hover{
+  opacity: 0.7;
+}

@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import FirebaseServices from '../firebase/services';
 import Modal from 'react-modal';
-
+import ProductModal from '../Components/ProductModal';
 
 const firebaseServices = new FirebaseServices(); 
 Modal.setAppElement('#root');
@@ -24,7 +24,10 @@ const modalStyle = {
     right                 : 'auto',
     bottom                : 'auto',
     marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
+    transform             : 'translate(-50%, -50%)',
+    padding               : '0',
+    display               : 'inline-block',
+    overflow              : 'hidden'
   }
 };
 
@@ -182,10 +185,10 @@ class Product extends React.Component{
       <div className={"productCard container border rounded d-flex align-items-center justify-content-center "+
             (inWishlist ? "inWishlist" : '')} onClick={this.openModal}>
         <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal} style={modalStyle} shouldCloseOnOverlayClick={true}>
-          <button onClick={this.closeModal} className="closeButton"></button>
           <div style={{height: '80%', position: 'relative'}}>
-            <Product product={product} wishlist={wishlist} user={user}></Product>
+            <ProductModal product={product} user={user}></ProductModal>
           </div>
+          <a href="#" className="closeButton" onClick={this.closeModal}/>
         </Modal>
         <div className="productCardContent">
           <div className="row">

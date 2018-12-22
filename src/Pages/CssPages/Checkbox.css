@@ -76,7 +76,7 @@
     }
     100% {
       width: 0.3em;
-      height: 0.6em;
+      height: 0.8em;
       border-color: #212121;
       transform: translate3d(0, -0.5em, 0) rotate(45deg);
     }

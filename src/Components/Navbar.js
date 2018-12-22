@@ -12,7 +12,7 @@ export class Navbar extends React.Component {
         <div className="pull-left">
           <div className="navbar-brand m-a-0 p-a-0">
             <Link to="/">
-              <img
+              <img className="logoImg"
                 src={require("../Images/logo.png")}
                 height="22"
                 alt=""

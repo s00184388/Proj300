@@ -1,9 +1,9 @@
 .closeButton {
     position: absolute;
     right: 0;
-    top: 0;
-    width: 32px;
-    height: 32px;
+    top: 2px;
+    width: 22px;
+    height: 22px;
     opacity: 0.3;
   }
   .closeButton:hover {
@@ -14,7 +14,7 @@
     top:-2px;
     right: 12px;
     content: ' ';
-    height: 33px;
+    height: 20px;
     width: 2px;
     background-color: #333;
     color:white;

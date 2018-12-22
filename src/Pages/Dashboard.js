@@ -65,7 +65,7 @@ class ProductForm extends Component {
     fs.addProduct(product);
     console.log(product);
 
-    this.state = {
+    this.setState({
       brand: {
         name: "",
         picURL: ""
@@ -77,7 +77,7 @@ class ProductForm extends Component {
       price: 0,
       remaining: 0,
       category: ""
-    };
+    });
   };
 
   render() {
