@@ -5,7 +5,7 @@ import "./CssPages/Home.css";
 export class Home extends Component {
   render() {
     return (
-      <div className="container py-5">
+      <div className="container py-5" id="page-wrap">
         <div className="jumbotron">
           <h6 className="h5 strong text-center">
             We are a Corporate Health Engagement Platform

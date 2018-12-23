@@ -32,7 +32,7 @@ class App extends Component {
           <div style={{ height: "100%" }}>
             <Navbar />
             <Sidebar />
-            <div id="page-wrap">
+            <div>
               <Route exact path="/" component={Home} />
               <Route path="/admin" component={Admin} />
               <Route path="/dashboard" component={Dashboard} />

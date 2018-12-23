@@ -4,6 +4,7 @@ body {
 }
 
 #page-wrap {
+  text-align: center;
   overflow: auto;
 }
 

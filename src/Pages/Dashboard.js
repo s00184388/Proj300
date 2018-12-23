@@ -226,13 +226,14 @@ class CompanyInfo extends Component {
     this.employeesSubscr.unsubscribe();
   }
   render() {
+    const companyName = this.props.company.name;
     const employees = this.state.employees;
     const employeesList = employees.map((emp, index) => 
       <TableRow row={emp} index={++index} key={emp.key}/>
     );
     return(
       <div className="infoContainer">
-        <h2 className="text-center py-5"> Company Dashboard </h2>
+        <h2 className="text-center py-5"> <strong>{companyName}</strong> Dashboard </h2>
         <h4>Employee list</h4>
         <table className="table table-striped table-sm">
           <thead>
