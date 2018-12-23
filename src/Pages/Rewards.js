@@ -342,7 +342,7 @@ class Product extends React.Component{
   class ProductContainer extends React.Component{
     constructor(props){
       super(props);  
-      this.state = { wishlist: [] };
+      this.state = { wishlist: [], productList: [] };
       this.subscriptions = [];
       this.isInWishlist = this.isInWishlist.bind(this);
       this.filterbyWishlist = this.filterbyWishlist.bind(this);
@@ -353,23 +353,20 @@ class Product extends React.Component{
         this.userKey = nextProps.user.key;
         this.subscriptions.push(firebaseServices.getWishlist(this.userKey).subscribe(items =>{
           this.setState({wishlist: items});
+          this.subscriptions.push(firebaseServices.getProducts(nextProps.user.company)
+          .subscribe(products => this.setState({productList: products})));
         }));
       }
     }
-
-    
     componentWillUnmount(){
       this.subscriptions.forEach(obs => obs.unsubscribe());
     }
-
     isInWishlist(prod){
       if(this.state.wishlist.includes(prod.key)){
         return true;
       }
       return false;
     }
-
-
     filterbyCategory(str){
       return function(product){
         if(str && str!=='All'){
@@ -399,7 +396,7 @@ class Product extends React.Component{
       const user = this.props.user;
       this.userKey = user.key;
       const userCoins = user.coins;
-      var products = this.props.productList;
+      var products = this.state.productList;
       const wishlist = this.props.wishlist;
       if(this.props.affordableChecked){
         products = products.filter(this.filterbyAffordable(userCoins));
@@ -448,11 +445,11 @@ class Product extends React.Component{
         wishlistChecked: false,
         orderBy: "price",
         order: "asc",
-        productList:[],
         wishlist:[],
         user: {
           name: '',
           coins: 0,
+          company: '',
           doc:'',
           key: ''
         }
@@ -463,12 +460,11 @@ class Product extends React.Component{
       this.doOrderBy = this.doOrderBy.bind(this);
       this.doOrder = this.doOrder.bind(this);
     }
-
+    
     componentDidMount(){   
       this.subscriptions.push(firebaseServices.getUser("LXCYHelb75dWxPRZhhB5")
         .subscribe(user => this.setState({user: user})));
-      this.subscriptions.push(firebaseServices.getProducts()
-        .subscribe(products => this.setState({productList: products})));
+      
       this.subscriptions.push(firebaseServices.getWishlist("LXCYHelb75dWxPRZhhB5")
         .subscribe(items => this.setState({wishlist: items})));
     }
@@ -499,7 +495,6 @@ class Product extends React.Component{
     }
 
     render(){
-      const products = this.state.productList;
       const categoryFilter = this.state.categoryFilter;
       const affordableChecked = this.state.affordableChecked;
       const wishlistChecked = this.state.wishlistChecked;
@@ -516,7 +511,6 @@ class Product extends React.Component{
         {<button className="btn btn-primary" type="button" onClick={this.addFirebaseData}>Add data to Firebase</button>}
         Hello, {userName}, you have {userCoins} Coins
           <Filters user={user} wishlist={wishlist}
-            productList={products} 
             categoryFilter={categoryFilter} onCategoryChange={this.handleCategoryChange}
             affordableChecked={affordableChecked} onAffordableChange={this.handleAffordableChange}
             wishlistChecked={wishlistChecked} onWishlistChange={this.handleWishlistChange}
@@ -525,7 +519,6 @@ class Product extends React.Component{
             
           </Filters>
           <ProductContainer user={user} wishlist={wishlist}
-            productList={products} 
             categoryFilter={categoryFilter}
             affordableChecked={affordableChecked}
             wishlistChecked={wishlistChecked}

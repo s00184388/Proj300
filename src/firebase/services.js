@@ -13,9 +13,11 @@ export default class FirebaseServices {
     this.wishlistCollection = this.db.collection("wishlist");
   }
 
-  getProducts = () => {
+  getProducts = (companyName) => {
     return new Observable(observer => {
-      this.productsCollection.onSnapshot(querySnapshot => {
+      this.productsCollection
+      .where("companyName", "==", companyName)
+      .onSnapshot(querySnapshot => {
         const products = [];
         querySnapshot.forEach(doc => {
           const {
@@ -111,12 +113,14 @@ export default class FirebaseServices {
         .onSnapshot(querySnapshot => {
           var user = {};
           querySnapshot.forEach(doc => {
-            const { name, coins } = doc.data();
+            const { name, coins, company, role } = doc.data();
             user = {
               name,
               coins,
               key: doc.id,
-              doc
+              doc,
+              company, 
+              role
             };
           });
           observer.next(user);

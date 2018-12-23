@@ -56,7 +56,9 @@ class ProductForm extends Component {
       quantity: this.state.quantity,
       price: this.state.price,
       remaining: this.state.quantity,
-      category: this.state.category
+      category: this.state.category,
+      sponsored: false,
+      companyName: this.props.company.name
     };
 
     fs.addProduct(product);
@@ -79,6 +81,8 @@ class ProductForm extends Component {
 
   render() {
     const categories = ['Electronics', 'Shoes', 'Sports', 'Others'];
+    const options = categories.map(opt=>
+      <option key={opt}>{opt}</option>)
     return (
       <form onSubmit={this.handleSubmit}>
         <div className="form-group">
@@ -113,8 +117,10 @@ class ProductForm extends Component {
           <label htmlFor="categoryList">
             Product Category:
           </label>
-          <DropdownList id="categoryList" data={categories} onChange={this.handleChange}
-            value={this.state.category} placeholder="Select a category"/>
+            <select id="categoryList" name="category" className="form-control" defaultValue="">
+              <option value="" disabled hidden>Select a category</option>
+              {options}
+            </select>
         </div>
         <div className="form-group">
           <label htmlFor="formName">
@@ -186,11 +192,9 @@ class ProductForm extends Component {
             value={this.state.quantity}
           />
         </div>
-        <Link to="/rewards">
-          <button className="btn btn-primary" id="formSubmit" type="submit">
+          <button className="btn btn-primary" id="formSubmit" type="submit" onClick={this.handleSubmit}>
             Submit Product
           </button>
-        </Link>
       </form>
     );
   }
@@ -261,7 +265,7 @@ export class Dashboard extends Component {
       <div className="container">
         <div className="row">
           <div className="col-md">
-            <ProductForm/>
+            <ProductForm company={{name: 'Overstock'}}/>
           </div>
           <div className="col-md">
             <CompanyInfo company={{name: 'Overstock'}}/>
