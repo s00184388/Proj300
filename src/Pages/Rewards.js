@@ -127,6 +127,18 @@ class Picture extends React.Component{
     }
   }
 
+class SponsoredTitle extends React.Component{
+  render(){
+    return(
+      <div className="row">
+        <div className="col-md d-flex justify-content-center">
+          <strong>Sponsored by {this.props.brandName}</strong>
+        </div>
+      </div>
+    )
+  }
+}
+
 class Product extends React.Component{
   constructor(props){
     super(props);
@@ -180,10 +192,11 @@ class Product extends React.Component{
     const quantity = product.quantity;
     const remaining = product.remaining;
     const productKey = product.key;
+    const sponsored = product.sponsored;
     const inWishlist = this.state.isInWishlist;
     return(
       <div className={"productCard container border rounded d-flex align-items-center justify-content-center "+
-            (inWishlist ? "inWishlist" : '')} onClick={this.openModal}>
+            (inWishlist ? " inWishlist " : ' ') + (sponsored ? " sponsored " : ' ')} onClick={this.openModal}>
         <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal} style={modalStyle} shouldCloseOnOverlayClick={true}>
           <div style={{height: '80%', position: 'relative'}}>
             <ProductModal product={product} user={user}></ProductModal>
@@ -191,6 +204,7 @@ class Product extends React.Component{
           <a href="#" className="closeButton" onClick={this.closeModal}/>
         </Modal>
         <div className="productCardContent">
+          {sponsored ? <SponsoredTitle brandName={brandName}/> : null}
           <div className="row">
             <div className="col-md-3 d-flex justify-content-start"> 
               <Picture className="productPicture" url={picURL} name={productName}></Picture> 
@@ -342,7 +356,7 @@ class Product extends React.Component{
   class ProductContainer extends React.Component{
     constructor(props){
       super(props);  
-      this.state = { wishlist: [], productList: [] };
+      this.state = { wishlist: [], companyProductList: [], sponsoredProductList: [] };
       this.subscriptions = [];
       this.isInWishlist = this.isInWishlist.bind(this);
       this.filterbyWishlist = this.filterbyWishlist.bind(this);
@@ -353,8 +367,12 @@ class Product extends React.Component{
         this.userKey = nextProps.user.key;
         this.subscriptions.push(firebaseServices.getWishlist(this.userKey).subscribe(items =>{
           this.setState({wishlist: items});
-          this.subscriptions.push(firebaseServices.getProducts(nextProps.user.company)
-          .subscribe(products => this.setState({productList: products})));
+          this.subscriptions.push(firebaseServices.getProducts("companyName", nextProps.user.company)
+          .subscribe(products => this.setState({companyProductList: products})));
+          this.subscriptions.push(firebaseServices.getProducts("sponsored", true)
+          .subscribe(sponsoredProds => {
+            this.setState({sponsoredProductList: sponsoredProds});
+          }));
         }));
       }
     }
@@ -396,7 +414,9 @@ class Product extends React.Component{
       const user = this.props.user;
       this.userKey = user.key;
       const userCoins = user.coins;
-      var products = this.state.productList;
+      var companyProducts = this.state.companyProductList;
+      var sponsoredProducts = this.state.sponsoredProductList;
+      var products = companyProducts.concat(sponsoredProducts);
       const wishlist = this.props.wishlist;
       if(this.props.affordableChecked){
         products = products.filter(this.filterbyAffordable(userCoins));

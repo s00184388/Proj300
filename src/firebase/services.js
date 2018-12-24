@@ -1,5 +1,5 @@
 import { fire } from "./firebase";
-import { Observable } from "rxjs";
+import { Observable, observable } from "rxjs";
 import firebase from "firebase";
 
 export default class FirebaseServices {
@@ -13,34 +13,19 @@ export default class FirebaseServices {
     this.wishlistCollection = this.db.collection("wishlist");
   }
 
-  getProducts = (companyName) => {
+  getProducts = (field, query) => {
     return new Observable(observer => {
       this.productsCollection
-      .where("companyName", "==", companyName)
+      .where(field.toString(), "==", query)
       .onSnapshot(querySnapshot => {
         const products = [];
         querySnapshot.forEach(doc => {
           const {
-            category,
-            description,
-            name,
-            picURL,
-            price,
-            quantity,
-            remaining,
-            brand
+            category, description, name, picURL, price, quantity, remaining, brand, sponsored
           } = doc.data();
           products.push({
-            key: doc.id,
-            doc, // DocumentSnapshot
-            category,
-            description,
-            name,
-            brand,
-            picURL,
-            price,
-            quantity,
-            remaining
+            key: doc.id, doc, 
+            category, description, name, picURL, price, quantity, remaining, brand, sponsored
           });
         });
         observer.next(products);
