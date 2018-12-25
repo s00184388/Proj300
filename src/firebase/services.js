@@ -33,6 +33,28 @@ export default class FirebaseServices {
     });
   };
 
+  getBrandedProducts = (field, query) => {
+    return new Observable(observer => {
+      this.productsCollection
+      .where("sponsored", "==", true)
+      .where(field.toString(), "==", query)
+      .orderBy("price")
+      .onSnapshot(querySnapshot => {
+        const products = [];
+        querySnapshot.forEach(doc => {
+          const {
+            category, description, name, picURL, price, quantity, remaining, brand, sponsored
+          } = doc.data();
+          products.push({
+            key: doc.id, doc, 
+            category, description, name, picURL, price, quantity, remaining, brand, sponsored
+          });
+        });
+        observer.next(products.reverse());
+      });
+    });
+  };
+
   getWishlist = userId => {
     return new Observable(observer => {
       this.wishlistCollection

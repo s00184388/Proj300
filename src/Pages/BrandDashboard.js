@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { DropdownList } from 'react-widgets'
-import "./CssPages/CompanyDashboard.css";
+import "./CssPages/BrandDashboard.css";
 import FirebaseServices from "../firebase/services";
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -47,8 +47,8 @@ class ProductForm extends Component {
 
     let product = {
       brand: {
-        name: this.state.brandName,
-        picURL: this.state.brandPic
+        name: this.props.brand.name,
+        picURL: this.props.brand.picURL
       },
       name: this.state.name,
       description: this.state.description,
@@ -57,8 +57,8 @@ class ProductForm extends Component {
       price: this.state.price,
       remaining: this.state.quantity,
       category: this.state.category,
-      sponsored: false,
-      companyName: this.props.company.name
+      sponsored: true,
+      companyName: this.props.brand.name
     };
 
     fs.addProduct(product);
@@ -85,34 +85,6 @@ class ProductForm extends Component {
       <option key={opt}>{opt}</option>)
     return (
       <form onSubmit={this.handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="formBrandName">
-            Brand Name:
-          </label>
-          <input
-            id="formBrandName"
-            className="form-control"
-            name="brandName"
-            type="text"
-            placeholder="Enter Brand Name"
-            onChange={this.handleChange}
-            value={this.state.brandName}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="formBrandPic">
-            Brand Image:
-          </label>
-          <input
-            id="formBrandPic"
-            className="form-control"
-            name="brandPic"
-            type="text"
-            placeholder="Enter Brand Image URL (e.g. https://)"
-            onChange={this.handleChange}
-            value={this.state.brandPic}
-          />
-        </div>
         <div className="form-group">
           <label htmlFor="categoryList">
             Product Category:
@@ -200,6 +172,28 @@ class ProductForm extends Component {
   }
 }
 
+class ProductProgressbar extends React.Component{
+  constructor(props){
+    super(props);
+  }
+  render(){
+    const quantity = this.props.quantity;
+    const remaining = this.props.remaining;
+    const percent = remaining*100/quantity;
+    const progressStyle = {
+      width: percent+"%"
+    }
+    return(
+      <div className="progress">
+        <div className={"progress-bar progress-bar-striped "+
+          (percent<60 ? percent<30 ? "bg-danger" : "bg-warning" : "bg-success")} role="progressbar" 
+        aria-valuenow={percent} aria-valuemin="0" 
+        aria-valuemax="100" style={progressStyle}>{remaining + "/" + quantity}</div>
+      </div>
+    );
+  }
+}
+
 class TableRow extends Component{
   render(){
     const row = this.props.row;
@@ -208,47 +202,49 @@ class TableRow extends Component{
       <tr>
         <td key={index}>{index}</td>
         <td key={row.name}>{row.name}</td>
-        <td key={row.coins}>{row.coins}</td>
+        <td key={row.price}>{row.price}</td>
+        <td key={row.key}><ProductProgressbar quantity={row.quantity} remaining={row.remaining} /></td>
       </tr>
     );
   }
 }
 
-class CompanyInfo extends Component {
+class BrandInfo extends Component {
   constructor(props){
     super(props);
     this.state={
-      employees: []
+      products: []
     }
   }
 
   componentDidMount(){
-    this.employeesSubscr = fs.getEmployees(this.props.company.name)
-    .subscribe(employees=>this.setState({employees: employees}));
+    this.productsSubscr = fs.
+    getBrandedProducts("brand.name", this.props.brand.name).subscribe(prods=>this.setState({products: prods}));
   }
   componentWillUnmount(){
-    this.employeesSubscr.unsubscribe();
+    this.productsSubscr.unsubscribe();
   }
   render() {
-    const companyName = this.props.company.name;
-    const employees = this.state.employees;
-    const employeesList = employees.map((emp, index) => 
-      <TableRow row={emp} index={++index} key={emp.key}/>
+    const brandName = this.props.brand.name;
+    const products = this.state.products;
+    const productsList = products.map((prod, index) => 
+      <TableRow row={prod} index={++index} key={prod.key}/>
     );
     return(
       <div className="infoContainer">
-        <h2 className="text-center py-5"> <strong>{companyName}</strong> Dashboard </h2>
-        <h4>Employee list</h4>
+        <h2 className="text-center py-5"> <strong>{brandName}</strong> Dashboard </h2>
+        <h4>Products list</h4>
         <table className="table table-striped table-sm">
           <thead>
             <tr>
               <th>#</th>
               <th>Name</th>
-              <th>Coins <FontAwesomeIcon icon="arrow-down"/></th>
+              <th>Price</th>
+              <th>Stock</th>
             </tr>
           </thead>
           <tbody>
-            {employeesList}
+            {productsList}
           </tbody>
         </table>
       </div>
@@ -256,7 +252,7 @@ class CompanyInfo extends Component {
   }
 }
 
-export class CompanyDashboard extends Component {
+export class BrandDashboard extends Component {
   constructor(props) {
     super(props);
   }
@@ -265,10 +261,10 @@ export class CompanyDashboard extends Component {
       <div className="container">
         <div className="row">
           <div className="col-md">
-            <ProductForm company={{name: 'Overstock'}}/>
+            <ProductForm brand={{name: 'FitBit', picURL: 'https://vignette.wikia.nocookie.net/logopedia/images/0/0a/Fitbit_logo_2016.svg/revision/latest?cb=20160108000300'}}/>
           </div>
           <div className="col-md">
-            <CompanyInfo company={{name: 'Overstock'}}/>
+            <BrandInfo brand={{name: 'FitBit', picURL: 'https://vignette.wikia.nocookie.net/logopedia/images/0/0a/Fitbit_logo_2016.svg/revision/latest?cb=20160108000300'}}/>
           </div>
         </div>
       </div>
@@ -276,4 +272,4 @@ export class CompanyDashboard extends Component {
   }
 }
 
-export default CompanyDashboard;
+export default BrandDashboard;

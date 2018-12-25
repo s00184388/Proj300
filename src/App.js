@@ -17,6 +17,7 @@ import {
 import { Home } from "./Pages/Home";
 import { Admin } from "./Pages/Admin";
 import { CompanyDashboard } from "./Pages/CompanyDashboard";
+import { BrandDashboard } from "./Pages/BrandDashboard";
 import { Rewards } from "./Pages/Rewards";
 import { Navbar } from "./Components/Navbar";
 import { Sidebar } from "./Components/Sidebar";
@@ -36,6 +37,7 @@ class App extends Component {
               <Route exact path="/" component={Home} />
               <Route path="/admin" component={Admin} />
               <Route path="/CompanyDashboard" component={CompanyDashboard} />
+              <Route path="/BrandDashboard" component={BrandDashboard} />
               <Route path="/wishlist" component={Test} />
               <Route path="/rewards" component={Rewards} />
             </div>

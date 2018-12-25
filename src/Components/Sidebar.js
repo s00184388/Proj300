@@ -19,6 +19,9 @@ export class Sidebar extends React.Component {
         <Link to="/CompanyDashboard" className="menu-item">
           Company Dashboard
         </Link>
+        <Link to="/BrandDashboard" className="menu-item">
+          Brand Dashboard
+        </Link>
       </Menu>
     );
   }
