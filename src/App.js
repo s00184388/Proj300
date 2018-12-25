@@ -16,7 +16,7 @@ import {
 //components
 import { Home } from "./Pages/Home";
 import { Admin } from "./Pages/Admin";
-import { Dashboard } from "./Pages/Dashboard";
+import { CompanyDashboard } from "./Pages/CompanyDashboard";
 import { Rewards } from "./Pages/Rewards";
 import { Navbar } from "./Components/Navbar";
 import { Sidebar } from "./Components/Sidebar";
@@ -35,7 +35,7 @@ class App extends Component {
             <div>
               <Route exact path="/" component={Home} />
               <Route path="/admin" component={Admin} />
-              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/CompanyDashboard" component={CompanyDashboard} />
               <Route path="/wishlist" component={Test} />
               <Route path="/rewards" component={Rewards} />
             </div>

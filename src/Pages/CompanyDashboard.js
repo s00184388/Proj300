@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { DropdownList } from 'react-widgets'
-import "./CssPages/Dashboard.css";
+import "./CssPages/CompanyDashboard.css";
 import FirebaseServices from "../firebase/services";
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -237,7 +237,7 @@ class CompanyInfo extends Component {
     );
     return(
       <div className="infoContainer">
-        <h2 className="text-center py-5"> <strong>{companyName}</strong> Dashboard </h2>
+        <h2 className="text-center py-5"> <strong>{companyName}</strong> CompanyDashboard </h2>
         <h4>Employee list</h4>
         <table className="table table-striped table-sm">
           <thead>
@@ -256,7 +256,7 @@ class CompanyInfo extends Component {
   }
 }
 
-export class Dashboard extends Component {
+export class CompanyDashboard extends Component {
   constructor(props) {
     super(props);
   }
@@ -276,4 +276,4 @@ export class Dashboard extends Component {
   }
 }
 
-export default Dashboard;
+export default CompanyDashboard;
