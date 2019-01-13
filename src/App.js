@@ -23,6 +23,7 @@ import { Navbar } from "./Components/Navbar";
 import { Sidebar } from "./Components/Sidebar";
 import { Test } from "./Pages/Test";
 
+
 library.add(faHome, faBars, faGift, faTrash);
 
 class App extends Component {

@@ -1,6 +1,5 @@
 import React from 'react';
 import { DropdownList } from 'react-widgets'
-import { Link } from 'react-router-dom';
 import './CssPages/Rewards.css';
 import jsonProds from '../mockData.json';
 import './CssPages/Checkbox.css';
@@ -31,7 +30,6 @@ const modalStyle = {
   }
 };
 
-
 class Picture extends React.Component{
   constructor(props){
     super(props);
@@ -41,7 +39,10 @@ class Picture extends React.Component{
     const productPicture = this.props.url;
     const productName = this.props.name;
     return(
-      <img width="80" height="80" src={productPicture} alt={productName}/>
+      <img className="rounded imag" 
+           width="100" height="90" 
+           src={productPicture} 
+           alt={productName}/>
       );
     }
   }
@@ -75,7 +76,7 @@ class Picture extends React.Component{
     render(){
       const price = this.props.price;
       return(
-        <p>{price} Kudos</p>
+        <h6>{price} Kudos</h6>
       )
     }
   }
@@ -119,7 +120,7 @@ class Picture extends React.Component{
     render(){
       const inWishlist = this.state.isInWishlist;
       return(
-        <button className="wishlistButton btn btn-primary" 
+        <button className="wishlistButton btn btn-primary btn-sm" 
           role="button" onClick={this.addToWishlist} disabled={inWishlist}> 
           {inWishlist ? "Item in Wishlist" : "Add to Wishlist"}
         </button>
@@ -131,11 +132,29 @@ class SponsoredTitle extends React.Component{
   render(){
     return(
       <div className="row">
-        <div className="col-md d-flex justify-content-center">
+        <div className="col-lg mr-4 p-2">
           <strong>Sponsored by {this.props.brandName}</strong>
         </div>
       </div>
     )
+  }
+}
+class BrandPicture extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    const productPicture = this.props.url;
+    const productName = this.props.name;
+    return (
+      <img
+        className="rounded imag d-block"
+        width="40"
+        height="41"
+        src={productPicture}
+        alt={productName}
+      />
+    );
   }
 }
 
@@ -195,7 +214,8 @@ class Product extends React.Component{
     const sponsored = product.sponsored;
     const inWishlist = this.state.isInWishlist;
     return(
-      <div className={"productCard container border rounded d-flex align-items-center justify-content-center "+
+      <div className="pb-5">
+      <div className={"card card-primary productCard"+
             (inWishlist ? " inWishlist " : ' ') + (sponsored ? " sponsored " : ' ')} onClick={this.openModal}>
         <Modal isOpen={this.state.modalIsOpen} onRequestClose={this.closeModal} style={modalStyle} shouldCloseOnOverlayClick={true}>
           <div style={{height: '80%', position: 'relative'}}>
@@ -203,38 +223,37 @@ class Product extends React.Component{
           </div>
           <a href="#" className="closeButton" onClick={this.closeModal}/>
         </Modal>
-        <div className="productCardContent">
-          {sponsored ? <SponsoredTitle brandName={brandName}/> : null}
+        <div className="card-header bg-primary p-0" style={{width:"100%",height:"17%"}}>
           <div className="row">
-            <div className="col-md-3 d-flex justify-content-start"> 
-              <Picture className="productPicture" url={picURL} name={productName}></Picture> 
-            </div>
-            <div className="col-md-6 d-flex justify-content-center">
-              <h5>{productName}</h5>
-            </div>
-            <div className="col-md-3 d-flex justify-content-end">
-              <Picture className="brandPicture" url={brandURL} name={brandName}></Picture>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md d-flex justify-content-center">
-            <p>{productDescription}</p>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md d-flex justify-content-end">
-              <ProductPrice price={price}></ProductPrice>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md">
-              <ProductProgressbar quantity={quantity} remaining={remaining}></ProductProgressbar>
-            </div>
-            <div className="col-md d-flex justify-content-end">
-              <WishlistButton productKey={productKey} userKey={userKey} wishlist={wishlist}></WishlistButton>
-            </div>
+          <div class="d-flex mx-auto">
+                      {sponsored ? <SponsoredTitle brandName={brandName}/> : null}
+                      <BrandPicture className="brandPicture" url={brandURL} name={brandName}></BrandPicture>
+                    </div>
           </div>
         </div>
+        <div className="card-body">
+            <div className="row">
+                <div className="col-lg-4">
+                    <Picture className="productPicture" url={picURL} name={productName}></Picture>
+                </div>
+                <div className="col-lg-6 pt-4 ml-3">
+                    <h5>{productName}</h5>
+                </div>    
+            </div> 
+            <div className="row pt-2 ml-1">
+                <p>{productDescription}</p>
+            </div>
+            <hr></hr>
+            <div className="row">
+                <div className="col-lg-6 d-flex justify-content-start">
+                  <ProductPrice price={price}></ProductPrice>
+                </div>
+                <div className="col-lg-6 d-flex justify-content-end">
+                  <WishlistButton productKey={productKey} userKey={userKey} wishlist={wishlist}></WishlistButton>
+                </div>
+            </div>
+        </div>
+      </div>
       </div>
     )};
   }
@@ -259,28 +278,26 @@ class Product extends React.Component{
     render() {   
       const { orderBy, order, doOrderBy, doOrder } = this.props;   
       const checked = <FontAwesomeIcon icon="check" />
+      
       return (
         <div className="dropdown">
-          <button className="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Sort products 
-            <span className="caret"></span>
+          <button className="btn btn-default sortbutton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span>Sort By</span>
+          <span className="caret"></span>
           </button>
-          <ul className="dropdown-menu">
+          <ul className="dropdown-menu col-lg-12">
           <h6 className="dropdown-header">Order by</h6>
             <li><button className="dropdown-item" onClick={ doOrderBy } data-value="price">Price {orderBy==="price" ? checked : null}</button></li>
             <li><button className="dropdown-item" onClick={ doOrderBy } data-value="remaining">In stock {orderBy==="remaining" ? checked : null}</button></li>
-          
             <div className="dropdown-divider"></div>
             <h6 className="dropdown-header">Order</h6>
             <li><button className="dropdown-item" onClick={ doOrder } data-value="asc">ascendind {order==="asc" ? checked : null}</button></li>
             <li><button className="dropdown-item" onClick={ doOrder } data-value="desc">descending {order==="desc" ? checked : null}</button></li>
           </ul>
-        </div>  
+        </div> 
      )   
     }
   }
-
-
   class Filters extends React.Component{
     constructor(props){
       super(props);
@@ -313,43 +330,45 @@ class Product extends React.Component{
     render(){
       const rewardsType = ['Electronics', 'Shoes', 'Sports', 'Others', 'All'];
       const { orderBy, order, doOrderBy, doOrder } = this.props;
-      const DropdownListStyle = {width:'80%'}
 
       return(
-        <div className="container">
-          <div className="row">
-            <div className="col-md">
-            <DropdownList data={rewardsType} onChange={this.handleCategoryChange} style={DropdownListStyle}
-            value={this.props.categoryFilter} placeholder="Type of reward"/>
-            </div>
-            <div className="col-md">
-              <Dropdown 
-                doOrderBy={ doOrderBy }
-                doOrder={ doOrder }
-                orderBy={ orderBy }
-                order={ order } />
-            </div>           
-            <div className="col-md">
-            <section className="checkboxSection">              
-              <input id='affordableChk' type='checkbox' onClick={this.handleAffordableChange}/>
-              <label htmlFor='affordableChk'>
-                <span></span>
-                Show only affordable items
-              </label>          
-            </section>
-            </div>
-            <div className="col-md">
-            <section className="checkboxSection">              
-              <input id='wishlistChk' type='checkbox' onClick={this.handleWishlistChange}/>
-              <label htmlFor='wishlistChk'>
-                <span></span>
-                Hide wishlist items
-              </label>          
-            </section>
-            </div>
-          </div>
-        </div>
-      );
+          <div className="col-lg">
+                <p class="h6 text-center py-3">Filter By</p>
+                <div className="py-2">
+                    <DropdownList data={rewardsType} onChange={this.handleCategoryChange} 
+                    value={this.props.categoryFilter} placeholder="Categories" style={{padding:"0%"}}/>
+                </div>
+                
+                <hr></hr> 
+                <Dropdown 
+                   doOrderBy={ doOrderBy }
+                    doOrder={ doOrder }
+                    orderBy={ orderBy }
+                    order={ order }/> 
+                <hr></hr>         
+                <section className="checkboxSection p-0">              
+                    <input id='affordableChk' type='checkbox' onClick={this.handleAffordableChange}/>
+                    <label htmlFor='affordableChk'>
+                      <span></span>
+                      <div className="color">Only Affordable Items</div>
+                    </label>          
+                  </section>
+                  <section className="checkboxSection">              
+                    <input id='wishlistChk' type='checkbox' onClick={this.handleWishlistChange}/>
+                    <label htmlFor='wishlistChk'>
+                      <span></span>
+                      <div className="color">No Wishlist Items</div>
+                    </label>          
+                  </section>
+                  <section className="checkboxSection">              
+                    <input id='sponsoredChk' type='checkbox' onClick={this.handleWishlistChange}/>
+                    <label htmlFor='sponsoredChk'>
+                      <span></span>
+                      <div className="color">Only Sponsored Items</div>
+                    </label>          
+                  </section>
+            </div>     
+        );
     }
   }
 
@@ -445,11 +464,9 @@ class Product extends React.Component{
         </div>
       );
       return(
-        <div className="container">
-          <div className="row ">
+          <div className="row p-0">
             {listProducts}
           </div>
-        </div>
       );
     }
   }
@@ -526,26 +543,33 @@ class Product extends React.Component{
       const userCoins = user.coins;
       const userName = user.name;
       return(
-        
-        <div className="container">
-        {<button className="btn btn-primary" type="button" onClick={this.addFirebaseData}>Add data to Firebase</button>}
-        Hello, {userName}, you have {userCoins} Coins
-          <Filters user={user} wishlist={wishlist}
-            categoryFilter={categoryFilter} onCategoryChange={this.handleCategoryChange}
-            affordableChecked={affordableChecked} onAffordableChange={this.handleAffordableChange}
-            wishlistChecked={wishlistChecked} onWishlistChange={this.handleWishlistChange}
-            doOrderBy={ this.doOrderBy } orderBy={ orderBy }
-            doOrder={ this.doOrder } order={ order }>
-            
-          </Filters>
-          <ProductContainer user={user} wishlist={wishlist}
-            categoryFilter={categoryFilter}
-            affordableChecked={affordableChecked}
-            wishlistChecked={wishlistChecked}
-            orderBy={ orderBy }
-            order={ order }>
-          </ProductContainer>
-        </div>
+            <div className="ml-4 mr-4">
+             {<button className="btn btn-primary btn-sm" type="button" onClick={this.addFirebaseData}>Add data to Firebase</button>}
+             Hello, {userName}, you have {userCoins} Coins
+            <div className="row py-5">
+                <div className="col-lg-3">
+                      <div className="card-header p-0">                     
+                          <Filters user={user} wishlist={wishlist}
+                            categoryFilter={categoryFilter} onCategoryChange={this.handleCategoryChange}
+                            affordableChecked={affordableChecked} onAffordableChange={this.handleAffordableChange}
+                            wishlistChecked={wishlistChecked} onWishlistChange={this.handleWishlistChange}
+                            doOrderBy={ this.doOrderBy } orderBy={ orderBy }
+                            doOrder={ this.doOrder } order={ order }>
+                         </Filters>
+                      </div>
+                </div>
+              
+              <div className="col-lg-9">
+                  <ProductContainer user={user} wishlist={wishlist}
+                      categoryFilter={categoryFilter}
+                      affordableChecked={affordableChecked}
+                      wishlistChecked={wishlistChecked}
+                      orderBy={ orderBy }
+                      order={ order } style={{position:"fixed"}}>
+                    </ProductContainer>
+              </div>
+            </div>    
+          </div>
       )
     }
   }

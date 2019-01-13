@@ -1,15 +1,27 @@
   .productCard{
-    margin: 10px;
-    padding: 5px;
+    padding: 0px;
+    height: 280px;
   }
 
   .sponsored{
-    border-color: red !important;
+    -webkit-box-shadow: 0px 0px 10px 2px #303030;
+    -moz-box-shadow: 0px 0px 10px 2px #303030;
+    box-shadow: 0px 0px 10px 2px #303030
+  }
+
+  .sponsored:hover{
+    -webkit-box-shadow: 0px 0px 10px 2px ;
+    -moz-box-shadow: 0px 0px 10px 2px #25A0E6;
+    box-shadow: 0px 0px 10px 2px #25A0E6
   }
   
   .productCardContent{
     width: 100%;
     height: 100%;
+  }
+
+  .imag {
+    border: 2px solid #303030;
   }
   
   .inWishlist{
@@ -42,4 +54,18 @@
   
   .product-modal-display-none {
     display: none;
+  }
+
+  .sortbutton{
+    color: #999999;
+    background-color: #FFFFFF;
+    width: 100%;
+    text-align: left;
+    border: 1px  solid #CCCCCC;  
+    font-size: 15px; 
+  }
+
+  .color{
+    color: dimgrey;
+    font-size: 14px;
   }
