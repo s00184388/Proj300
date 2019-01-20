@@ -10,11 +10,15 @@ export class Login extends Component {
     error: null
   };
   handleInputChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
+    this.setState({
+       [event.target.name]: event.target.value 
+      });
   };
   handleSubmit = event => {
     event.preventDefault();
     const { email, password } = this.state;
+    console.log(this.state.email);
+    console.log(this.state.password);
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)

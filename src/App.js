@@ -22,6 +22,7 @@ import { Rewards } from "./Pages/Rewards";
 import { Navbar } from "./Components/Navbar";
 import { Sidebar } from "./Components/Sidebar";
 import { Test } from "./Pages/Test";
+import {Login } from "./Pages/Login";
 
 
 library.add(faHome, faBars, faGift, faTrash);
@@ -41,6 +42,7 @@ class App extends Component {
               <Route path="/BrandDashboard" component={BrandDashboard} />
               <Route path="/wishlist" component={Test} />
               <Route path="/rewards" component={Rewards} />
+              <Route path="/login" component={Login} />
             </div>
           </div>
         </div>

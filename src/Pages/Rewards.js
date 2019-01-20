@@ -128,12 +128,12 @@ class Picture extends React.Component{
     }
   }
 
-class SponsoredTitle extends React.Component{
+class Title extends React.Component{
   render(){
     return(
       <div className="row">
         <div className="col-lg mr-4 p-2">
-          <strong>Sponsored by {this.props.brandName}</strong>
+          <strong>{this.props.sponsored ? 'Sponsored by ': null} {this.props.brandName}</strong>
         </div>
       </div>
     )
@@ -226,7 +226,7 @@ class Product extends React.Component{
         <div className="card-header bg-primary p-0" style={{width:"100%",height:"17%"}}>
           <div className="row">
           <div class="d-flex mx-auto">
-                      {sponsored ? <SponsoredTitle brandName={brandName}/> : null}
+                      <Title brandName={brandName} sponsored={sponsored}/>
                       <BrandPicture className="brandPicture" url={brandURL} name={brandName}></BrandPicture>
                     </div>
           </div>
