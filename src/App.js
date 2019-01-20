@@ -1,6 +1,7 @@
 //modules
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import firebase from "firebase";
 
 //styling
 import "./App.css";
@@ -12,8 +13,11 @@ import {
   faGift,
   faTrash
 } from "@fortawesome/free-solid-svg-icons";
+import * as serviceWorker from './serviceWorker';
+
 
 //components
+
 import { Home } from "./Pages/Home";
 import { Admin } from "./Pages/Admin";
 import { CompanyDashboard } from "./Pages/CompanyDashboard";
@@ -23,18 +27,33 @@ import { Navbar } from "./Components/Navbar";
 import { Sidebar } from "./Components/Sidebar";
 import { Test } from "./Pages/Test";
 import {Login } from "./Pages/Login";
+import {Register } from "./Pages/Register";
 
 
 library.add(faHome, faBars, faGift, faTrash);
 
 class App extends Component {
+  state = {
+    authenticated: false,
+  };
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged((authenticated) => {
+      authenticated
+        ? this.setState(() => ({
+            authenticated: true,
+          }))
+        : this.setState(() => ({
+            authenticated: false,
+          }));
+    });
+  }
   render() {
     return (
       <Router>
         <div>
           <div style={{ height: "100%" }}>
-            <Navbar />
-            <Sidebar />
+            <Navbar  authenticated={this.state.authenticated } />
+            <Sidebar/>
             <div>
               <Route exact path="/" component={Home} />
               <Route path="/admin" component={Admin} />
@@ -43,6 +62,7 @@ class App extends Component {
               <Route path="/wishlist" component={Test} />
               <Route path="/rewards" component={Rewards} />
               <Route path="/login" component={Login} />
+              <Route path="/register" component={Register} />
             </div>
           </div>
         </div>
@@ -52,3 +72,5 @@ class App extends Component {
 }
 
 export default App;
+
+serviceWorker.register();

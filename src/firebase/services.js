@@ -1,5 +1,5 @@
-import { fire } from "./firebase";
-import { Observable, observable } from "rxjs";
+import fire from './firebase'
+import { Observable} from "rxjs";
 import firebase from "firebase";
 
 export default class FirebaseServices {
@@ -9,6 +9,7 @@ export default class FirebaseServices {
       timestampsInSnapshots: true
     });
     this.productsCollection = this.db.collection("shopItems");
+    this.usersTestCollection=this.db.collection("UserTest")
     this.usersCollection = this.db.collection("users");
     this.wishlistCollection = this.db.collection("wishlist");
   }
@@ -162,6 +163,10 @@ export default class FirebaseServices {
   addProduct = product => {
     this.productsCollection.add(product);
   };
+
+  createUser= user=>{
+    this.usersTestCollection.add(user)
+  }
 
   deleteProduct = product => {
     this.wishlistCollection.where("product_id", "==", product.key)

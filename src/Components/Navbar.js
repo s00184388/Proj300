@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+
 //style
 import "./Navbar.css";
+import LogOut from "./LogOut";
 
 export class Navbar extends React.Component {
   render() {
@@ -21,6 +23,19 @@ export class Navbar extends React.Component {
             </Link>
           </div>
         </div>
+          <ul class="navbar-nav">
+          {this.props.authenticated ?
+          (
+            <li class="nav-item  pull-right active">
+              <Link  to="/"><LogOut></LogOut></Link>
+            </li> 
+          ):
+          (
+            <li class="nav-item  pull-right active">
+              <Link  to="/login"><button className="btn btn-defaut">Login</button></Link>
+            </li> 
+          )}       
+          </ul>
       </nav>
     );
   }
