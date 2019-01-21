@@ -18,7 +18,7 @@ export class Home extends Component {
           <p className="text-center strong">
             Protect Your Most Valuable Asset!
           </p>
-          <Link to="/rewards">
+          <Link to="/login">
             <button className="btn btn-sm btn-primary">Explore</button>
           </Link>
           <div className="push" />

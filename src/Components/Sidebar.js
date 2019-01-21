@@ -1,7 +1,6 @@
 import React from "react";
 import { slide as Menu } from "react-burger-menu";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export class Sidebar extends React.Component {
   render() {
@@ -11,8 +10,9 @@ export class Sidebar extends React.Component {
           <span>Home</span>
         </Link>
         <Link to="/rewards" className="menu-item ">
-          <span>Rewards</span>
-        </Link>
+              <span>Rewards</span>
+            </Link>
+        
         <Link to="/wishlist" className="menu-item ">
           <span>Wishlist</span>
         </Link>

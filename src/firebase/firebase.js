@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import "firebase/auth";
+
 
 const config = {
   apiKey: "AIzaSyBUYWmaD070queqzty2IDqiqJIdQ12jcK4",
@@ -10,14 +10,14 @@ const config = {
   messagingSenderId: "62840631243"
 };
 
-const fire = firebase.initializeApp(config);
-//this.auth = app.auth();
+const fire=firebase.initializeApp(config);
+
+export default fire;
 
 // *** Auth API ***//
 
-/*doCreateUserWithEmailAndPassword = (email, password) =>
-  this.auth.doCreateUserWithEmailAndPassword(email, password);
+/*CreateUserWithEmailAndPassword = (email, password) =>
+  this.auth.CreateUserWithEmailAndPassword(email, password);
 
-doSignInWithEmailAndPassword = (email, password) =>
-  this.auth.doSignInWithEmailAndPassword(email, password);*/
-export { fire };
+SignInWithEmailAndPassword = (email, password) =>
+  this.auth.SignInWithEmailAndPassword(email, password);*/
