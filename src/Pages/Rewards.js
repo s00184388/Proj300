@@ -225,7 +225,7 @@ class Product extends React.Component{
         </Modal>
         <div className="card-header bg-primary p-0" style={{width:"100%",height:"17%"}}>
           <div className="row">
-          <div class="d-flex mx-auto">
+          <div className="d-flex mx-auto">
                       {sponsored ? <SponsoredTitle brandName={brandName}/> : null}
                       <BrandPicture className="brandPicture" url={brandURL} name={brandName}></BrandPicture>
                     </div>
@@ -333,7 +333,7 @@ class Product extends React.Component{
 
       return(
           <div className="col-lg">
-                <p class="h6 text-center py-3">Filter By</p>
+                <p className="h6 text-center py-3">Filter By</p>
                 <div className="py-2">
                     <DropdownList data={rewardsType} onChange={this.handleCategoryChange} 
                     value={this.props.categoryFilter} placeholder="Categories" style={{padding:"0%"}}/>
@@ -497,7 +497,7 @@ class Product extends React.Component{
       this.doOrderBy = this.doOrderBy.bind(this);
       this.doOrder = this.doOrder.bind(this);
     }
-    
+
     componentDidMount(){   
       this.subscriptions.push(firebaseServices.getUser("LXCYHelb75dWxPRZhhB5")
         .subscribe(user => this.setState({user: user})));
