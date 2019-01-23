@@ -6,19 +6,6 @@ var app = express();
 app.use(cors());
 var strava = require('strava-v3');
 
-
-function httpGetAsync(link, callback){
-  var xmlHttp = new XMLHttpRequest();
-  xmlHttp.onreadystatechange = function() { 
-      if (xmlHttp.readyState === 4 && xmlHttp.status === 200)
-          callback(xmlHttp.responseText);
-  }
-  xmlHttp.open("GET", link, true); // true for asynchronous 
-  xmlHttp.setRequestHeader('Authorization',
-  'Bearer ' + "e15688a04a37509c1f889074267665887b036b6b");
-  xmlHttp.send(null);
-}
-
 function postData(url = ``, data={}) {
     return fetch(url, {
         method: "POST", // *GET, POST, PUT, DELETE, etc.

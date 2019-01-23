@@ -19,15 +19,16 @@ class ProductForm extends Component {
 
     this.state = {
       //brand fields will be converted into brand object on submit
-      brandName: "",
-      brandPic: "",
-      name: "",
-      description: "",
-      picURL: "",
-      quantity: 0,
-      price: 0,
-      remaining: 0,
-      category: "",
+      brandID : '',
+      category : '',
+      companyID : '',
+      description : '',
+      name : '',
+      picture : '',
+      price : 0,
+      stock : 0,
+      sponsored : true,
+      tresholdPercentage: 0,
 
       categoryOptions: ['Electronics', 'Shoes', 'Sports', 'Others']
     };
@@ -46,36 +47,32 @@ class ProductForm extends Component {
     e.preventDefault();
 
     let product = {
-      brand: {
-        name: this.props.brand.name,
-        picURL: this.props.brand.picURL
-      },
-      name: this.state.name,
-      description: this.state.description,
-      picURL: this.state.picURL,
-      quantity: this.state.quantity,
-      price: this.state.price,
-      remaining: this.state.quantity,
-      category: this.state.category,
-      sponsored: true,
-      companyName: this.props.brand.name
+      brandID : this.state.brandID,
+      category : this.state.category,
+      companyID : this.state.companyID,
+      description : this.state.description,
+      name : this.state.name,
+      picture : this.state.picture,
+      price : this.state.price,
+      stock : this.state.stock,
+      sponsored : true,
+      tresholdPercentage: this.state.tresholdPercentage
     };
 
     fs.addProduct(product);
     console.log(product);
 
     this.setState({
-      brand: {
-        name: "",
-        picURL: ""
-      },
-      name: "",
-      description: "",
-      picURL: "",
-      quantity: 0,
-      price: 0,
-      remaining: 0,
-      category: ""
+      brandID : '',
+      category : '',
+      companyID : '',
+      description : '',
+      name : '',
+      picture : '',
+      price : 0,
+      stock : 0,
+      sponsored : true,
+      tresholdPercentage: 0
     });
   };
 
@@ -129,11 +126,11 @@ class ProductForm extends Component {
           <input
             id="formPicture"
             className="form-control"
-            name="picURL"
+            name="picture"
             type="text"
             placeholder="Enter Product Image URL (e.g. https://)"
             onChange={this.handleChange}
-            value={this.state.picURL}
+            value={this.state.picture}
           />
         </div>
         <div className="form-group">
@@ -151,45 +148,37 @@ class ProductForm extends Component {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="formQuantity">
-            Product Quantity:
+          <label htmlFor="formStock">
+            Product Stock:
           </label>
           <input
-            id="formQuantity"
+            id="formStock"
             className="form-control"
-            name="quantity"
+            name="stock"
             type="number"
-            placeholder="Enter Product Quantity"
+            placeholder="Enter Product Stock"
             onChange={this.handleChange}
-            value={this.state.quantity}
+            value={this.state.stock}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="formTreshold">
+            Treshold Percentage:
+          </label>
+          <input
+            id="formTreshold"
+            className="form-control"
+            name="tresholdPercentage"
+            type="number"
+            placeholder="Enter Treshold Percentage in %"
+            onChange={this.handleChange}
+            value={this.state.tresholdPercentage}
           />
         </div>
           <button className="btn btn-primary" id="formSubmit" type="submit" onClick={this.handleSubmit}>
             Submit Product
           </button>
       </form>
-    );
-  }
-}
-
-class ProductProgressbar extends React.Component{
-  constructor(props){
-    super(props);
-  }
-  render(){
-    const quantity = this.props.quantity;
-    const remaining = this.props.remaining;
-    const percent = remaining*100/quantity;
-    const progressStyle = {
-      width: percent+"%"
-    }
-    return(
-      <div className="progress">
-        <div className={"progress-bar progress-bar-striped "+
-          (percent<60 ? percent<30 ? "bg-danger" : "bg-warning" : "bg-success")} role="progressbar" 
-        aria-valuenow={percent} aria-valuemin="0" 
-        aria-valuemax="100" style={progressStyle}>{remaining + "/" + quantity}</div>
-      </div>
     );
   }
 }
@@ -203,7 +192,7 @@ class TableRow extends Component{
         <td key={index}>{index}</td>
         <td key={row.name}>{row.name}</td>
         <td key={row.price}>{row.price}</td>
-        <td key={row.key}><ProductProgressbar quantity={row.quantity} remaining={row.remaining} /></td>
+        <td key={row.key}>{row.stock}</td>
       </tr>
     );
   }
@@ -261,10 +250,10 @@ export class BrandDashboard extends Component {
       <div className="container">
         <div className="row">
           <div className="col-md">
-            <ProductForm brand={{name: 'FitBit', picURL: 'https://vignette.wikia.nocookie.net/logopedia/images/0/0a/Fitbit_logo_2016.svg/revision/latest?cb=20160108000300'}}/>
+            <ProductForm brand={{name: 'FitBit', picture: 'https://vignette.wikia.nocookie.net/logopedia/images/0/0a/Fitbit_logo_2016.svg/revision/latest?cb=20160108000300'}}/>
           </div>
           <div className="col-md">
-            <BrandInfo brand={{name: 'FitBit', picURL: 'https://vignette.wikia.nocookie.net/logopedia/images/0/0a/Fitbit_logo_2016.svg/revision/latest?cb=20160108000300'}}/>
+            <BrandInfo brand={{name: 'FitBit', picture: 'https://vignette.wikia.nocookie.net/logopedia/images/0/0a/Fitbit_logo_2016.svg/revision/latest?cb=20160108000300'}}/>
           </div>
         </div>
       </div>

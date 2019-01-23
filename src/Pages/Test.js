@@ -10,41 +10,41 @@ import {httpPostAsync} from '../serivces/strava';
 const firebaseServices = new FirebaseServices();
 
 class ProductProgressbar extends React.Component {
-    constructor(props) {
-      super(props);
-    }
-    render() {
-      const quantity = this.props.quantity;
-      const remaining = this.props.remaining;
-      const percent = (remaining * 100) / quantity;
-      const label = this.props.label;
-      const progressStyle = {
-        width: percent + "%"
-      };
-      return (
-        <div className="progress">
-          <p>{label}</p>
-          <div
-            className={
-              "progress-bar progress-bar-striped" +
-              (percent < 60
-                ? percent < 30
-                  ? "bg-danger"
-                  : "bg-warning"
-                : "bg-success")
-            }
-            role="progressbar"
-            aria-valuenow={percent}
-            aria-valuemin="0"
-            aria-valuemax="100"
-            style={progressStyle}
-          >
-            {remaining + "/" + quantity}
-          </div>
-        </div>
-      );
-    }
+  constructor(props) {
+    super(props);
   }
+  render() {
+    const quantity = this.props.quantity;
+    const remaining = this.props.remaining;
+    const percent = (remaining * 100) / quantity;
+    const label = this.props.label;
+    const progressStyle = {
+      width: percent + "%"
+    };
+    return (
+      <div className="progress">
+        <p>{label}</p>
+        <div
+          className={
+            "progress-bar progress-bar-striped" +
+            (percent < 60
+              ? percent < 30
+                ? "bg-danger"
+                : "bg-warning"
+              : "bg-success")
+          }
+          role="progressbar"
+          aria-valuenow={percent}
+          aria-valuemin="0"
+          aria-valuemax="100"
+          style={progressStyle}
+        >
+          {remaining + "/" + quantity}
+        </div>
+      </div>
+    );
+  }
+}
   
   {
     /*Picture component-fixed */
@@ -78,7 +78,6 @@ class ProductProgressbar extends React.Component {
       firebaseServices.deleteProduct(this.props.product);
     }
     render() {
-      const prod = this.props.product;
       return (
         <button className="btn btn-danger" onClick={this.deleteProduct}>
           <FontAwesomeIcon icon="trash" className="fa-lg" />
@@ -141,16 +140,27 @@ class ProductProgressbar extends React.Component {
   class Products extends React.Component {
     constructor(props) {
       super(props);
+
+      this.state = {brand : {}};
+      this.subscriptions = [];
+      this.subscriptions.push(firebaseServices.getBrand(this.props.product.brandID).subscribe(brand =>{
+        this.setState({brand:brand});
+      }));
     }
+
+    componentWillUnmount(){
+      this.subscriptions.forEach(obs => obs.unsubscribe());
+    }
+
     render() {
       const product = this.props.product;
+      const brand = this.state.brand;
       const productName = product.name;
-      const quantity = product.quantity;
-      const remaining = product.remaining;
+      const stock = product.stock;
       const productDescription = product.description;
-      const picURL = product.picURL;
-      const brandURL = product.brand.picURL;
-      const brandName = product.brand.name;
+      const productPicture = product.picture;
+      const brandPicture = brand.picture;
+      const brandName = brand.name;
       const price = product.price;
       return (
         <div className="row py-4">
@@ -169,7 +179,7 @@ class ProductProgressbar extends React.Component {
                     <div className="col-md-1 d-flex justify-content-end ">
                       <BrandPicture
                         className="brandPicture"
-                        url={brandURL}
+                        url={brandPicture}
                         name={brandName}
                       />
                     </div>
@@ -181,7 +191,7 @@ class ProductProgressbar extends React.Component {
                       <div className="row ml-0 mt-1">
                         <Picture
                           className="productPicture"
-                          url={picURL}
+                          url={productPicture}
                           name={productName}
                         />
                       </div>
@@ -190,25 +200,17 @@ class ProductProgressbar extends React.Component {
                       </p>
                     </div>
                     <div className="col-md-5">
-                      <p className="text-left mb-1">Remaining Stock</p>
                       <div className="pb-2">
-                        <ProductProgressbar
-                          quantity={quantity - 2}
-                          remaining={remaining - 1}
-                        />
+                        Stock: {stock}
                       </div>
                       <p className="text-left mb-1">Average of competitors</p>
                       <div className="pb-2">
                         <ProductProgressbar
-                          quantity={quantity}
-                          remaining={remaining}
+                          quantity={16}
+                          remaining={11}
                         />
                       </div>
                       <p className="text-left mb-1">Your progress</p>
-                      <ProductProgressbar
-                        quantity={quantity - 1}
-                        remaining={remaining - 2}
-                      />
                     </div>
                     <div className="col-md-3 text-right">
                       <DeleteButton product={product} />
@@ -244,7 +246,7 @@ export class Test extends React.Component {
   componentDidMount() {
     this.subscriptions.push(
       firebaseServices
-        .getWishListItems("LXCYHelb75dWxPRZhhB5")
+        .getWishListItems("RuXsq8vflU3rMGOku9Po")
         .subscribe(prod => this.setState({ products: prod }))
     );
   }

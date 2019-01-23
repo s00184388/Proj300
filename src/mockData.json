@@ -2,79 +2,73 @@
   {
     "name": "Cat",
     "description": "This is a cat",
-    "picURL": "https://placekitten.com/g/64/64",
-    "brand": {
-      "name": "Cattens",
-      "picURL": "https://i.imgur.com/FApqk3D.jpg"
-    },
-    "quantity": 20,
-    "remaining": 20,
+    "picture": "https://placekitten.com/g/64/64",
+    "brandID": "E5IOEBDEWqT9NFyhDZ5n",
+    "stock": 20,
     "price": 899,
-    "category": "others"
+    "category": "others",
+    "companyID": "mDbDH06a1sww4529l0x3",
+    "sponsored" : true,
+    "tresholdPercentage": 0.5
   },
   {
     "name": "Runners",
     "description": "Best Runners in the world!",
-    "picURL": "https://i.imgur.com/3AcTZcV.jpg",
-    "brand": {
-      "name": "Nike",
-      "picURL": "https://i.imgur.com/CJ5yubF.jpg"
-    },
-    "quantity": 10,
-    "remaining": 2,
+    "picture": "https://i.imgur.com/3AcTZcV.jpg",
+    "brandID": "E5IOEBDEWqT9NFyhDZ5n",
+    "stock": 2,
     "price": 1800,
-    "category": "shoes"
+    "category": "shoes",
+    "companyID": "mDbDH06a1sww4529l0x3",
+    "sponsored" : true,
+    "tresholdPercentage": 0.4
   },
   {
     "name": "Fitbit",
     "description": "Sports Tracking Smartwatch",
-    "picURL": "https://i.imgur.com/VtHJ3qe.jpg",
-    "brand": {
-      "name": "FitBit",
-      "picURL": "https://i.imgur.com/6P5FjqW.png"
-    },
-    "quantity": 5,
-    "remaining": 2,
+    "picture": "https://i.imgur.com/VtHJ3qe.jpg",
+    "brandID": "E5IOEBDEWqT9NFyhDZ5n",
+    "stock": 5,
     "price": 1200,
-    "category": "electronics"
+    "category": "electronics",
+    "companyID": "mDbDH06a1sww4529l0x3",
+    "sponsored" : true,
+    "tresholdPercentage": 0.6
   },
   {
     "name": "Tennis Ball Set with five tennis balls",
     "description": "A normal tennis ball set with 5 big nice tennis balls",
-    "picURL": "https://i.imgur.com/l7R00Rv.jpg",
-    "brand": {
-      "name": "TennisMasters",
-      "picURL": "https://i.imgur.com/SFx3a.jpg"
-    },
-    "quantity": 15,
-    "remaining": 14,
+    "picture": "https://i.imgur.com/l7R00Rv.jpg",
+    "brandID": "E5IOEBDEWqT9NFyhDZ5n",
+    "stock": 15,
     "price": 90,
-    "category": "sports"
+    "category": "sports",
+    "companyID": "mDbDH06a1sww4529l0x3",
+    "sponsored" : true,
+    "tresholdPercentage": 0.5
   },
   {
     "name": "Cinema Ticket",
     "description": "One two-persons entrance to the local cinema",
-    "picURL": "https://i.imgur.com/FHuEfRf.jpg",
-    "brand": {
-      "name": "CinemaCity",
-      "picURL": "https://i.imgur.com/pPdvmXj.jpg"
-    },
-    "quantity": 16,
-    "remaining": 8,
+    "picture": "https://i.imgur.com/FHuEfRf.jpg",
+    "brandID": "E5IOEBDEWqT9NFyhDZ5n",
+    "stock": 16,
     "price": 750,
-    "category": "others"
+    "category": "others",
+    "companyID": "mDbDH06a1sww4529l0x3",
+    "sponsored" : true,
+    "tresholdPercentage": 0.5
   },
   {
     "name": "Runners2",
     "description": "Other best Runners in the world!",
-    "picURL": "https://i.imgur.com/3AcTZcV.jpg",
-    "brand": {
-      "name": "Nike",
-      "picURL": "https://i.imgur.com/CJ5yubF.jpg"
-    },
-    "quantity": 8,
-    "remaining": 3,
+    "picture": "https://i.imgur.com/3AcTZcV.jpg",
+    "brandID": "E5IOEBDEWqT9NFyhDZ5n",
+    "stock": 8,
     "price": 1700,
-    "category": "shoes"
+    "category": "shoes",
+    "companyID": "mDbDH06a1sww4529l0x3",
+    "sponsored" : true,
+    "tresholdPercentage": 0.5
   }
 ]

@@ -47,28 +47,6 @@ class Picture extends React.Component{
     }
   }
 
-  class ProductProgressbar extends React.Component{
-    constructor(props){
-      super(props);
-    }
-    render(){
-      const quantity = this.props.quantity;
-      const remaining = this.props.remaining;
-      const percent = remaining*100/quantity;
-      const progressStyle = {
-        width: percent+"%"
-      }
-      return(
-        <div className="progress">
-          <div className={"progress-bar progress-bar-striped "+
-            (percent<60 ? percent<30 ? "bg-danger" : "bg-warning" : "bg-success")} role="progressbar" 
-          aria-valuenow={percent} aria-valuemin="0" 
-          aria-valuemax="100" style={progressStyle}>{remaining + "/" + quantity}</div>
-        </div>
-      );
-    }
-  }
-
   class ProductPrice extends React.Component{
     constructor(props){
       super(props);
@@ -148,7 +126,7 @@ class BrandPicture extends React.Component {
     const productName = this.props.name;
     return (
       <img
-        className="rounded imag d-block"
+        className="rounded image d-block"
         width="40"
         height="41"
         src={productPicture}
@@ -168,13 +146,17 @@ class Product extends React.Component{
     this.productKey = this.props.product.key;
     this.state = {
       isInWishlist: false,
-      modalIsOpen: false
+      modalIsOpen: false,
+      brand : {}
     }
     this.userKey = this.props.user.key;
     this.subscriptions.push(firebaseServices.getWishlist(this.userKey).subscribe(items =>{
       this.setState({isInWishlist: false});
       this.wishlist = items;
       this.isInWishlist();
+    }));
+    this.subscriptions.push(firebaseServices.getBrand(this.props.product.brandID).subscribe(brand=>{
+      this.setState({brand: brand})
     }));
   }
 
@@ -199,17 +181,16 @@ class Product extends React.Component{
 
   render(){
     const product = this.props.product;
+    const brand = this.state.brand;
     const wishlist = this.props.wishlist;
     const user = this.props.user;
     const userKey = user.key;
     const productName = product.name;
     const productDescription = product.description;
-    const picURL = product.picURL;
-    const brandURL = product.brand.picURL;
-    const brandName = product.brand.name;
+    const productPicture = product.picture;
+    const brandPicture = brand.picture;
+    const brandName = brand.name;
     const price = product.price;
-    const quantity = product.quantity;
-    const remaining = product.remaining;
     const productKey = product.key;
     const sponsored = product.sponsored;
     const inWishlist = this.state.isInWishlist;
@@ -225,16 +206,16 @@ class Product extends React.Component{
         </Modal>
         <div className="card-header bg-primary p-0" style={{width:"100%",height:"17%"}}>
           <div className="row">
-          <div class="d-flex mx-auto">
+          <div className="d-flex mx-auto">
                       <Title brandName={brandName} sponsored={sponsored}/>
-                      <BrandPicture className="brandPicture" url={brandURL} name={brandName}></BrandPicture>
+                      <BrandPicture className="brandPicture" url={brandPicture} name={brandName}></BrandPicture>
                     </div>
           </div>
         </div>
         <div className="card-body">
             <div className="row">
                 <div className="col-lg-4">
-                    <Picture className="productPicture" url={picURL} name={productName}></Picture>
+                    <Picture className="productPicture" url={productPicture} name={productName}></Picture>
                 </div>
                 <div className="col-lg-6 pt-4 ml-3">
                     <h5>{productName}</h5>
@@ -375,25 +356,26 @@ class Product extends React.Component{
   class ProductContainer extends React.Component{
     constructor(props){
       super(props);  
-      this.state = { wishlist: [], companyProductList: [], sponsoredProductList: [] };
+      this.state = { wishlist: [], companyProductList: [], sponsoredProductList: [], company : {} };
       this.subscriptions = [];
       this.isInWishlist = this.isInWishlist.bind(this);
       this.filterbyWishlist = this.filterbyWishlist.bind(this);
       this.userKey="";
     }
     componentWillReceiveProps(nextProps) {
-      if (nextProps.user.key !== this.userKey) {
-        this.userKey = nextProps.user.key;
-        this.subscriptions.push(firebaseServices.getWishlist(this.userKey).subscribe(items =>{
-          this.setState({wishlist: items});
-          this.subscriptions.push(firebaseServices.getProducts("companyName", nextProps.user.company)
+      this.userKey = nextProps.user.key;
+      this.subscriptions.push(firebaseServices.getWishlist(this.userKey).subscribe(items =>{
+        this.setState({wishlist: items});
+        this.subscriptions.push(firebaseServices.getCompany(nextProps.user.companyID).subscribe(comp=>{
+          this.setState({company: comp});
+          this.subscriptions.push(firebaseServices.getProducts("companyID", this.state.company.key)
           .subscribe(products => this.setState({companyProductList: products})));
-          this.subscriptions.push(firebaseServices.getProducts("sponsored", true)
+          this.subscriptions.push(firebaseServices.getSponsoredProducts()
           .subscribe(sponsoredProds => {
-            this.setState({sponsoredProductList: sponsoredProds});
+          this.setState({sponsoredProductList: sponsoredProds});
           }));
         }));
-      }
+      }));
     }
     componentWillUnmount(){
       this.subscriptions.forEach(obs => obs.unsubscribe());
@@ -426,7 +408,7 @@ class Product extends React.Component{
     }
 
     sortbyRemaining(a, b){
-      return (a.remaining > b.remaining) ? 1 : ((a.remaining < b.remaining) ? -1 : 0);   
+      return (a.stock > b.stock) ? 1 : ((a.stock < b.stock) ? -1 : 0);   
     }
 
     render(){
@@ -484,9 +466,13 @@ class Product extends React.Component{
         order: "asc",
         wishlist:[],
         user: {
-          name: '',
+          firstName: '',
+          lastName: '',
+          role: '',
+          email: '',
+          deviceID: '',
+          companyID: '',
           coins: 0,
-          company: '',
           doc:'',
           key: ''
         }
@@ -499,10 +485,9 @@ class Product extends React.Component{
     }
 
     componentDidMount(){   
-      this.subscriptions.push(firebaseServices.getUser("LXCYHelb75dWxPRZhhB5")
+      this.subscriptions.push(firebaseServices.getUser("RuXsq8vflU3rMGOku9Po")
         .subscribe(user => this.setState({user: user})));
-      
-      this.subscriptions.push(firebaseServices.getWishlist("LXCYHelb75dWxPRZhhB5")
+      this.subscriptions.push(firebaseServices.getWishlist("RuXsq8vflU3rMGOku9Po")
         .subscribe(items => this.setState({wishlist: items})));
     }
     componentWillUnmount(){
@@ -541,7 +526,7 @@ class Product extends React.Component{
       const wishlist = this.state.wishlist;
       const user = this.state.user;
       const userCoins = user.coins;
-      const userName = user.name;
+      const userName = user.firstName;
       return(
             <div className="ml-4 mr-4">
              {<button className="btn btn-primary btn-sm" type="button" onClick={this.addFirebaseData}>Add data to Firebase</button>}

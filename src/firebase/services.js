@@ -8,171 +8,351 @@ export default class FirebaseServices {
     this.db.settings({
       timestampsInSnapshots: true
     });
-    this.productsCollection = this.db.collection("shopItems");
-    this.usersTestCollection=this.db.collection("UserTest")
-    this.usersCollection = this.db.collection("users");
-    this.wishlistCollection = this.db.collection("wishlist");
+    this.productsCollection = this.db.collection("Products");
+    this.usersCollection = this.db.collection("Users");
+    this.wishlistsCollection = this.db.collection("Wishlists");
+    this.connectedDevicesCollection = this.db.collection("Connected_Devices");
+    this.brandsCollection = this.db.collection("Brands");
+    this.companiesCollection = this.db.collection("Companies");
   }
 
   getProducts = (field, query) => {
     return new Observable(observer => {
-      this.productsCollection
-      .where(field.toString(), "==", query)
-      .onSnapshot(querySnapshot => {
-        const products = [];
-        querySnapshot.forEach(doc => {
-          const {
-            category, description, name, picURL, price, quantity, remaining, brand, sponsored
-          } = doc.data();
-          products.push({
-            key: doc.id, doc, 
-            category, description, name, picURL, price, quantity, remaining, brand, sponsored
+      if(field && query){
+        this.productsCollection
+        .where("sponsored", "==", false)
+        .where(field.toString(), "==", query)
+        .onSnapshot(querySnapshot => {
+          const products = [];
+          querySnapshot.forEach(doc => {
+            const {
+              brandID, category, companyID, description, name, picture, price, stock, sponsored, tresholdPercentage
+            } = doc.data();
+            products.push({
+              key: doc.id, doc, 
+              brandID, category, companyID, description, name, picture, price, stock, sponsored, tresholdPercentage
+            });
           });
+          observer.next(products);
         });
-        observer.next(products);
-      });
+      }
+      else{
+        observer.next([]);
+      }
     });
-  };
+  }
 
-  getBrandedProducts = (field, query) => {
+  getSponsoredProducts = () => {
     return new Observable(observer => {
       this.productsCollection
       .where("sponsored", "==", true)
-      .where(field.toString(), "==", query)
       .orderBy("price")
       .onSnapshot(querySnapshot => {
         const products = [];
         querySnapshot.forEach(doc => {
           const {
-            category, description, name, picURL, price, quantity, remaining, brand, sponsored
+            brandID, category, companyID, description, name, picture, price, stock, sponsored, tresholdPercentage
           } = doc.data();
           products.push({
             key: doc.id, doc, 
-            category, description, name, picURL, price, quantity, remaining, brand, sponsored
+            brandID, category, companyID, description, name, picture, price, stock, sponsored, tresholdPercentage
           });
         });
         observer.next(products.reverse());
       });
     });
-  };
+  }
 
-  getWishlist = userId => {
+  getBrandedProducts = (field, query) => {
     return new Observable(observer => {
-      this.wishlistCollection
-        .where("user_id", "==", userId)
+      if(field && query){
+        this.productsCollection
+        .where("sponsored", "==", true)
+        .where(field.toString(), "==", query)
+        .orderBy("price")
         .onSnapshot(querySnapshot => {
           const products = [];
-          const productKeys = [];
           querySnapshot.forEach(doc => {
-            const productData = doc.data();
-            products.push(productData);
+            const {
+              brandID, category, companyID, description, name, picture, price, stock, sponsored, tresholdPercentage
+            } = doc.data();
+            products.push({
+              key: doc.id, doc, 
+              brandID, category, companyID, description, name, picture, price, stock, sponsored, tresholdPercentage
+            });
           });
-          products.forEach(prod => productKeys.push(prod.product_id));
-          observer.next(productKeys);
+          observer.next(products.reverse());
         });
+      }
+      else{
+        observer.next([]);
+      }
     });
-  };
+  }
 
-  getWishListItems = userId => {
+  getWishlist = userID => {
+    return new Observable(observer => {
+      if(userID){
+        this.wishlistsCollection
+          .where("userID", "==", userID)
+          .onSnapshot(querySnapshot => {
+            const products = [];
+            const productKeys = [];
+            querySnapshot.forEach(doc => {
+              const productData = doc.data();
+              products.push(productData);
+            });
+            products.forEach(prod => productKeys.push(prod.productID));
+            observer.next(productKeys);
+          });
+      }
+      else{
+        const productKeys = [];
+        observer.next(productKeys);
+      }
+    });
+  }
+
+  getWishListItems = userID => {
     return new Observable(observer => {
       var wishlist = [];
-      this.getWishlist(userId).subscribe(items => {
-        wishlist.push(items);
-        const products = [];
-        items.forEach(item => {
-          this.productsCollection
-            .where(firebase.firestore.FieldPath.documentId(), "==", item)
-            .onSnapshot(querySnapshot => {
-              querySnapshot.forEach(doc => {
-                const {
-                  category,
-                  description,
-                  name,
-                  picURL,
-                  price,
-                  quantity,
-                  remaining,
-                  brand
-                } = doc.data();
-                products.push({
-                  key: doc.id,
-                  doc,
-                  category,
-                  description,
-                  name,
-                  brand,
-                  picURL,
-                  price,
-                  quantity,
-                  remaining
+      if(userID){
+        this.getWishlist(userID).subscribe(items => {
+          wishlist.push(items);
+          const products = [];
+          items.forEach(item => {
+            this.productsCollection
+              .where(firebase.firestore.FieldPath.documentId(), "==", item)
+              .onSnapshot(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                  const {
+                    brandID, category, companyID, description, name, picture, price, stock, sponsored, tresholdPercentage
+                  } = doc.data();
+                  products.push({
+                    key: doc.id, doc,
+                    brandID, category, companyID, description, name, picture, price, stock, sponsored, tresholdPercentage
+                  });
                 });
+                observer.next(products);
               });
-              observer.next(products);
-            });
-        });
-      });
-    });
-  };
-
-  getUser = userId => {
-    return new Observable(observer => {
-      this.usersCollection
-        .where(firebase.firestore.FieldPath.documentId(), "==", userId)
-        .onSnapshot(querySnapshot => {
-          var user = {};
-          querySnapshot.forEach(doc => {
-            const { name, coins, company, role } = doc.data();
-            user = {
-              name,
-              coins,
-              key: doc.id,
-              doc,
-              company, 
-              role
-            };
           });
-          observer.next(user);
         });
+      }
+      else{
+        observer.next([]);
+      }
     });
-  };
+  }
 
-  getEmployees = (companyName) => {
+  getUser = userID => {
     return new Observable(observer => {
-      this.usersCollection
-      .orderBy("coins")
-      .where("company", "==", companyName)
+    if(userID){
+        this.usersCollection
+          .where(firebase.firestore.FieldPath.documentId(), "==", userID)
+          .onSnapshot(querySnapshot => {
+            var user = {};
+            querySnapshot.forEach(doc => {
+              const { firstName, lastName, role, email, deviceID, companyID, points, coins } = doc.data();
+              user = {
+                key: doc.id, doc,
+                firstName, lastName, role, email, deviceID, companyID, points, coins
+              };
+            });
+            observer.next(user);
+          });
+      }
+      else{
+        observer.next({});
+      }
+    });
+  }
+
+  getDevice = deviceID => {
+    return new Observable(observer => {
+    if(deviceID){
+        this.connectedDevicesCollection
+          .where(firebase.firestore.FieldPath.documentId(), "==", deviceID)
+          .onSnapshot(querySnapshot => {
+            var device = {};
+            querySnapshot.forEach(doc => {
+              const { apiKey, calories, distance, steps } = doc.data();
+              device = {
+                key: doc.id, doc,
+                apiKey, calories, distance, steps
+              };
+            });
+            observer.next(device);
+          });
+      }
+      else{
+        observer.next({});
+      }
+    });
+  }
+
+  getDevices = () => {
+    return new Observable(observer => {
+      this.connectedDevicesCollection
       .onSnapshot(querySnapshot => {
-        const employees = [];
+        const devices = [];
         querySnapshot.forEach(doc => {
-          const {name, coins } = doc.data();
-          employees.push({key: doc.id, doc, name, coins });
+          const {
+            apiKey, calories, distance, steps
+          } = doc.data();
+          devices.push({
+            key: doc.id, doc, 
+            apiKey, calories, distance, steps
+          });
         });
-        observer.next(employees.reverse());
+        observer.next(devices);
       });
     });
   };
 
-  addToWishlist = (productId, userId) => {
-    var item = {
-      product_id: productId,
-      user_id: userId
-    };
-    this.wishlistCollection.add(item);
+  getBrand = brandID => {
+    return new Observable(observer => {
+    if(brandID){
+        this.brandsCollection
+          .where(firebase.firestore.FieldPath.documentId(), "==", brandID)
+          .onSnapshot(querySnapshot => {
+            var brand = {};
+            querySnapshot.forEach(doc => {
+              const { adminUserID, name, picture, address, phoneNumber, email, description } = doc.data();
+              brand = {
+                key: doc.id, doc,
+                adminUserID, name, picture, address, phoneNumber, email, description 
+              };
+            });
+            observer.next(brand);
+          });
+      }
+      else{
+        observer.next({});
+      }
+    });
+  }
+
+  getBrands = () => {
+    return new Observable(observer => {
+      this.brandsCollection
+      .onSnapshot(querySnapshot => {
+        const brands = [];
+        querySnapshot.forEach(doc => {
+          const {
+            adminUserID, name, picture, address, phoneNumber, email, description
+          } = doc.data();
+          brands.push({
+            key: doc.id, doc, 
+            adminUserID, name, picture, address, phoneNumber, email, description
+          });
+        });
+        observer.next(brands);
+      });
+    });
   };
+
+  getCompany = companyID => {
+    return new Observable(observer => {
+    if(companyID){
+        this.companiesCollection
+          .where(firebase.firestore.FieldPath.documentId(), "==", companyID)
+          .onSnapshot(querySnapshot => {
+            var company = {};
+            querySnapshot.forEach(doc => {
+              const { adminUserID, name, picture, address, phoneNumber, email } = doc.data();
+              company = {
+                key: doc.id, doc,
+                adminUserID, name, picture, address, phoneNumber, email 
+              };
+            });
+            observer.next(company);
+          });
+      }
+    });
+  }
+
+  getCompanies = () => {
+    return new Observable(observer => {
+      this.companiesCollection
+      .onSnapshot(querySnapshot => {
+        const companies = [];
+        querySnapshot.forEach(doc => {
+          const {
+            adminUserID, name, picture, address, phoneNumber, email
+          } = doc.data();
+          companies.push({
+            key: doc.id, doc, 
+            adminUserID, name, picture, address, phoneNumber, email
+          });
+        });
+        observer.next(companies);
+      });
+    });
+  };
+
+  getCompanyEmployees = (companyName) => {
+    return new Observable(observer => {
+    if(companyName){
+        this.usersCollection
+        .orderBy("coins")
+        .where("company", "==", companyName)
+        .onSnapshot(querySnapshot => {
+          const employees = [];
+          querySnapshot.forEach(doc => {
+            const {firstName, lastName, role, email, deviceID, companyID, points, coins } = doc.data();
+            employees.push({key: doc.id, doc, firstName, lastName, role, email, deviceID, companyID, points, coins });
+          });
+          observer.next(employees.reverse());
+        });
+      }
+      else{
+        observer.next([]);
+      }
+    });
+  }
+
+  addToWishlist = (productID, userID) => {
+    if(productID && userID){
+      var item = {
+        productID: productID,
+        userID: userID,
+        gainedCoins: 0
+      };
+      this.wishlistsCollection.add(item);
+    }
+    else{
+      console.log("Cannot add to wishlist. productID or userID missing");
+    }
+  }
 
   addProduct = product => {
-    this.productsCollection.add(product);
+    if(product){
+      this.productsCollection.add(product);
+    }
+    else{
+      console.log("Cannot add product");
+    }
   };
 
   createUser= user=>{
-    this.usersTestCollection.add(user)
+    if(user){
+        this.usersTestCollection.add(user)
+    }
+    else{
+      console.log("Cannot add user");
+    }
   }
 
   deleteProduct = product => {
-    this.wishlistCollection.where("product_id", "==", product.key)
-      .get()
-      .then(querySnapshot=>{
-        querySnapshot.forEach(doc=>doc.ref.delete())
-      });
-  };
+    if(product){
+      this.wishlistsCollection.where("productID", "==", product.key)
+        .get()
+        .then(querySnapshot=>{
+          querySnapshot.forEach(doc=>doc.ref.delete())
+        });
+    }
+    else{
+      console.log("Cannot delete product");
+    }
+  }
 }
