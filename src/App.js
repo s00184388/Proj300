@@ -25,7 +25,7 @@ import { BrandDashboard } from "./Pages/BrandDashboard";
 import { Rewards } from "./Pages/Rewards";
 import { Navbar } from "./Components/Navbar";
 import { Sidebar } from "./Components/Sidebar";
-import { Test } from "./Pages/Test";
+import { Wishlist } from "./Pages/Wishlist";
 import {Login } from "./Pages/Login";
 import {Register } from "./Pages/Register";
 
@@ -59,7 +59,7 @@ class App extends Component {
               <Route path="/admin" component={Admin} />
               <Route path="/CompanyDashboard" component={CompanyDashboard} />
               <Route path="/BrandDashboard" component={BrandDashboard} />
-              <Route path="/wishlist" component={Test} />
+              <Route path="/wishlist" component={Wishlist} />
               <Route path="/rewards" component={Rewards} />
               <Route path="/login" component={Login} />
               <Route path="/register" component={Register} />

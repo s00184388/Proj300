@@ -120,7 +120,7 @@ class Title extends React.Component{
   }
 }
 class BrandPicture extends React.Component {
-  constructor(props) {
+  constructor(props) { 
     super(props);
   }
   render() {
@@ -548,7 +548,7 @@ class Product extends React.Component{
       return(
             <div className="ml-4 mr-4">
              {<button className="btn btn-primary btn-sm" type="button" onClick={this.addFirebaseData}>Add data to Firebase</button>}
-             Hello, {userName}, you have {userCoins} Coins
+             Hello, {userName}, you have {userCoins} Kudos
             <div className="row py-5">
                 <div className="col-lg-3">
                       <div className="card-header p-0">                     
