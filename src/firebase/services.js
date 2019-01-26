@@ -359,12 +359,12 @@ export default class FirebaseServices {
     });
   };
 
-  getCompanyEmployees = (companyName) => {
+  getCompanyEmployees = (companyID) => {
     return new Observable(observer => {
-    if(companyName){
+    if(companyID){
         this.usersCollection
         .orderBy("coins")
-        .where("company", "==", companyName)
+        .where("companyID", "==", companyID)
         .onSnapshot(querySnapshot => {
           const employees = [];
           querySnapshot.forEach(doc => {

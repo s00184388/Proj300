@@ -16,7 +16,6 @@ const fs = new FirebaseServices();
 class ProductForm extends Component {
   constructor() {
     super();
-
     this.state = {
       //brand fields will be converted into brand object on submit
       brandID : '',
@@ -47,16 +46,15 @@ class ProductForm extends Component {
     e.preventDefault();
 
     let product = {
-      brandID : this.state.brandID,
-      category : this.state.category,
-      companyID : this.state.companyID,
+      brandID : this.props.brand.key,
+      category : this.state.category.toLowerCase(),
       description : this.state.description,
       name : this.state.name,
       picture : this.state.picture,
       price : this.state.price,
       stock : this.state.stock,
       sponsored : true,
-      tresholdPercentage: this.state.tresholdPercentage
+      tresholdPercentage: this.state.tresholdPercentage/100
     };
 
     fs.addProduct(product);
@@ -86,7 +84,7 @@ class ProductForm extends Component {
           <label htmlFor="categoryList">
             Product Category:
           </label>
-            <select id="categoryList" name="category" className="form-control" defaultValue="">
+            <select id="categoryList" name="category" className="form-control" defaultValue="" onChange={this.handleChange}>
               <option value="" disabled hidden>Select a category</option>
               {options}
             </select>
@@ -204,12 +202,15 @@ class BrandInfo extends Component {
     this.state={
       products: []
     }
+    this.productsSubscr = [];
   }
 
-  componentDidMount(){
-    this.productsSubscr = fs.
-    getBrandedProducts("brand.name", this.props.brand.name).subscribe(prods=>this.setState({products: prods}));
+  componentWillReceiveProps(nextProps){
+    this.productsSubscr = fs
+    .getBrandedProducts("brandID", nextProps.brand.key)
+    .subscribe(prods=>this.setState({products: prods}));
   }
+
   componentWillUnmount(){
     this.productsSubscr.unsubscribe();
   }
@@ -244,16 +245,39 @@ class BrandInfo extends Component {
 export class BrandDashboard extends Component {
   constructor(props) {
     super(props);
+    this.subscriptions = [];
+    this.state = {
+      brand : {
+        adminUserID : '',
+        name : '',
+        picture : '',
+        address : '',
+        phoneNumber : '',
+        email : '',
+        description : ''
+    }};
   }
+
+  componentDidMount(){
+    this.subscriptions.push(fs.getBrand("E5IOEBDEWqT9NFyhDZ5n")
+    .subscribe(brand=>{
+      this.setState({brand: brand});
+    }));
+  }
+
+  componentWillUnmount(){
+    this.subscriptions.forEach(obs=>obs.unsubscribe());
+  }
+
   render() {
     return (
       <div className="container">
         <div className="row">
           <div className="col-md">
-            <ProductForm brand={{name: 'FitBit', picture: 'https://vignette.wikia.nocookie.net/logopedia/images/0/0a/Fitbit_logo_2016.svg/revision/latest?cb=20160108000300'}}/>
+            <ProductForm brand={this.state.brand}/>
           </div>
           <div className="col-md">
-            <BrandInfo brand={{name: 'FitBit', picture: 'https://vignette.wikia.nocookie.net/logopedia/images/0/0a/Fitbit_logo_2016.svg/revision/latest?cb=20160108000300'}}/>
+            <BrandInfo brand={this.state.brand}/>
           </div>
         </div>
       </div>

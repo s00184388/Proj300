@@ -47,23 +47,21 @@ class ProductForm extends Component {
     e.preventDefault();
 
     let product = {
-      brandID : this.state.brandID,
-      category : this.state.category,
-      companyID : this.state.companyID,
+      category : this.state.category.toLowerCase(),
+      companyID : this.props.company.key,
       description : this.state.description,
       name : this.state.name,
       picture : this.state.picture,
       price : this.state.price,
       stock : this.state.stock,
       sponsored : false,
-      tresholdPercentage: this.state.tresholdPercentage
+      tresholdPercentage: this.state.tresholdPercentage/100
     };
 
     fs.addProduct(product);
     console.log(product);
 
     this.setState({
-      brandID : '',
       category : '',
       companyID : '',
       description : '',
@@ -86,7 +84,7 @@ class ProductForm extends Component {
           <label htmlFor="categoryList">
             Product Category:
           </label>
-            <select id="categoryList" name="category" className="form-control" defaultValue="">
+            <select id="categoryList" name="category" className="form-control" defaultValue="" onChange={this.handleChange}>
               <option value="" disabled hidden>Select a category</option>
               {options}
             </select>
@@ -190,7 +188,7 @@ class TableRow extends Component{
     return(
       <tr>
         <td key={index}>{index}</td>
-        <td key={row.name}>{row.name}</td>
+        <td key={row.name}>{row.firstName} {row.lastName}</td>
         <td key={row.coins}>{row.coins}</td>
       </tr>
     );
@@ -205,9 +203,14 @@ class CompanyInfo extends Component {
     }
   }
 
-  componentDidMount(){
-    this.employeesSubscr = fs.getCompanyEmployees(this.props.company.name)
+  componentWillReceiveProps(nextProps){
+    this.employeesSubscr = fs.getCompanyEmployees(nextProps.company.key)
     .subscribe(employees=>this.setState({employees: employees}));
+    console.log(this.state.employees);
+  }
+
+  componentDidMount(){
+    
   }
   componentWillUnmount(){
     this.employeesSubscr.unsubscribe();
@@ -242,16 +245,39 @@ class CompanyInfo extends Component {
 export class CompanyDashboard extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      company:{
+        adminUserID : '',
+        name : '',
+        address : '',
+        phoneNumber : '',
+        email : '',
+        picture : ''
+      }
+    }
+    this.subscriptions = [];
+  }
+
+  componentDidMount(){
+    this.subscriptions.push(fs.getCompany("mDbDH06a1sww4529l0x3")
+    .subscribe(company=>{
+      this.setState({company: company});
+    }));
+  }
+
+  componentWillUnmount(){
+    this.subscriptions.forEach(obs=>obs.unsubscribe());
   }
   render() {
+    const company = this.state.company;
     return (
       <div className="container">
         <div className="row">
           <div className="col-md">
-            <ProductForm company={{name: 'Overstock'}}/>
+            <ProductForm company={company}/>
           </div>
           <div className="col-md">
-            <CompanyInfo company={{name: 'Overstock'}}/>
+            <CompanyInfo company={company}/>
           </div>
         </div>
       </div>

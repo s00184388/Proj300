@@ -108,22 +108,29 @@ class Picture extends React.Component{
 
 class Title extends React.Component{
   render(){
+    const brandName = this.props.brandName;
+    const companyName = this.props.companyName;
     return(
       <div className="row">
         <div className="col-lg mr-4 p-2">
-          <strong>{this.props.sponsored ? 'Sponsored by ': null} {this.props.brandName}</strong>
+          <strong>{this.props.sponsored ? `Sponsored by ${brandName}`: `${companyName}`} </strong>
         </div>
       </div>
     )
   }
 }
 class BrandPicture extends React.Component {
-  constructor(props) {
+  constructor(props) { 
     super(props);
   }
   render() {
-    const productPicture = this.props.url;
-    const productName = this.props.name;
+    var productPicture = this.props.brandPicture;
+    var productName = this.props.brandName;
+    var sponsored = this.props.sponsored;
+    if(!sponsored){
+      productPicture = this.props.companyPicture;
+      productName = this.props.companyName
+    }
     return (
       <img
         className="rounded image d-block"
@@ -147,9 +154,13 @@ class Product extends React.Component{
     this.state = {
       isInWishlist: false,
       modalIsOpen: false,
-      brand : {}
+      brand : {},
+      company : {}
     }
     this.userKey = this.props.user.key;
+  }
+
+  componentDidMount(){
     this.subscriptions.push(firebaseServices.getWishlist(this.userKey).subscribe(items =>{
       this.setState({isInWishlist: false});
       this.wishlist = items;
@@ -157,6 +168,9 @@ class Product extends React.Component{
     }));
     this.subscriptions.push(firebaseServices.getBrand(this.props.product.brandID).subscribe(brand=>{
       this.setState({brand: brand})
+    }));
+    this.subscriptions.push(firebaseServices.getCompany(this.props.product.companyID).subscribe(company=>{
+      this.setState({company: company})
     }));
   }
 
@@ -194,6 +208,9 @@ class Product extends React.Component{
     const productKey = product.key;
     const sponsored = product.sponsored;
     const inWishlist = this.state.isInWishlist;
+    const company = this.state.company;
+    const companyName = company.name;
+    const companyPicture = company.picture;
     return(
       <div className="pb-5">
       <div className={"card card-primary productCard"+
@@ -207,8 +224,9 @@ class Product extends React.Component{
         <div className="card-header bg-primary p-0" style={{width:"100%",height:"17%"}}>
           <div className="row">
           <div className="d-flex mx-auto">
-                      <Title brandName={brandName} sponsored={sponsored}/>
-                      <BrandPicture className="brandPicture" url={brandPicture} name={brandName}></BrandPicture>
+                      <Title brandName={brandName} sponsored={sponsored} companyName={companyName}/>
+                      <BrandPicture className="brandPicture" companyName={companyName} companyPicture={companyPicture}
+                      sponsored={sponsored} brandPicture={brandPicture} brandName={brandName}></BrandPicture>
                     </div>
           </div>
         </div>
@@ -533,7 +551,7 @@ class Product extends React.Component{
       return(
             <div className="ml-4 mr-4">
              {<button className="btn btn-primary btn-sm" type="button" onClick={this.addFirebaseData}>Add data to Firebase</button>}
-             Hello, {userName}, you have {userCoins} Coins
+             Hello, {userName}, you have {userCoins} Kudos
             <div className="row py-5">
                 <div className="col-lg-3">
                       <div className="card-header p-0">                     
