@@ -10,3 +10,8 @@
 .logoImg:hover{
   opacity: 0.7;
 }
+
+.backgr{
+  background-color: #01AEF0;
+  color: white;
+}
