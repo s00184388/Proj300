@@ -4,6 +4,7 @@ import firebase from 'firebase';
 
 const logOutUser = () => {
  firebase.auth().signOut();
+ localStorage.setItem('userKey', '');
 };
 
 const LogOut = () => {

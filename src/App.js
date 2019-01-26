@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import firebase from "firebase";
 
+
 //styling
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
@@ -11,10 +12,9 @@ import {
   faHome,
   faBars,
   faGift,
-  faTrash
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import * as serviceWorker from './serviceWorker';
-
 
 //components
 
@@ -27,15 +27,17 @@ import { Navbar } from "./Components/Navbar";
 import { Sidebar } from "./Components/Sidebar";
 import { Wishlist } from "./Pages/Wishlist";
 import {Login } from "./Pages/Login";
-import {Register } from "./Pages/Register";
+import EmployeeForm from "./Pages/Registering/EmployeeForm";
 
 
 library.add(faHome, faBars, faGift, faTrash);
 
 class App extends Component {
+  
   state = {
     authenticated: false,
   };
+  
   componentDidMount() {
     firebase.auth().onAuthStateChanged((authenticated) => {
       authenticated
@@ -53,7 +55,6 @@ class App extends Component {
         <div>
           <div style={{ height: "100%" }}>
             <Navbar  authenticated={this.state.authenticated } />
-            <Sidebar/>
             <div>
               <Route exact path="/" component={Home} />
               <Route path="/admin" component={Admin} />
@@ -62,7 +63,7 @@ class App extends Component {
               <Route path="/wishlist" component={Wishlist} />
               <Route path="/rewards" component={Rewards} />
               <Route path="/login" component={Login} />
-              <Route path="/register" component={Register} />
+              <Route path="/register" component={EmployeeForm} />
             </div>
           </div>
         </div>

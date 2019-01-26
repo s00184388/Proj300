@@ -144,6 +144,73 @@ export default class FirebaseServices {
     });
   }
 
+  getUserByEmail=email=>{
+    return new Promise((resolve, reject)=>{
+      if(email){
+        this.usersCollection
+        .where('email', '==', email)
+        .get()
+        .then(snapshot=>{
+          if(snapshot.empty){
+            reject(new Error('no email found'));
+          }
+          else{
+            snapshot.forEach(doc=>{
+              const { firstName, lastName, role, email, deviceID, companyID, points, coins } = doc.data();
+              var user = {
+                key: doc.id, doc,
+                firstName, lastName, role, email, deviceID, companyID, points, coins
+              };
+              console.log(user)
+              resolve(user)
+            });
+          }
+        })
+        .catch(err => {
+          console.log('Error getting documents', err);
+          reject(err);
+        });
+      }
+      else{
+        reject(new Error("bad email"));
+      }
+    });
+  }
+
+  getConnectedUser = () =>{
+    var user = firebase.auth().currentUser;
+    var userEmail='';
+    if(user){
+      userEmail = user.email;
+      console.log(userEmail);
+    }
+    else{
+      console.log("no connected user found");
+    }
+    return new Observable(observer=>{
+      if(userEmail){
+        this.usersCollection
+        .where('email','==',userEmail)
+        .onSnapshot(querySnapshot=>{
+          var user = {};
+            querySnapshot.forEach(doc => {
+              const { firstName, lastName, role, email, deviceID, companyID, points, coins } = doc.data();
+              user = {
+                key: doc.id, doc,
+                firstName, lastName, role, email, deviceID, companyID, points, coins
+              };
+            });
+            console.log(user);
+            observer.next(user);
+        });
+      }
+      else{
+        console.log("no email to search with");
+        observer.next({});
+      }
+    });
+  }
+
   getUser = userID => {
     return new Observable(observer => {
     if(userID){
@@ -166,6 +233,8 @@ export default class FirebaseServices {
       }
     });
   }
+
+
 
   getDevice = deviceID => {
     return new Observable(observer => {
@@ -311,6 +380,35 @@ export default class FirebaseServices {
     });
   }
 
+  getCompanyByName=(companyName) =>{
+    return new Promise((resolve,reject)=> {
+      if(companyName){
+          this.companiesCollection
+            .where('name', "==", companyName)
+            .get()
+            .then(querySnapshot=>{
+              if(querySnapshot.empty){
+                reject(new Error('no company found'))
+              }
+              else{
+                var company = {};
+              querySnapshot.forEach(doc => {
+                const { adminUserID, name, picture, address, phoneNumber, email } = doc.data();
+                company = {
+                  key: doc.id, doc,
+                  adminUserID, name, picture, address, phoneNumber, email 
+                };
+              });
+              resolve(company);
+              }
+            });
+        }
+        else{
+          reject(new Error('no company name'));
+        }
+      });
+  }
+
   addToWishlist = (productID, userID) => {
     if(productID && userID){
       var item = {
@@ -335,11 +433,44 @@ export default class FirebaseServices {
   };
 
   createUser= user=>{
-    if(user){
-        this.usersTestCollection.add(user)
+    return new Promise((resolve, reject)=>{
+      if(user){
+        this.usersCollection.add(user)
+        .then(docRef=>resolve(docRef.id))
+        .catch(err=>{
+          console.log(err); 
+          reject(err)
+        });
+      }
+      else{
+        reject(new Error('No user given'));
+      }
+    });
+  }
+
+  createCompany=(company)=>{
+    if(company){
+        this.companiesCollection.add(company)
+        .then(docRef=>{
+          return docRef.id;
+        })
+        .catch(err=>console.log(err))
     }
     else{
-      console.log("Cannot add user");
+      console.log("Cannot add company");
+    }
+  }
+
+  createBrand=(brand)=>{
+    if(brand){
+        this.brandsCollection.add(brand)
+        .then(docRef=>{
+          return docRef.id;
+        })
+        .catch(err=>console.log(err))
+    }
+    else{
+      console.log("Cannot add brand");
     }
   }
 

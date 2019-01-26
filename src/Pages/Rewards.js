@@ -503,10 +503,13 @@ class Product extends React.Component{
     }
 
     componentDidMount(){   
-      this.subscriptions.push(firebaseServices.getUser("RuXsq8vflU3rMGOku9Po")
-        .subscribe(user => this.setState({user: user})));
-      this.subscriptions.push(firebaseServices.getWishlist("RuXsq8vflU3rMGOku9Po")
-        .subscribe(items => this.setState({wishlist: items})));
+      this.subscriptions.push(firebaseServices.getUser(localStorage.getItem('userKey'))
+        .subscribe(user => {
+          console.log(user);
+          this.setState({user: user});
+          this.subscriptions.push(firebaseServices.getWishlist(user.key)
+          .subscribe(items => this.setState({wishlist: items})));
+      }));
     }
     componentWillUnmount(){
       this.subscriptions.forEach(obs => obs.unsubscribe());
