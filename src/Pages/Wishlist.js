@@ -3,9 +3,6 @@ import '../Pages/CssPages/Wishlist.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import FirebaseServices from "../firebase/services";
-import {httpGetAsync} from '../serivces/strava';
-import {httpPostAsync} from '../serivces/strava';
-
 
 const firebaseServices = new FirebaseServices();
 
@@ -285,8 +282,12 @@ export class Wishlist extends React.Component {
         <div className="row">
           <div className="col-md-8 py-4">{listProd}</div>
           <div className="col-md-2">
-            <a href='https://www.strava.com/oauth/authorize?client_id=31723&response_type=code&redirect_uri=http://localhost:3001/getCode&approval_prompt=force&scope=activity:read_all' 
-            className="btn btn-primary">Connect with strava</a>
+            <a href='https://www.strava.com/oauth/authorize?client_id=31723&response_type=code&redirect_uri=https://kudoshealth.herokuapp.com/getStravaCode&approval_prompt=force&scope=activity:read_all' 
+            className="btn btn-primary">Connect with Strava</a>
+          </div>
+          <div className="col-md-2">
+            <a href='http://localhost:3001/authorizeFitbit'
+            className="btn btn-primary">Connect with Fitbit</a>
           </div>
         </div>
       </div>

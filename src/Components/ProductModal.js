@@ -3,9 +3,6 @@ import '../Pages/CssPages/Wishlist.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import FirebaseServices from "../firebase/services";
-import {httpGetAsync} from '../serivces/strava';
-import {httpPostAsync} from '../serivces/strava';
-
 
 const firebaseServices = new FirebaseServices();
 
