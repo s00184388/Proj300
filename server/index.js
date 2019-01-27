@@ -16,8 +16,11 @@ var serviceAccount = require('./kudoshealth_database_key.json');
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount)
 });
+const firebaseDb = firebaseAdmin.firestore();
+firebaseDb.settings({ timestampsInSnapshots: true });
 
-var devicesCollection = firebaseAdmin.firestore().collection('Connected_Devices')
+var devicesCollection = firebaseAdmin.firestore().collection('Connected_Devices');
+var usersCollection = firebaseAdmin.firestore().collection('Users');
 
 function postData(url = ``, data={}) {
     return fetch(url, {
@@ -129,6 +132,7 @@ app.get("/fitbitCallback", (req, res) => {
                 refreshToken: refresh_token,
                 distance: 0
             }
+            //TODO: check if no other entry with same apiClientID
             devicesCollection.add(device);
         })
         .catch(err=>console.log(err));    
@@ -138,42 +142,121 @@ app.get("/fitbitCallback", (req, res) => {
     res.redirect('http://localhost:3000/wishlist');
 });
 
-app.get('/getFitbitData', (request, response)=>{
+getFitbitDistance = () =>{
     var distance=0;
     devicesCollection.get().then(querySnapshot => {
         querySnapshot.forEach(device => {
             var access_token = device.data().accessToken;
             var refresh_token = device.data().refreshToken;
             var apiClientID = device.data().apiClientID;
-            //try and change package fixed api path
+            var oldDistance = device.data().distance;
             //get data 
-            fitbitClient.get(`/activities/distance/date/today/1d.json`, access_token, apiClientID)
+            var header = {'Accept-Locale': 'de_DE'}; // for metric system (https://dev.fitbit.com/build/reference/web-api/basics/)
+            fitbitClient.get(`/activities/distance/date/today/1d.json`, access_token, apiClientID, header)
             .then(results => {
                 console.log("results:");
                 console.log(results[0]);
                 var activities = results[0];
                 var activity = activities['activities-distance'];
                 distance = parseFloat(activity[0].value);
-                console.log(distance);
-                //update distance, new access_token and new refresh_token
-                devicesCollection.doc(device.id).update({
-                    accessToken: access_token,
-                    refreshToken: refresh_token,
-                    distance: distance
-                });
+                console.log("distance: "+distance);
+                //update access and refresh token with a longer lifetime
+                fitbitClient.refreshAccessToken(access_token, refresh_token, 15778476) //6 months
+                .then(token=>{
+                    access_token = token.access_token;
+                    refresh_token = token.refresh_token;
+                    //update distance, new access_token and new refresh_token
+                    devicesCollection.doc(device.id).update({
+                        accessToken: access_token,
+                        refreshToken: refresh_token,
+                        distance: distance - oldDistance
+                    });
+                }).catch(err=>console.log(err));
             }).catch(err => {
                 console.log("fitbit api error");
+                console.log(err);
+            });
+        });
+    });
+}
+
+getUserPoints=(userID)=>{
+    return new Promise((resolve, reject)=>{
+        usersCollection.where(firebaseAdmin.firestore.FieldPath.documentId(), "==", userID)
+        .get().then(querySnapshot=>{
+            querySnapshot.forEach(user=>{
+                resolve({points:user.data().points, userID:user.id});
+            })
+        }).catch(err=>{
+            console.log(err);
+            reject(err);
+        });
+    });
+    
+}
+
+app.get('/computePoints', (request, response)=>{ // run every 60 minutes
+    getFitbitDistance(); // gather fitbit distance
+    //TODO: gather strava distance
+    //transform distance into points (1 km = 2 points)
+    devicesCollection.get().then(querySnapshot=>{
+        querySnapshot.forEach(device=>{
+            var userID = device.data().userID;
+            var distance = device.data().distance;
+            var userPoints=0;
+            var newPoints=0;
+            getUserPoints(userID).then((userData)=>{
+                userPoints = userData.points;
+                userID = userData.userID;
+                newPoints = userPoints + distance * 2 + 1; // plus 1 for test purposes only
+                console.log("user points: "+newPoints);
+                usersCollection.doc(userID).update({points: newPoints}); // update user's points 
+            }).catch(err=>{
                 console.log(err);
                 response.status(500).send(err);
             });
         });
-        response.status(200).end();
-      });
-
-    
+    }).catch(err=>{
+        console.log(err);
+        response.status(500).send(err);
+    });
+    response.status(200).end();
 });
 
-
+app.get('/computeCoins', (request, response)=>{ // run everyday at 00:00
+    //transform points to coins by the formula:
+    // 1-2p=1c, 3-4p=2c, 5-6p=3c ... >12p=10c
+    usersCollection.where('role', '==', 'employee')
+    .get().then(querySnapshot=>{
+        querySnapshot.forEach(user=>{
+            var points = user.data().points;
+            var userCoins = user.data().coins;
+            var coins=0;
+            switch(points){
+                case 0: case 1:
+                    coins = 1; break;
+                case 2: case 3:
+                    coins = 2; break;
+                case 4: case 5:
+                    coins = 3; break;
+                case 6: case 7:
+                    coins = 4; break;
+                case 8: case 9:
+                    coins = 5; break;
+                case 10: case 11:
+                    coins = 6; break;
+                default : coins = 10;
+            } 
+            coins += userCoins;
+            console.log("new amount of coins: "+coins);
+            usersCollection.doc(user.id).update({coins: coins, points: 0});
+        });
+        response.status(200).end();
+    }).catch(err=>{
+        console.log(err);
+        response.status(500).send(err);
+    });
+});
 
 app.listen(3001,() => {
     console.log(`Server running on localhost:3001`);
