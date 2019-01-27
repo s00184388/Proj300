@@ -258,13 +258,16 @@ export class Wishlist extends React.Component {
     super(props);
     this.subscriptions = [];
     this.state = {
-      products: []
+      products: [],
+      user: props.user
     };
   }
   componentDidMount() {
+    console.log(this.state.user);
+    
     this.subscriptions.push(
       firebaseServices
-        .getWishListItems(localStorage.getItem('userKey'))
+        .getWishListItems(this.state.user.key)
         .subscribe(prod => this.setState({ products: prod }))
     );
   }

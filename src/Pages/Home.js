@@ -42,7 +42,11 @@ class Footer extends Component{
 }
 
 export class Home extends Component {
+  constructor(props){
+    super(props);
+  }
   render() {
+      console.log(this.props.name)
     return (
         <div className='container-fluid  h-100'>
           <div className='col-lg-12' style={{marginTop:"7%"}}>

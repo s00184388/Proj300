@@ -77,14 +77,16 @@ export class EmployeeForm extends Component {
         console.log('works');
         firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.pwd1)
           .then((user) => {
-            localStorage.setItem('userKey', user.key);
+            sessionStorage.setItem('userKey', user.key);
             this.props.history.push('/');
+            this.props.role=this.state.role;
           })
           .catch((error) => {
             this.setState({ error: error });
           }); 
         
         fs.createUser(user);
+
         console.log(user);
         })
         .catch(err=>console.log(err));
