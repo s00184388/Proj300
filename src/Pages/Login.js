@@ -36,8 +36,8 @@ export class Login extends Component {
       fire.auth().signInWithEmailAndPassword(this.state.email,this.state.password)
       .then((u)=>{
         this.props.history.push('/rewards');
-        localStorage.setItem('userKey',user.key);
-        console.log('local storage:'+localStorage.getItem('userKey'));
+        sessionStorage.setItem('userKey',user.key);
+        console.log('local storage:'+sessionStorage.getItem('userKey'));
       })
       .catch((error)=>{
         console.log(error)

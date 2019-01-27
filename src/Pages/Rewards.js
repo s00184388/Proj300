@@ -474,6 +474,7 @@ class Product extends React.Component{
   export class Rewards extends React.Component{
     constructor(props){
       super(props);
+      console.log(props.user);
       this.subscriptions = [];
       
       this.state = {
@@ -483,17 +484,7 @@ class Product extends React.Component{
         orderBy: "price",
         order: "asc",
         wishlist:[],
-        user: {
-          firstName: '',
-          lastName: '',
-          role: '',
-          email: '',
-          deviceID: '',
-          companyID: '',
-          coins: 0,
-          doc:'',
-          key: ''
-        }
+        user: props.user
       };
       this.handleCategoryChange = this.handleCategoryChange.bind(this);
       this.handleAffordableChange = this.handleAffordableChange.bind(this);
@@ -502,15 +493,17 @@ class Product extends React.Component{
       this.doOrder = this.doOrder.bind(this);
     }
 
-    componentDidMount(){   
-      this.subscriptions.push(firebaseServices.getUser(localStorage.getItem('userKey'))
-        .subscribe(user => {
-          console.log(user);
-          this.setState({user: user});
-          this.subscriptions.push(firebaseServices.getWishlist(user.key)
-          .subscribe(items => this.setState({wishlist: items})));
-      }));
+    componentWillReceiveProps(nextProps){
+      this.setState({user: nextProps.user});
+      console.log(nextProps.user);
+      
     }
+
+    componentDidMount(){   
+      this.subscriptions.push(firebaseServices.getWishlist(this.state.user.key)
+      .subscribe(items => this.setState({wishlist: items})));
+    }
+
     componentWillUnmount(){
       this.subscriptions.forEach(obs => obs.unsubscribe());
     }
