@@ -274,6 +274,7 @@ export class Wishlist extends React.Component {
   }
 
   render() {
+    const userID = localStorage.getItem('userKey');
     const listProd = this.state.products.map(product => (
       <Products product={product} key={product.key} />
     ));
@@ -286,7 +287,7 @@ export class Wishlist extends React.Component {
             className="btn btn-primary">Connect with Strava</a>
           </div>
           <div className="col-md-2">
-            <a href='http://localhost:3001/authorizeFitbit'
+            <a href={`http://localhost:3001/authorizeFitbit?userID=${userID}`}
             className="btn btn-primary">Connect with Fitbit</a>
           </div>
         </div>
