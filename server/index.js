@@ -15,8 +15,8 @@ firebaseAdmin.initializeApp({
 const firebaseDb = firebaseAdmin.firestore();
 firebaseDb.settings({ timestampsInSnapshots: true });
 
-const devicesCollection = firebaseAdmin.firestore().collection('Connected_Devices');
 const usersCollection = firebaseAdmin.firestore().collection('Users');
+const wishlistsCollection = firebaseAdmin.firestore().collection('Wishlists');
 
 app.use('/strava', strava);
 app.use('/fitbit', fitbit);
@@ -57,9 +57,21 @@ app.get('/computeCoins', (request, response)=>{ // run everyday at 00:00
             else if(points == 10 || points == 11) coins = 6; 
             else if(point > 11) coins = 10;
 
-            coins += userCoins;
-            console.log(name + "'s new amount of coins: "+coins);
+            var totalCoins = coins + userCoins;
+            console.log(name + "'s got: " + coins + " coins");
+            console.log(name + "'s new amount of coins: "+totalCoins);
             usersCollection.doc(user.id).update({coins: coins, points: 0});
+
+            wishlistsCollection.where('userID','==',user.id)
+            .get().then(qs=>{
+                qs.forEach(wishlist=>{
+                    var wishlistCoins = wishlist.data().gainedCoins;
+                    wishlistsCollection.doc(wishlist.id).update({gainedCoins: wishlistCoins + coins});
+                });
+            }).catch(err=>{
+                console.log(err);
+                response.status(500).send(err);
+            })
         });
         response.status(200).end();
     }).catch(err=>{
