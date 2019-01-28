@@ -1,6 +1,6 @@
 //modules
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route,Redirect} from "react-router-dom";
 import firebase from "firebase";
 
 
@@ -31,6 +31,28 @@ import EmployeeForm from "./Pages/Registering/EmployeeForm";
 
 const firebaseServices = new FirebaseServices();
 
+const AuthService = {
+  isAuthenticated: false,
+  authenticate(user) {
+    this.isAuthenticated = true
+    setTimeout(user, 100)
+  },
+  logout(user) {
+    this.isAuthenticated = false
+    setTimeout(user, 100)
+  }
+};
+
+function PrivateRoute ({component: Component, authenticated, ...rest}) {
+  return (
+    <Route
+      {...rest}
+      render={(props) => (authenticated === true)
+        ? <Component {...props} />
+        : <Redirect to={{pathname: '/login', state: {from: props.location}}} />}
+    />
+  )
+}
 
 library.add(faHome, faBars, faGift, faTrash);
 
@@ -98,7 +120,7 @@ render() {
               <Route path="/CompanyDashboard" component={CompanyDashboard} />
               <Route path="/BrandDashboard" component={BrandDashboard} />
               <Route path="/wishlist" component={MyWishlist} />
-              <Route path="/rewards" component={MyRewards} />
+              <PrivateRoute authenticated={this.state.authenticated} path="/rewards" component={MyRewards} />
               <Route path="/login" component={Login} />
               <Route path="/register" component={EmployeeForm} />
             </div>
