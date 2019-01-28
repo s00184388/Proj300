@@ -286,11 +286,11 @@ export class Wishlist extends React.Component {
         <div className="row">
           <div className="col-md-8 py-4">{listProd}</div>
           <div className="col-md-2">
-            <a href='https://www.strava.com/oauth/authorize?client_id=31723&response_type=code&redirect_uri=https://kudoshealth.herokuapp.com/getStravaCode&approval_prompt=force&scope=activity:read_all' 
+            <a href={`http://localhost:3001/strava/authorize?userID=${userID}`}  
             className="btn btn-primary">Connect with Strava</a>
           </div>
           <div className="col-md-2">
-            <a href={`http://localhost:3001/authorizeFitbit?userID=${userID}`}
+            <a href={`http://localhost:3001/fitbit/authorize?userID=${userID}`}
             className="btn btn-primary">Connect with Fitbit</a>
           </div>
         </div>
