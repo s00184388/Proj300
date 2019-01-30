@@ -13,12 +13,14 @@ export class Login extends Component {
     this.state={
       email:'',
       password:'',
-      error:''
+      error:'',
+      authenticated:'false',
+      searchedUser:props.searchedUser,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
+  
   handleChange = e => {
     let newState = {};
     newState[e.target.name] = e.target.value;
@@ -34,8 +36,11 @@ export class Login extends Component {
     fs.getUserByEmail(this.state.email)
     .then(user=>{
       fire.auth().signInWithEmailAndPassword(this.state.email,this.state.password)
-      .then((u)=>{
-        this.props.history.push('/rewards');
+      .then(()=>{
+        this.setState({
+          searchedUser:user,
+        })
+        console.log(this.state.searchedUser);        
         sessionStorage.setItem('userKey',user.key);
         console.log('local storage:'+sessionStorage.getItem('userKey'));
       })
@@ -45,13 +50,15 @@ export class Login extends Component {
     })
     .catch(err=>{
       console.log(err);
-      this.setState({error: err})
+      this.setState({error: err,
+      authenticated:false})
       alert(err.message);
     });
     console.log(this.state.error);
   }
   render() {
-    const { email, password } = this.state;
+    const { email, password} = this.state;
+  
     return (
       <div className="container">
             <div className="card col-lg-4 centered registerCard">
