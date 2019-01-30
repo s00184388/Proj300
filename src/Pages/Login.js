@@ -41,8 +41,6 @@ export class Login extends Component {
           searchedUser:user,
         })
         console.log(this.state.searchedUser);        
-        sessionStorage.setItem('userKey',user.key);
-        console.log('local storage:'+sessionStorage.getItem('userKey'));
       })
       .catch((error)=>{
         console.log(error)

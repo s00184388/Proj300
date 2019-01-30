@@ -68,18 +68,15 @@ componentDidMount(){
                 authenticated: false,
               }));
         }); 
-
-        var storage=sessionStorage.getItem('userKey');
-        console.log(storage);
-
-        this.subscriptions.push(firebase.auth().onAuthStateChanged(()=>{
+  
+        firebase.auth().onAuthStateChanged(()=>{
           if(this.state.authenticated){
-            fs.getConnectedUser().subscribe(user=>{
+            this.subscriptions.push(fs.getConnectedUser().subscribe(user=>{
               console.log(user);
               this.setState({user:user});
-            });
+            }));
           }
-        }));     
+        }) ;
 }
 
 componentWillUnmount(){
