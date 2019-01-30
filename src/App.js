@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route,Redirect} from "react-router-dom";
 import firebase from "firebase";
 
-
 //styling
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
@@ -29,19 +28,7 @@ import { Wishlist } from "./Pages/Wishlist";
 import {Login } from "./Pages/Login";
 import EmployeeForm from "./Pages/Registering/EmployeeForm";
 
-const firebaseServices = new FirebaseServices();
-
-const AuthService = {
-  isAuthenticated: false,
-  authenticate(user) {
-    this.isAuthenticated = true
-    setTimeout(user, 100)
-  },
-  logout(user) {
-    this.isAuthenticated = false
-    setTimeout(user, 100)
-  }
-};
+const fs = new FirebaseServices();
 
 function PrivateRoute ({component: Component, authenticated, ...rest}) {
   return (
@@ -65,8 +52,9 @@ class App extends Component {
       authenticated: false,
       userRole:'',
       userName:'',
-      user:{},
-      wishlist:{}
+      userEmail:'',
+      wishlist:{},
+      user:{}
     };
   }  
   
@@ -79,20 +67,24 @@ componentDidMount(){
             : this.setState(() => ({
                 authenticated: false,
               }));
-        });  
-        
-        this.subscriptions.push(firebaseServices.getUser(sessionStorage.getItem('userKey'))
-        .subscribe(user => {
-          this.setState({user:user,userName: user.firstName, userRole:user.role});
-          console.log(this.state.user, this.state.authenticated);
-          this.subscriptions.push(firebaseServices.getWishlist(user.key)
-          .subscribe(items => this.setState({wishlist: items})));
-      }));
-  }
+        }); 
+
+        var storage=sessionStorage.getItem('userKey');
+        console.log(storage);
+
+        this.subscriptions.push(firebase.auth().onAuthStateChanged(()=>{
+          if(this.state.authenticated){
+            fs.getConnectedUser().subscribe(user=>{
+              console.log(user);
+              this.setState({user:user});
+            });
+          }
+        }));     
+}
 
 componentWillUnmount(){
-      this.subscriptions.forEach(obs => obs.unsubscribe());
-    }
+  this.subscriptions.forEach(subs=>subs.unsubscribe());
+}
 
 render() {
     
@@ -101,6 +93,7 @@ render() {
         <Rewards user={this.state.user}></Rewards>
       )
     }
+
 
     const MyWishlist=(props)=>{
       return(
@@ -112,7 +105,7 @@ render() {
       <Router>
         <div>
           <div style={{ height: "100%" }}>
-            <Navbar userName={this.state.userName} authenticated={this.state.authenticated}
+            <Navbar userName={this.state.user.firstName} authenticated={this.state.authenticated}
             />
             <div>
               <Route exact path="/" component={Home}/>
@@ -124,13 +117,12 @@ render() {
               <Route path="/login" component={Login} />
               <Route path="/register" component={EmployeeForm} />
             </div>
-          </div>
+        </div>
         </div>
       </Router>
     );
   }
 }
-
 export default App;
 
 serviceWorker.register();

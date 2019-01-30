@@ -59,18 +59,20 @@ export class Navbar extends React.Component {
                 this.props.authenticated ?
                   (
                     <div className="pull-right">
-                    <li className='nav-link'> Hello {this.props.userName}</li>
+                      <div className='row'>
+                        <p className='text-white pt-3 h6'>Hello, {this.props.userName}!</p>
                         <li className="nav-link">
-                          <Link to="/"><LogOut></LogOut></Link>
-                        </li> 
+                          <Link to="/"><FontAwesomeIcon icon={faSignInAlt} className="fa-lg m-1 backgr"/> <LogOut></LogOut></Link>
+                        </li>
+                      </div>
                     </div>
                   ):
                   (
                     <div  className="pull-right">
                     <div className="nav-item">
                       <Link to="/login" className="text-white h6" style={{ textDecoration: 'none' }}>
-                      <FontAwesomeIcon icon={faSignInAlt} className="fa-lg mr-2 backgr"/> 
-                      Login
+                      <FontAwesomeIcon icon={faSignInAlt} className="fa-lg m-1 backgr"/> 
+                        Login
                       </Link>
                     </div> 
                     </div>

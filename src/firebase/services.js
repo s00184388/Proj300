@@ -152,7 +152,7 @@ export default class FirebaseServices {
         .get()
         .then(snapshot=>{
           if(snapshot.empty){
-            reject(new Error('no email found'));
+            reject(new Error('no email found'))
           }
           else{
             snapshot.forEach(doc=>{
@@ -161,7 +161,6 @@ export default class FirebaseServices {
                 key: doc.id, doc,
                 firstName, lastName, role, email, deviceID, companyID, points, coins
               };
-              console.log(user)
               resolve(user)
             });
           }
@@ -211,7 +210,7 @@ export default class FirebaseServices {
     });
   }
 
-  getUser = userID => {
+  getUser = (userID) => {
     return new Observable(observer => {
     if(userID){
         this.usersCollection
@@ -229,6 +228,7 @@ export default class FirebaseServices {
           });
       }
       else{
+        console.log("no email to search with");
         observer.next({});
       }
     });
