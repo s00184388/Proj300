@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "kudoshealth-2961f",
+  "private_key_id": "cbc6263bc9a2aaf1cf761922df6c61d0a2eb2e01",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDYVzTTFWs3F/gd\n+pQWokg2SxiXNGcp41UoZ+ch76GMb8sr8PsocsBdvSiNm1W0B8HHzGhdgjSgqgC5\nfUC7IqwOf2h8PsX8Bb319YxJxAhTZs3FftYSVGcPtWRYkfK4w3EeVVMJmEQGlUZW\n7iv3Mq0teTNVCEuL9E+zhaniZ5ucb5ybN7jU0x22/950LPvP7N0FMveuwleZXurQ\nclFFskJugNVMZGffraMQbOaXnHs4a8xmx1aR69AEq4wp8ktnEwiff/Jt6bZeZ2oc\nnz0pIr78ps2BIeBEmoRuvVb6TAd962ZR2GwBFgvxyzNj30cJEaaEuK21JLp6Ri99\nfRR8DKPTAgMBAAECggEAAzTXrZaQWOgGtLsKstiDkCUbdNzr99eiDXqXbGNW1klZ\n44mAz3VT8I+7KCN4k7XXDhUI1En3vwyF/OR5ryGxFyNASIci/BHsYiwvgMW3sd9r\nhqp96xZL02nG1kvjeGWSfvaYx82f7yZgkoKZLY1sulMk4EptLuKCGTu5QYfI60/y\nh3U523zmlNQKY5UxqErlbwa1ozlGXUyUKcTEU0NBuRFhxw3ng1V8tEM+Wlwz3tXG\noIxQRk2M41o5EM3YYEfs94wfBocddBRfT+tCQY13UVSlwEPCtuwTQ78QY3HxsM4v\nSekq3L8GEVcBa2NXDYnFLy85RNtzD1RAPbdY0gOEwQKBgQDvgK5JJe6BlyAf9KWR\n+fZER8DHv/28aHLGwuKjdP/dWQPZwzN9sngso9itt+7xvdq9CTiXEcvMRi4dG6fX\ncFiXEt4ENAHBCgAg6glPaNOZCBZTRE4nLsXw1q8Yt09zrZaFVoXqfyouCVwy/Ui3\n7hMQNvN+ZZaKpL7Z9mZObE7fkQKBgQDnPhfvwjJAp4dlVw0l+U85LYHTWsLIMhRX\ny0BpdXDy94DNCQLoF9xe8iCfac9jE9+QxgdqTCm3QDe+uvFpY2jDkOn+ZUSPG1iC\n7WI5yuyzXMQGYmFu7ySl6gXGHzsuD0QphagLohrqo3NeplgRa/PawJKjbfBAUhu9\nuoDB1l9jIwKBgQCqbByYfF9M42a+lm1ChGWSjKRG/vzklkYl3QM8YMK4lODCkb4Q\nEXCmAyjp5FootnnxzZ/xD36/KqkhmU5DZPQE/C3zO7aL0DvrL93UHbmDyVdphM8/\n3m6HQ5xwr+/fVoQm+TxtcnNnMs3ikoyuJMB350I4jL0khrovir+dykANoQKBgB4f\nR4zy1gr4B7oaudq9fCVtmSDIDOF5LI83Kb/TDZCIzx1mVBuZqBoyHi/F377/Qrsg\nIK0nGLQHSHuu7G2XBnmbMe/yjxi5LjF37Lish2Lh7aMLQ7forPRz5KanQNVCJdXm\n1DoXtrvj6M5mishSMKTJOxDQ7F/kkjqHxef6HdjTAoGATqurIzhiq5pZ2Y2DNbo8\nLivbykuNNuJo2nwXkXCQDtYRdPrKbQ1yuss7sVLboK1EQXSMVpTd9fCyJtGxywJi\nf+4BcHq0A9L47q6ci7/oFsIaqDPL4GozRfeE2+KU/fRyyhD6ITjYz38XjYI+KSqM\n440W5LEPV45Mw6FQ33R0JdI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-s8s05@kudoshealth-2961f.iam.gserviceaccount.com",
+  "client_id": "103542602005047071093",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-s8s05%40kudoshealth-2961f.iam.gserviceaccount.com"
+}
