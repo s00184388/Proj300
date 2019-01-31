@@ -19,16 +19,15 @@ class ProductForm extends Component {
 
     this.state = {
       //brand fields will be converted into brand object on submit
-      brandID : '',
-      category : '',
-      companyID : '',
-      description : '',
-      name : '',
-      picture : '',
-      price : 0,
-      stock : 0,
-      sponsored : false,
-      tresholdPercentage: 0,
+      brandName: "",
+      brandPic: "",
+      name: "",
+      description: "",
+      picURL: "",
+      quantity: 0,
+      price: 0,
+      remaining: 0,
+      category: "",
 
       categoryOptions: ['Electronics', 'Shoes', 'Sports', 'Others']
     };
@@ -47,30 +46,36 @@ class ProductForm extends Component {
     e.preventDefault();
 
     let product = {
-      category : this.state.category.toLowerCase(),
-      companyID : this.props.company.key,
-      description : this.state.description,
-      name : this.state.name,
-      picture : this.state.picture,
-      price : this.state.price,
-      stock : this.state.stock,
-      sponsored : false,
-      tresholdPercentage: this.state.tresholdPercentage/100
+      brand: {
+        name: this.state.brandName,
+        picURL: this.state.brandPic
+      },
+      name: this.state.name,
+      description: this.state.description,
+      picURL: this.state.picURL,
+      quantity: this.state.quantity,
+      price: this.state.price,
+      remaining: this.state.quantity,
+      category: this.state.category,
+      sponsored: false,
+      companyName: this.props.company.name
     };
 
     fs.addProduct(product);
     console.log(product);
 
     this.setState({
-      category : '',
-      companyID : '',
-      description : '',
-      name : '',
-      picture : '',
-      price : 0,
-      stock : 0,
-      sponsored : true,
-      tresholdPercentage: 0
+      brand: {
+        name: "",
+        picURL: ""
+      },
+      name: "",
+      description: "",
+      picURL: "",
+      quantity: 0,
+      price: 0,
+      remaining: 0,
+      category: ""
     });
   };
 
@@ -81,10 +86,38 @@ class ProductForm extends Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <div className="form-group">
+          <label htmlFor="formBrandName">
+            Brand Name:
+          </label>
+          <input
+            id="formBrandName"
+            className="form-control"
+            name="brandName"
+            type="text"
+            placeholder="Enter Brand Name"
+            onChange={this.handleChange}
+            value={this.state.brandName}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="formBrandPic">
+            Brand Image:
+          </label>
+          <input
+            id="formBrandPic"
+            className="form-control"
+            name="brandPic"
+            type="text"
+            placeholder="Enter Brand Image URL (e.g. https://)"
+            onChange={this.handleChange}
+            value={this.state.brandPic}
+          />
+        </div>
+        <div className="form-group">
           <label htmlFor="categoryList">
             Product Category:
           </label>
-            <select id="categoryList" name="category" className="form-control" defaultValue="" onChange={this.handleChange}>
+            <select id="categoryList" name="category" className="form-control" defaultValue="">
               <option value="" disabled hidden>Select a category</option>
               {options}
             </select>
@@ -124,11 +157,11 @@ class ProductForm extends Component {
           <input
             id="formPicture"
             className="form-control"
-            name="picture"
+            name="picURL"
             type="text"
             placeholder="Enter Product Image URL (e.g. https://)"
             onChange={this.handleChange}
-            value={this.state.picture}
+            value={this.state.picURL}
           />
         </div>
         <div className="form-group">
@@ -146,31 +179,17 @@ class ProductForm extends Component {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="formStock">
-            Product Stock:
+          <label htmlFor="formQuantity">
+            Product Quantity:
           </label>
           <input
-            id="formStock"
+            id="formQuantity"
             className="form-control"
-            name="stock"
+            name="quantity"
             type="number"
-            placeholder="Enter Product Stock"
+            placeholder="Enter Product Quantity"
             onChange={this.handleChange}
-            value={this.state.stock}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="formTreshold">
-            Treshold Percentage:
-          </label>
-          <input
-            id="formTreshold"
-            className="form-control"
-            name="tresholdPercentage"
-            type="number"
-            placeholder="Enter Treshold Percentage in %"
-            onChange={this.handleChange}
-            value={this.state.tresholdPercentage}
+            value={this.state.quantity}
           />
         </div>
           <button className="btn btn-primary" id="formSubmit" type="submit" onClick={this.handleSubmit}>
@@ -188,7 +207,7 @@ class TableRow extends Component{
     return(
       <tr>
         <td key={index}>{index}</td>
-        <td key={row.name}>{row.firstName} {row.lastName}</td>
+        <td key={row.name}>{row.name}</td>
         <td key={row.coins}>{row.coins}</td>
       </tr>
     );
@@ -203,18 +222,14 @@ class CompanyInfo extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps){
-    this.employeesSubscr = fs.getCompanyEmployees(nextProps.company.key)
+ /* componentDidMount(){
+    this.employeesSubscr = fs.getEmployees(this.props.company.name)
     .subscribe(employees=>this.setState({employees: employees}));
-    console.log(this.state.employees);
-  }
-
-  componentDidMount(){
-    
   }
   componentWillUnmount(){
     this.employeesSubscr.unsubscribe();
-  }
+  }*/
+  
   render() {
     const companyName = this.props.company.name;
     const employees = this.state.employees;
@@ -245,39 +260,16 @@ class CompanyInfo extends Component {
 export class CompanyDashboard extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      company:{
-        adminUserID : '',
-        name : '',
-        address : '',
-        phoneNumber : '',
-        email : '',
-        picture : ''
-      }
-    }
-    this.subscriptions = [];
-  }
-
-  componentDidMount(){
-    this.subscriptions.push(fs.getCompany("mDbDH06a1sww4529l0x3")
-    .subscribe(company=>{
-      this.setState({company: company});
-    }));
-  }
-
-  componentWillUnmount(){
-    this.subscriptions.forEach(obs=>obs.unsubscribe());
   }
   render() {
-    const company = this.state.company;
     return (
       <div className="container">
         <div className="row">
           <div className="col-md">
-            <ProductForm company={company}/>
+            <ProductForm company={{name: 'Overstock'}}/>
           </div>
           <div className="col-md">
-            <CompanyInfo company={company}/>
+            <CompanyInfo company={{name: 'Overstock'}}/>
           </div>
         </div>
       </div>
