@@ -77,7 +77,6 @@ export class EmployeeForm extends Component {
         console.log('works');
         firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.pwd1)
           .then((user) => {
-            sessionStorage.setItem('userKey', user.key);
             this.props.history.push('/');
             this.props.role=this.state.role;
           })
