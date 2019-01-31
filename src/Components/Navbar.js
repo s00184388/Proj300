@@ -2,25 +2,41 @@ import React from "react";
 import { Link } from "react-router-dom";
 import {faSignInAlt} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import firebase from "firebase";
 
 
 //style
 import "./Navbar.css";
 import LogOut from "./LogOut";
-import { userInfo } from "os";
+
 
 export class Navbar extends React.Component {
   constructor(props){
     super(props);
-
-    this.state={
-      firstName:'',
-      role:''
-    }
   }
   render() {
-    const imageStyle = { marginLeft: "15px", marginRight:"15px",paddingtop:"0px" };
+    const imageStyle = { marginLeft: "15px", marginRight:"15px",paddingtop:"0px" }
+    
+    const MyNavbar=(props)=>{      
+      return(
+        <div>
+          {this.props.userRole==='brandAdmin'&&
+            (
+                <li><Link to={'/brandDashboard'} className="nav-link text-white h6 ">Brand Dashboard </Link></li>
+            )}
+          
+          {this.props.userRole==='employee'&&
+            (
+              <div>
+                <li><Link to={'/rewards'} className="nav-link text-white h6 ">Rewards </Link></li>
+                <li><Link to={'/wishlist'} className="nav-link text-white h6 ">Wishlist </Link></li>
+                <li><Link to={'/brands'} className="nav-link text-white h6 ">Brands </Link></li>
+              </div>
+            )
+        }
+        </div>
+      )
+    }
+
     return (
       <nav className="navbar navbar-expand-lg navbar-dark backgr">
           {/* Brand*/}
@@ -37,22 +53,38 @@ export class Navbar extends React.Component {
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav mr-auto mt-2">
-              <li><Link to={'/'} className="nav-link text-white h6 ">Home </Link></li>
-              {
-                this.props.authenticated ?
-              (
-                <div className='row ml-2'>
-                  <li><Link to={'/brands'} className="nav-link text-white h6">Brands</Link></li>
-                  <li><Link to={'/rewards'} className="nav-link text-white h6">Rewards</Link></li>
-                  <li><Link to={'/wishlist'} className="nav-link text-white h6">Wishlist</Link></li>
-                </div>
-              ):
-              (
-                <div className='row ml-2'>
-                  <li><Link to={'/contact'} className="nav-link text-white h6">Contact</Link></li>
-                  <li><Link to={'/aboutus'} className="nav-link text-white h6">About Us</Link></li>
-                </div>
-              )}
+              <div className='row'>
+                {this.props.userRole===null &&
+                  <li><Link to={'/'} className="nav-link text-white h6 ">Home </Link></li>
+                }
+                {this.props.userRole==='employee' &&
+                  (
+                    <div className='row m-2'>
+                      <li><Link to={'/'} className="nav-link text-white h6 ">Home </Link></li>
+                      <li><Link to={'/rewards'} className="nav-link text-white h6 ">Rewards </Link></li>
+                      <li><Link to={'/wishlist'} className="nav-link text-white h6 ">Wishlist </Link></li>
+                      <li><Link to={'/brands'} className="nav-link text-white h6 ">Brands </Link></li>
+                    </div>
+                  )}
+                {this.props.userRole==='brandAdmin' &&
+                  (
+                    <div className='row m-2'>
+                      <li><Link to={'/'} className="nav-link text-white h6 ">Home </Link></li>
+                      <li><Link to={'/brandDashboard'} className="nav-link text-white h6 ">Dashboard </Link></li>
+                      <li><Link to={'/brands'} className="nav-link text-white h6 ">Brands </Link></li>
+                    </div>
+                  )}
+                
+                {this.props.userRole==='companyAdmin' &&
+                  (
+                    <div className='row m-2'>
+                      <li><Link to={'/'} className="nav-link text-white h6 ">Home </Link></li>
+                      <li><Link to={'/companyDashboard'} className="nav-link text-white h6 ">Dashboard </Link></li>
+                      <li><Link to={'/brands'} className="nav-link text-white h6 ">Brands </Link></li>
+                    </div>
+                  )}
+
+              </div>
             </ul>
             <ul className="navbar-nav">
               {
@@ -60,7 +92,7 @@ export class Navbar extends React.Component {
                   (
                     <div className="pull-right">
                       <div className='row'>
-                        <p className='text-white pt-3 h6'>Hello, {this.props.userName}!</p>
+                        <p className='text-white pt-3 h6'>Hello, {this.props.userName}! Your role  {this.props.userRole}</p>
                         <li className="nav-link">
                           <Link to="/"><FontAwesomeIcon icon={faSignInAlt} className="fa-lg m-1 backgr"/> <LogOut></LogOut></Link>
                         </li>
