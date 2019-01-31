@@ -82,6 +82,54 @@ class ProductProgressbar extends React.Component {
       );
     }
   }
+
+  class BuyButton extends React.Component{
+    constructor(props){
+      super(props);
+      this.buyProduct = this.buyProduct.bind(this);
+      this.state = {disabled: false}
+    }
+    buyProduct(){
+      var data = {
+        recipient : {
+          email: 'sana_an@avcc.tk',
+          name: 'Overstock'
+        },
+        user: {
+          firstName: 'John',
+          lastName: 'Doe',
+          email: "john.doe@employee.overstock.com",
+          key: '123key456user'
+        },
+        product: {
+          name: 'Test Product',
+          key: '987key654product'
+        }
+      }
+      var url = "http://stravakudos.herokuapp.com/mail/send";
+      fetch(url, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, cors, *same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+            "Content-Type": "application/json",
+            // "Content-Type": "application/x-www-form-urlencoded",
+        },
+        redirect: "follow", // manual, *follow, error
+        referrer: "no-referrer", // no-referrer, *client
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+      })
+      .then(response => this.setState({disabled : true})) // parses response to JSON
+      .catch(err=>console.log(err));
+    }
+    render(){
+      const disabled = this.state.disabled;
+      return(
+        <button className="btn btn-success" onClick={this.buyProduct} disabled={disabled}>Buy</button>
+      );
+    }
+  }
   
   class BrandPicture extends React.Component {
     constructor(props) {
@@ -217,6 +265,7 @@ class ProductProgressbar extends React.Component {
                         Description
                       </p>
                     </div>
+                    <div className="col-md-4"><BuyButton/></div>
                     <div className="col-md-5">
                       <div className="pb-2">
                         Stock: {stock}
