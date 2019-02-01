@@ -17,12 +17,46 @@
 }
 
 .circle {
-  height: 30px;
-  width: 30px;
   background-color: #ffffff;
-  color: #01AEF0;
   border-radius: 50%;
-  border: #0000 solid 2;
+  color: #01AEF0;
+  height: 35px;
+  width: 35px;
+  border: 2px solid #01AEF0  ;
+  font-weight: bold;
   display: inline-block;
   text-align: center;
+}
+
+.circle p {
+  vertical-align: center;
+  font-size: 20px;
+
+}
+
+.navbar-login
+{
+    width: 220px;
+    padding: 10px;
+    padding-bottom: 0px;
+}
+
+.rows{
+  border: 2px solid #FFFF;
+  border-radius: 25px;
+}
+
+.rows:hover{
+  border: 2px solid #01AEF0;
+  border-radius: 25px;
+}
+
+.nav-link{
+  border: 2px solid #ffffff;
+  border-radius: 25px;
+}
+
+.nav-link:hover{
+  border: 2px solid #01AEF0;
+  border-radius: 25px;
 }
