@@ -16,23 +16,22 @@ export class Navbar extends React.Component {
   render() {
     const imageStyle = { marginLeft: "15px", marginRight:"15px",paddingtop:"0px" }
     
-    const MyNavbar=(props)=>{      
+    const Round=(props)=>{      
       return(
         <div>
           {this.props.userRole==='brandAdmin'&&
             (
-                <li><Link to={'/brandDashboard'} className="nav-link text-white h6 ">Brand Dashboard </Link></li>
+                <span className='circle'>BA</span>
             )}
           
           {this.props.userRole==='employee'&&
-            (
-              <div>
-                <li><Link to={'/rewards'} className="nav-link text-white h6 ">Rewards </Link></li>
-                <li><Link to={'/wishlist'} className="nav-link text-white h6 ">Wishlist </Link></li>
-                <li><Link to={'/brands'} className="nav-link text-white h6 ">Brands </Link></li>
-              </div>
-            )
-        }
+            <span className=''>E</span>
+          }
+
+          {this.props.userRole==='companyAdmin'&&
+            <span className=''>CA</span>
+          }
+
         </div>
       )
     }
@@ -92,6 +91,7 @@ export class Navbar extends React.Component {
                   (
                     <div className="pull-right">
                       <div className='row'>
+                      <Round></Round>
                         <p className='text-white pt-3 h6'>Hello, {this.props.userName}! Your role  {this.props.userRole}</p>
                         <li className="nav-link">
                           <Link to="/"><FontAwesomeIcon icon={faSignInAlt} className="fa-lg m-1 backgr"/> <LogOut></LogOut></Link>

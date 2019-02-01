@@ -32,10 +32,10 @@ const fs = new FirebaseServices();
 
 library.add(faHome, faBars, faGift, faTrash);
 
-const PrivateRoute = ({ component: Component, role, authenticated, ...rest }) => (
+const PrivateRoute = ({ component: Component,role, authenticated, ...rest }) => (
   <Route {...rest} render={(props) => (
-      authenticated === true
-      ? <Component {...props} role={this.state.userRole} />
+    authenticated ===true
+      ? <Component {...props}/>
       : <Redirect to="/Login"/>
   )} />
 );
@@ -70,7 +70,7 @@ componentDidMount(){
           if(this.state.authenticated){
             this.subscriptions.push(fs.getConnectedUser().subscribe(user=>{
               console.log(user);
-              this.setState({user:user});
+              this.setState({user:user,userRole:user.role});
             }));
           }
         }) ;
@@ -98,11 +98,11 @@ render() {
         <div>
           <div style={{ height: "100%" }}>
             <Navbar userName={this.state.user.firstName} authenticated={this.state.authenticated} userRole={this.state.user.role}
-            />            
-            {this.state.userRole==='employee'&&
+            /> 
+             {this.state.userRole==='employee' &&
                 (
                   <div>
-                    <Route path="/rewards" component={MyRewards} />
+                    <Route exact path="/rewards" component={MyRewards} />
                     <Route path="/wishlist" component={MyWishlist} />
                     <PrivateRoute path={'/admin'} component={Admin}></PrivateRoute>
                     <PrivateRoute path={'/companyDashboard'} component={CompanyDashboard}></PrivateRoute>
@@ -121,10 +121,8 @@ render() {
                     <PrivateRoute path={'/brandDashboard'} component={BrandDashboard}></PrivateRoute>
               </div>
             )} 
-            
             {this.state.userRole==='brandAdmin' &&
             (
-              
               <div>
                 {console.log(this.state.userRole + 'esti brandAdmin!')}
                     <PrivateRoute path="/rewards" component={MyRewards} />
@@ -145,7 +143,6 @@ render() {
                     <PrivateRoute path={'/brandDashboard'} component={BrandDashboard}></PrivateRoute>
               </div>
             )}  
-
             <Route exact path="/" component={Home}/>
             <Route path="/login" component={Login} />
             <Route path="/register" component={EmployeeForm} />
