@@ -1,5 +1,5 @@
 import React from "react";
-import '../Pages/CssPages/Wishlist.css';
+import "../Pages/CssPages/Wishlist.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import FirebaseServices from "../firebase/services";
@@ -16,20 +16,26 @@ class ProductProgressbar extends React.Component {
     const percent = (remaining * 100) / quantity;
     const label = this.props.label;
     const progressStyle = {
-      width: percent + "%"
+      width: percent + "%",
+      color: "black"
     };
+    var progressClass = "progress-bar ";
+    if (label === "yourProgress") {
+      if (percent <= 30) progressClass += "bg-danger";
+      else if (percent > 30 && percent <= 60) progressClass += "bg-warning";
+      else if (percent >= 100) progressClass += "bg-success";
+      else progressClass += "bg-info";
+    } else if (label === "avgOfCompetitors") {
+      if (percent <= 30) progressClass += "bg-success";
+      else if (percent > 30 && percent <= 60) progressClass += "bg-warning";
+      else if (percent >= 100) progressClass += "bg-danger";
+      else progressClass += "bg-info";
+    } else progressClass += "bg-info";
+
     return (
       <div className="progress">
-        <p>{label}</p>
         <div
-          className={
-            "progress-bar progress-bar-striped" +
-            (percent < 60
-              ? percent < 30
-                ? "bg-danger"
-                : "bg-warning"
-              : "bg-success")
-          }
+          className={progressClass}
           role="progressbar"
           aria-valuenow={percent}
           aria-valuemin="0"
@@ -42,191 +48,231 @@ class ProductProgressbar extends React.Component {
     );
   }
 }
-  
-  {
-    /*Picture component-fixed */
-  }
-  
-  class Picture extends React.Component {
-    constructor(props) {
-      super(props);
-    }
-    render() {
-      const productPicture = this.props.url;
-      const productName = this.props.name;
-      return (
-        <img
-          className="rounded imag d-block"
-          width="100"
-          height="100"
-          src={productPicture}
-          alt={productName}
-        />
-      );
-    }
-  } 
-  
-  class BrandPicture extends React.Component {
-    constructor(props) {
-      super(props);
-    }
-    render() {
-      var productPicture = this.props.brandPicture;
-      var productName = this.props.brandName;
-      var sponsored = this.props.sponsored;
-      if(!sponsored){
-        productPicture = this.props.companyPicture;
-        productName = this.props.companyName
-      }
-      return (
-        <img
-          className="rounded imag d-block"
-          width="35"
-          height="35"
-          src={productPicture}
-          alt={productName}
-        />
-      );
-    }
-  }
 
-  class Title extends React.Component{
-    render(){
-      const brandName = this.props.brandName;
-      const companyName = this.props.companyName;
-      return(
-        <div className="row">
-          <div className="col-lg mr-4 p-2">
-            <strong>{this.props.sponsored ? `Sponsored by ${brandName}`: `${companyName}`} </strong>
-          </div>
+{
+  /*Picture component-fixed */
+}
+
+class Picture extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    const productPicture = this.props.url;
+    const productName = this.props.name;
+    return (
+      <img
+        className="rounded imag d-block"
+        width="100"
+        height="100"
+        src={productPicture}
+        alt={productName}
+      />
+    );
+  }
+}
+
+class BrandPicture extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    var productPicture = this.props.brandPicture;
+    var productName = this.props.brandName;
+    var sponsored = this.props.sponsored;
+    if (!sponsored) {
+      productPicture = this.props.companyPicture;
+      productName = this.props.companyName;
+    }
+    return (
+      <img
+        className="rounded imag d-block"
+        width="35"
+        height="35"
+        src={productPicture}
+        alt={productName}
+      />
+    );
+  }
+}
+
+class Title extends React.Component {
+  render() {
+    const brandName = this.props.brandName;
+    const companyName = this.props.companyName;
+    return (
+      <div className="row">
+        <div className="col-lg mr-4 p-2">
+          <strong>
+            {this.props.sponsored
+              ? `Sponsored by ${brandName}`
+              : `${companyName}`}{" "}
+          </strong>
         </div>
-      )
-    }
+      </div>
+    );
   }
-  
-  {
-    /*Status component-fixed */
+}
+
+{
+  /*Status component-fixed */
+}
+class Status extends React.Component {
+  constructor(props) {
+    super(props);
   }
-  class Status extends React.Component {
-    constructor(props) {
-      super(props);
-    }
-    render() {
-      return (
-        <div className="card card-primary status col-md-3">
-          <div className="card-header">Status</div>
-          <div className="card-body">
-            This is the status component body for each element from the wishlist!
-          </div>
+  render() {
+    return (
+      <div className="card card-primary status col-md-3">
+        <div className="card-header">Status</div>
+        <div className="card-body">
+          This is the status component body for each element from the wishlist!
         </div>
-      );
-    }
+      </div>
+    );
   }
-  
-  {
-    /*Products component */
+}
+
+{
+  /*Products component */
+}
+
+class ProductModal extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { brand: {}, company: {}, avgOfCompetitors: 0 };
+    this.subscriptions = [];
   }
-  
-  class ProductModal extends React.Component {
-    constructor(props) {
-      super(props);
 
-      this.state = {brand : {}, company: {}};
-      this.subscriptions = [];
-    }
+  componentWillMount() {
+    this.subscriptions.push(
+      firebaseServices.getBrand(this.props.product.brandID).subscribe(brand => {
+        this.setState({ brand: brand });
+      })
+    );
+    this.subscriptions.push(
+      firebaseServices
+        .getCompany(this.props.product.companyID)
+        .subscribe(company => {
+          this.setState({ company: company });
+        })
+    );
+    fetch(
+      `https://stravakudos.herokuapp.com/wishlistAverage?productId=${
+        this.props.product.key
+      }`
+    )
+      .then(res => {
+        if (res.status !== 200) {
+          console.log("Could not fetch average of competitors");
+          return;
+        }
+        res
+          .json()
+          .then(data => {
+            this.setState({ avgOfCompetitors: data });
+          })
+          .catch(err => console.log(err));
+      })
+      .catch(err => console.log(err));
+  }
 
-    componentWillMount(){
-      this.subscriptions.push(firebaseServices.getBrand(this.props.product.brandID).subscribe(brand =>{
-        this.setState({brand:brand});
-      }));
-      this.subscriptions.push(firebaseServices.getCompany(this.props.product.companyID).subscribe(company =>{
-        this.setState({company:company});
-      }));
-    }
+  componentWillUnmount() {
+    this.subscriptions.forEach(obs => obs.unsubscribe());
+  }
 
-    componentWillUnmount(){
-      this.subscriptions.forEach(obs => obs.unsubscribe());
-    }
+  render() {
+    const product = this.props.product;
+    const sponsored = product.sponsored;
+    const brand = this.state.brand;
+    const productName = product.name;
+    const stock = product.stock;
+    const productDescription = product.description;
+    const productPicture = product.picture;
+    const brandPicture = brand.picture;
+    const brandName = brand.name;
+    const company = this.state.company;
+    const companyName = company.name;
+    const companyPicture = company.picture;
+    const price = product.price;
+    const tresholdPercentage = product.tresholdPercentage;
+    const priceToUnlock = (price * tresholdPercentage).toFixed(2);
 
-    render() {
-      const product = this.props.product;
-      const sponsored = product.sponsored;
-      const brand = this.state.brand;
-      const productName = product.name;
-      const stock = product.stock;
-      const productDescription = product.description;
-      const productPicture = product.picture;
-      const brandPicture = brand.picture;
-      const brandName = brand.name;
-      const company = this.state.company;
-      const companyName = company.name;
-      const companyPicture = company.picture;
-      const price = product.price;
-      return (
-        <div className="card card-primary">
-          <div className="card" style={{width: '800px'}}>
-            <div className="card-header bg-primary  ">
-              <div className="row d-flex align-items-center">
-                <div className="col-md-3 d-flex justify-content-start">
-                  <h6>{productName}</h6>
+    const avgOfCompetitors = this.state.avgOfCompetitors;
+    return (
+      <div className="row py-4">
+        <div className="col-md-12">
+          <div className="card card-primary">
+            <div className="card">
+              <div className="card-header bg-primary  ">
+                <div className="row d-flex align-items-center">
+                  <div className="col-md-3 d-flex justify-content-start">
+                    <h6>{productName}</h6>
+                  </div>
+                  <div className="col-md-3 h6 text-white ">{price} Kudos</div>
+                  <div className="col-md-5 d-flex justify-content-end">
+                    <Title
+                      brandName={brandName}
+                      sponsored={sponsored}
+                      companyName={companyName}
+                    />
+                  </div>
+                  <div className="col-md-1 d-flex justify-content-end ">
+                    <BrandPicture
+                      className="brandPicture"
+                      companyName={companyName}
+                      companyPicture={companyPicture}
+                      brandPicture={brandPicture}
+                      brandName={brandName}
+                      sponsored={sponsored}
+                    />
+                  </div>
                 </div>
-                <div className="col-md-3 h6 text-white ">{price} Kudos</div>
-                <div className="col-md-5 d-flex justify-content-end">
-                  <Title brandName={brandName} sponsored={sponsored} companyName={companyName}/>
+              </div>
+              <div className="card-body mb-0">
+                <div className="row">
+                  <div className="col-md-4">
+                    <div className="row ml-0 mt-1">
+                      <Picture
+                        className="productPicture"
+                        url={productPicture}
+                        name={productName}
+                      />
+                    </div>
+                    <p className="strong d-flex justify-content-left mt-2">
+                      Description:
+                    </p>
+                  </div>
+                  <div className="col-md-5">
+                    <div className="pb-2">Stock: {stock}</div>
+                    <p className="text-left mb-1">Average of competitors</p>
+                    <div className="pb-2">
+                      <ProductProgressbar
+                        quantity={priceToUnlock}
+                        remaining={avgOfCompetitors}
+                        label={"avgOfCompetitors"}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="col-md-1 d-flex justify-content-end ">
-                  <BrandPicture
-                    className="brandPicture"
-                    companyName={companyName} companyPicture={companyPicture}
-                    brandPicture={brandPicture} brandName={brandName}
-                    sponsored={sponsored}
-                  />
+                <div className="row">
+                  <div className="col-md">
+                    <p className="d-flex justify-content-left align-content-center">
+                      {productDescription}
+                    </p>
+                  </div>
+                  <div className="col-md text-right">
+                    Price to unlock: {priceToUnlock} Kudos
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="card-body mb-0">
-              <div className="row">
-                <div className="col-md-4">
-                  <div className="row ml-0 mt-1">
-                    <Picture
-                      className="productPicture"
-                      url={productPicture}
-                      name={productName}
-                    />
-                  </div>
-                  <p className="strong d-flex justify-content-left mt-2">
-                    Description
-                  </p>
-                </div>
-                <div className="col-md-5">
-                  <div className="pb-2">
-                    Stock: {stock}
-                  </div>
-                  <p className="text-left mb-1">Average of competitors</p>
-                  <div className="pb-2">
-                    <ProductProgressbar
-                      quantity={16}
-                      remaining={11}
-                    />
-                  </div>
-                  <p className="text-left mb-1">Your progress</p>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-10">
-                  <p className="d-flex justify-content-left align-content-center">
-                    {productDescription}
-                  </p>
-                </div>
-                <div className="col-md-2">
-                  Price to unlock: x
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-      );
-    }
+      </div>
+    );
   }
+}
 
 export default ProductModal;
