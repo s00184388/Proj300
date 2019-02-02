@@ -1,8 +1,13 @@
 import React from "react";
 import "../Pages/CssPages/Wishlist.css";
+import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
 import FirebaseServices from "../firebase/services";
+
+library.add(faInfoCircle);
 
 const firebaseServices = new FirebaseServices();
 
@@ -264,6 +269,18 @@ class ProductModal extends React.Component {
                   </div>
                   <div className="col-md text-right">
                     Price to unlock: {priceToUnlock} Kudos
+                    <FontAwesomeIcon
+                      style={{ marginLeft: "5px" }}
+                      data-tip="React-tooltip"
+                      icon="info-circle"
+                    />
+                    <ReactTooltip place="right" type="dark" effect="solid">
+                      <p>
+                        To unlock a product, you must gain at least this amount
+                        of Kudos from the moment you added it to the wishlist
+                        and have enough Kudos to buy it
+                      </p>
+                    </ReactTooltip>
                   </div>
                 </div>
               </div>
