@@ -5,7 +5,7 @@ import "./CssPages/Home.css";
 class Footer extends Component{
   render(){
     return(
-      <div className='row py-3 fixed-bottom'>
+      <div className='row py-5 fixed-bottom' style={{position:'relative'}}>
           <div className="col-lg-4">
           <p className='text-center text-white h6'>Step 1</p>
           <img
@@ -49,7 +49,7 @@ export class Home extends Component {
       console.log(this.props.name)
     return (
         <div className='container-fluid  h-100'>
-          <div className='col-lg-12' style={{marginTop:"7%"}}>
+          <div className='col-lg-12'>
             <div className='row'>
               <div className='mx-auto text-center'>
                 <img src={require("../Images/logo.png")}
@@ -64,10 +64,12 @@ export class Home extends Component {
                  departments to compete against each other, in a few
                 minutes.
                 </div>
-                <div className='pt-4 col-lg-4 mx-auto'>
+                <div className='pt-4 col-lg-6 mx-auto'>
                    <Link to='/register' className="btn btn-warning text-white">Become a Member</Link>
                 </div>
+                <div className='py-5'>
                 <Footer></Footer>
+                </div>
            </div>
         </div>
       </div>

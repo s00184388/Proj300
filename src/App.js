@@ -27,6 +27,7 @@ import { Navbar } from "./Components/Navbar";
 import { Wishlist } from "./Pages/Wishlist";
 import {Login } from "./Pages/Login";
 import EmployeeForm from "./Pages/Registering/EmployeeForm";
+import Brands from "./Pages/Brands";
 
 const fs = new FirebaseServices();
 
@@ -49,8 +50,6 @@ class App extends Component {
       authenticated: false,
       userRole:'',
       userName:'',
-      userEmail:'',
-      wishlist:{},
       user:{}
     };
   }  
@@ -58,7 +57,7 @@ class App extends Component {
 componentDidMount(){
         firebase.auth().onAuthStateChanged((authenticated) => {
           authenticated
-            ? this.setState(() => ({
+            ?this.setState(() => ({
                 authenticated: true,
               }))
             : this.setState(() => ({
@@ -70,7 +69,7 @@ componentDidMount(){
           if(this.state.authenticated){
             this.subscriptions.push(fs.getConnectedUser().subscribe(user=>{
               console.log(user);
-              this.setState({user:user,userRole:user.role});
+              this.setState({user:user,userRole:user.role,userEmail:user.email});
             }));
           }
         }) ;
@@ -81,6 +80,8 @@ componentWillUnmount(){
 }
 
 render() {
+  const name =this.state.user.firstName + ' ' +this.state.user.lastName;
+  const userEmail=this.state.user.email;
     
     const MyRewards=(props)=>{      
       return(
@@ -97,7 +98,12 @@ render() {
       <Router>
         <div>
           <div style={{ height: "100%" }}>
-            <Navbar userName={this.state.user.firstName} authenticated={this.state.authenticated} userRole={this.state.user.role}
+            <Navbar 
+                  userName={this.state.user.firstName} 
+                  authenticated={this.state.authenticated} 
+                  userRole={this.state.user.role} 
+                  name={name}
+                  userEmail={userEmail}
             /> 
              {this.state.userRole==='employee' &&
                 (
@@ -113,7 +119,6 @@ render() {
             {this.state.userRole==='companyAdmin' &&
             (
               <div>
-                {console.log(this.state.userRole + 'esti companyAdmin!')}
                     <PrivateRoute path="/rewards" component={MyRewards} />
                     <PrivateRoute path="/wishlist" component={MyWishlist} />
                     <PrivateRoute path={'/admin'} component={Admin}></PrivateRoute>
@@ -146,6 +151,7 @@ render() {
             <Route exact path="/" component={Home}/>
             <Route path="/login" component={Login} />
             <Route path="/register" component={EmployeeForm} />
+            <Route path="/brands" component={Brands} />
           </div>
       </div>
     </Router>

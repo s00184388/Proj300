@@ -7,7 +7,7 @@ const logOutUser = () => {
 };
 
 const LogOut = () => {
- return <button className="btn btn-link text-white" onClick={logOutUser}>Log Out</button>;
+ return <button className="btn btn-danger btn-sm col-lg-5" onClick={logOutUser}>Log Out</button>;
 };
 
 export default LogOut;

@@ -40,6 +40,7 @@ export class Login extends Component {
         this.setState({
           searchedUser:user,
         })
+         this.props.history.push('/')
         console.log(this.state.searchedUser);        
       })
       .catch((error)=>{
