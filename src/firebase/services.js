@@ -706,4 +706,21 @@ export default class FirebaseServices {
       console.log("Cannot delete product");
     }
   }
+
+  editProduct = (p, _key) => {
+    if (p){
+      this.productsCollection.doc(_key).set({
+        category: p.category,
+        description: p.description,
+        name: p.name,
+        picture: p.picture,
+        price: p.price,
+        stock: p.stock,
+        tresholdPercentage: p.tresholdPercentage
+      }, {merge:true})
+
+      console.log("updating:  " + _key);
+    }
+  }
+
 }

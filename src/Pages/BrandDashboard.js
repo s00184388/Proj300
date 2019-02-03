@@ -3,19 +3,21 @@ import { Link } from "react-router-dom";
 import { DropdownList } from 'react-widgets'
 import "./CssPages/BrandDashboard.css";
 import FirebaseServices from "../firebase/services";
-import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faBullseye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import Modal from 'react-modal';
+import BrandProductEditingModal from '../Components/editProductModal';
 
 
 library.add(faArrowDown);
 
 //constant
 const fs = new FirebaseServices();
+Modal.setAppElement("#root");
 //components
 
-  class ProductForm extends Component {
+class ProductForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -359,42 +361,42 @@ class TableRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      editProduct : {
-        brandID: '',
-        category: '',
-        companyID: '',
-        description: '',
-        name: '',
-        picture: '',
-        price: 0,
-        stock: 0,
-        sponsored: true,
-        tresholdPercentage: 0,
-      }
+      show: false
     }
     this.setEditProduct = this.setEditProduct.bind(this);
   }
 
-  setEditProduct(e){
+  showModal = (e) => {
+    console.log("key = " + e.key);
+    this.setState({ show: true });
+  }
+
+  hideModal = () => {
+    this.setState({ show: false });
+  }
+
+  setEditProduct(e) {
     //const ep = this.state.editProduct
 
     this.state.editProduct = {
-      brandID : e.brandID,
-      category : e.category,
-      companyID : e.companyID,
-      description : e.description,
-      name : e.name,
-      picture : e.picture,
-      price : 99,
-      stock : e.stock,
-      sponsored : true ,
-      tresholdPercentage : e.tresholdPercentage,
+      brandID: e.brandID,
+      category: e.category,
+      companyID: e.companyID,
+      description: e.description,
+      name: e.name,
+      picture: e.picture,
+      price: 99,
+      stock: e.stock,
+      sponsored: true,
+      tresholdPercentage: e.tresholdPercentage,
     }
     this.state.isEditing = this.state.isEditing;
     //this.setState(state => ({isEditing : true}));
     console.log(e.key);
     fs.updateProduct(this.state.editProduct, e.key);
   }
+
+
 
   render() {
     const row = this.props.row;
@@ -407,11 +409,23 @@ class TableRow extends Component {
         <td key={row.name}>{row.name}</td>
         <td key={row.price}>{row.price}</td>
         <td key={row.key}>{row.stock}</td>
-        <td><button onClick={()=> {this.setEditProduct(row)}}>Edit</button></td>
+        <td><button onClick={() => { this.showModal(row) }}>Edit</button>
+          <Modal isOpen={this.state.show}
+            onRequestClose={this.hideModal}
+            shouldCloseOnOverlayClick={true}
+          >
+            <div>
+              <BrandProductEditingModal product={row} _key={row.key}  />
+            </div>
+            <a href="#" className="closeButton" onClick={this.hideModal}></a>
+          </Modal>
+        </td>
       </tr>
     );
   }
 }
+
+
 
 class BrandInfo extends Component {
   constructor(props) {
@@ -480,7 +494,7 @@ export class BrandDashboard extends Component {
         email: '',
         description: ''
       },
-      isEditing : false
+      isEditing: false
     };
 
   }
@@ -497,26 +511,11 @@ export class BrandDashboard extends Component {
   }
 
   render() {
-    if(this.state.isEditing === true){
-      return (
-        <div className="container">
-          <div className="row">
-            <div className="col-md">
-              <EditForm brand={this.state.brand}/>
-            </div>
-            <div className="col-md">
-              <BrandInfo brand={this.state.brand} />
-            </div>
-          </div>
-        </div>
-      );
-    }
-    else{
     return (
       <div className="container">
         <div className="row">
           <div className="col-md">
-            <ProductForm brand={this.state.brand}/>
+            <ProductForm brand={this.state.brand} />
           </div>
           <div className="col-md">
             <BrandInfo brand={this.state.brand} />
@@ -525,6 +524,5 @@ export class BrandDashboard extends Component {
       </div>
     );
   }
-}
 }
 export default BrandDashboard;
