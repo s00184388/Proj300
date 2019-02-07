@@ -138,7 +138,7 @@ render() {
               </div>
             )}  
             
-            {this.state.userRole===null &&
+            {this.state.userRole==' ' &&
             (
               <div>
                     <PrivateRoute path="/rewards" component={MyRewards} />
