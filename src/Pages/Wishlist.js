@@ -47,7 +47,7 @@ class ProductProgressbar extends React.Component {
           aria-valuemax="100"
           style={progressStyle}
         >
-          {remaining + "/" + quantity}
+          {remaining + " / " + quantity}
         </div>
       </div>
     );
@@ -113,10 +113,6 @@ class BuyButton extends React.Component {
         user: nextProps.user,
         product: nextProps.product
       });
-      console.log("userID: " + this.state.user.key);
-      console.log("productID " + this.state.product.key);
-      console.log("recipient:");
-      console.log(this.state.recipient);
     }
   }
 
@@ -285,7 +281,7 @@ class Products extends React.Component {
   render() {
     const user = this.props.user;
     const product = this.props.product;
-    const gainedCoins = product.gainedCoins; // only for getting products with getWishListItems method
+    const gainedCoins = product.gainedCoins.toFixed(2); // only for getting products with getWishListItems method
     const sponsored = product.sponsored;
     const brand = this.state.brand;
     const productName = product.name;
