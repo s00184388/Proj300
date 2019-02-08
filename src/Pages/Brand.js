@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import FirebaseServices from "../firebase/services";
 import Modal from "react-modal";
 import ProductModal from "../Components/ProductModal";
+import ReactLoading from "react-loading";
 
 const firebaseServices = new FirebaseServices();
 
@@ -277,16 +278,20 @@ export class Brand extends Component {
     this.state = {
       wishlist: [],
       sponsoredProductList: [],
-      name: ""
+      name: "",
+      fetchInProgress: true
     };
     this.subscriptions = [];
     this.isInWishlist = this.isInWishlist.bind(this);
     this.userKey = "";
-    this.deleteItems = this.deleteItems.bind(this);
+    this.getOnlyThisBrandItems = this.getOnlyThisBrandItems.bind(this);
   }
 
   componentDidMount() {
-    this.setState({ name: this.props.match.params.brandName });
+    this.setState({
+      name: this.props.match.params.brandName,
+      fetchInProgress: true
+    });
     this.userKey = this.props.user.key;
     this.subscriptions.push(
       firebaseServices.getWishlist(this.userKey).subscribe(items => {
@@ -299,10 +304,11 @@ export class Brand extends Component {
                 .getSponsoredProducts()
                 .subscribe(sponsoredProds => {
                   this.setState({
-                    sponsoredProductList: this.deleteItems(
+                    sponsoredProductList: this.getOnlyThisBrandItems(
                       sponsoredProds,
                       brand.key
-                    )
+                    ),
+                    fetchInProgress: false
                   });
                 })
             );
@@ -315,7 +321,7 @@ export class Brand extends Component {
     );
   }
 
-  deleteItems(arr, brandID) {
+  getOnlyThisBrandItems(arr, brandID) {
     var newArray = [];
     for (var i = 0; i < arr.length; i++) {
       if (arr[i].brandID === brandID) {
@@ -347,27 +353,32 @@ export class Brand extends Component {
     var products = sponsoredProducts;
     const wishlist = this.props.wishlist;
     const brandName = this.state.name;
-
+    var fetchInProgress = this.state.fetchInProgress;
+    console.log("fetch in progress:" + fetchInProgress);
     const listProducts = products.map(product => (
       <div className="col-md-4" key={product.key}>
         <Product product={product} user={user} wishlist={wishlist} />
       </div>
     ));
-    var welcomeMessage = (
-      <h1>
-        Welcome to the <b>{brandName}</b> page
-      </h1>
-    );
-
-    if (!this.state.sponsoredProductList.length) {
-      welcomeMessage = <h2>No brand found</h2>;
-    }
     return (
       <div className="container">
-        {welcomeMessage}
-        <div className="col">
-          <div className="row p-0">{listProducts}</div>
-        </div>
+        <h1>
+          Welcome to the <b>{brandName}</b> page
+        </h1>
+        {fetchInProgress ? (
+          <div className="col d-flex justify-content-center">
+            <ReactLoading
+              type={"spinningBubbles"}
+              color={"#fff"}
+              height={640}
+              width={256}
+            />
+          </div>
+        ) : (
+          <div className="col">
+            <div className="row p-0">{listProducts}</div>
+          </div>
+        )}
       </div>
     );
   }
