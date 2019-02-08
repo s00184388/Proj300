@@ -60,6 +60,43 @@ export default class FirebaseServices {
     });
   };
 
+  getAllProducts() {
+    return new Observable(observer => {
+      this.productsCollection.onSnapshot(querySnapshot => {
+        const products = [];
+        querySnapshot.forEach(doc => {
+          const {
+            brandID,
+            category,
+            companyID,
+            description,
+            name,
+            picture,
+            price,
+            stock,
+            sponsored,
+            tresholdPercentage
+          } = doc.data();
+          products.push({
+            key: doc.id,
+            doc,
+            brandID,
+            category,
+            companyID,
+            description,
+            name,
+            picture,
+            price,
+            stock,
+            sponsored,
+            tresholdPercentage
+          });
+        });
+        observer.next(products);
+      });
+    });
+  }
+
   getSponsoredProducts = brandName => {
     return new Observable(observer => {
       this.productsCollection
