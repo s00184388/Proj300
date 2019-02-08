@@ -673,7 +673,7 @@ export class Rewards extends React.Component {
     const userName = user.firstName;
     return (
       <div className="ml-4 mr-4">
-        {
+        {/*{
           <button
             className="btn btn-primary btn-sm"
             type="button"
@@ -682,7 +682,7 @@ export class Rewards extends React.Component {
             Add data to Firebase
           </button>
         }
-        Hello, {userName}, you have {userCoins} Kudos
+      Hello, {userName}, you have {userCoins} Kudos*/}
         <div className="row py-5">
           <div className="col-lg-3">
             <div className="card-header p-0">

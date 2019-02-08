@@ -84,7 +84,8 @@ class App extends Component {
             this.setState({
               user: user,
               userRole: user.role,
-              userEmail: user.email
+              userEmail: user.email,
+              coins:user.coins
             });
           })
         );
@@ -121,6 +122,7 @@ class App extends Component {
               userRole={this.state.user.role}
               name={name}
               userEmail={userEmail}
+              coins={this.state.coins}
             />
             {this.state.userRole === "employee" && (
               <div>

@@ -81,6 +81,7 @@ export class Navbar extends React.Component {
                       </p>
                     </div>
                   </div>
+                  <p className="text-center small p-0">You have {this.props.coins} K</p>
                   <p className="text-center small p-0">
                     {this.props.userEmail}
                   </p>
@@ -175,14 +176,6 @@ export class Navbar extends React.Component {
                           className="nav-link h6 text-white ml-2"
                         >
                           Dashboard{" "}
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to={"/brands"}
-                          className="nav-link text-white h6 ml-2 "
-                        >
-                          Brands{" "}
                         </Link>
                       </li>
                     </div>
