@@ -364,6 +364,7 @@ class TableRow extends Component {
       show: false
     }
     this.setEditProduct = this.setEditProduct.bind(this);
+    this.deleteItem = this.deleteItem.bind(this);
   }
 
   showModal = (e) => {
@@ -396,7 +397,10 @@ class TableRow extends Component {
     fs.updateProduct(this.state.editProduct, e.key);
   }
 
-
+  deleteItem(key){
+    fs.deleteItemFromDashboard(key);
+    console.log("deleting item : " + key);
+  }
 
   render() {
     const row = this.props.row;
@@ -415,11 +419,12 @@ class TableRow extends Component {
             shouldCloseOnOverlayClick={true}
           >
             <div>
-              <BrandProductEditingModal product={row} _key={row.key}  />
+              <BrandProductEditingModal product={row} _key={row.key} _show={this.hideModal}/>
             </div>
             <a href="#" className="closeButton" onClick={this.hideModal}></a>
           </Modal>
         </td>
+        <td><button onClick={()=> this.deleteItem(row.key)}>Delete</button></td>
       </tr>
     );
   }
@@ -434,13 +439,7 @@ class BrandInfo extends Component {
       products: []
     }
     this.productsSubscr = [];
-    this.transferEdit = this.transferEdit.bind(this);
   }
-
-  transferEdit = e => {
-
-  }
-
   componentWillReceiveProps(nextProps) {
     this.productsSubscr = fs
       .getBrandedProducts("brandID", nextProps.brand.key)
@@ -469,6 +468,7 @@ class BrandInfo extends Component {
               <th>Price</th>
               <th>Stock</th>
               <th>Edit</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>

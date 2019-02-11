@@ -1,5 +1,6 @@
 import React from 'react';
 import FirebaseServices from "../firebase/services";
+import BrandDashboard from '../Pages/BrandDashboard';
 
 const fs = new FirebaseServices();
 
@@ -44,14 +45,21 @@ class BrandProductEditingModal extends React.Component {
         };
         //console.log("UPDATING : " + this.state._key);
         fs.editProduct(product, this.state._key);
+        this.handleCloseAfterSubmit();
     };
+
+    handleCloseAfterSubmit = () => {
+        this.props._show();
+    }
 
     render() {
         const categories = ['Electronics', 'Shoes', 'Sports', 'Others'];
         const options = categories.map(opt =>
-            <option key={opt}>{opt}</option>)
+            <option key={opt}>{opt}</option>);
+        const title = this.props.product.name;
         return (
             <form onSubmit={this.handleSubmit}>
+            <h3>{title}</h3>
                 <div className="form-group">
                     <label htmlFor="categoryList">
                         Product Category:

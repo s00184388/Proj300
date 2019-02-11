@@ -1,5 +1,7 @@
-import fire from "./firebase";
-import { Observable } from "rxjs";
+import fire from './firebase'
+import {
+  Observable
+} from "rxjs";
 import firebase from "firebase";
 
 export default class FirebaseServices {
@@ -58,46 +60,9 @@ export default class FirebaseServices {
         observer.next([]);
       }
     });
-  };
-
-  getAllProducts() {
-    return new Observable(observer => {
-      this.productsCollection.onSnapshot(querySnapshot => {
-        const products = [];
-        querySnapshot.forEach(doc => {
-          const {
-            brandID,
-            category,
-            companyID,
-            description,
-            name,
-            picture,
-            price,
-            stock,
-            sponsored,
-            tresholdPercentage
-          } = doc.data();
-          products.push({
-            key: doc.id,
-            doc,
-            brandID,
-            category,
-            companyID,
-            description,
-            name,
-            picture,
-            price,
-            stock,
-            sponsored,
-            tresholdPercentage
-          });
-        });
-        observer.next(products);
-      });
-    });
   }
 
-  getSponsoredProducts = brandName => {
+  getSponsoredProducts = () => {
     return new Observable(observer => {
       this.productsCollection
         .where("sponsored", "==", true)
@@ -135,49 +100,7 @@ export default class FirebaseServices {
           observer.next(products.reverse());
         });
     });
-  };
-
-  getBrandByName = brandName => {
-    return new Promise((resolve, reject) => {
-      if (brandName) {
-        this.brandsCollection
-          .where("name", "==", brandName)
-          .get()
-          .then(querySnapshot => {
-            if (querySnapshot.empty) {
-              reject(new Error("no company found"));
-            } else {
-              var company = {};
-              querySnapshot.forEach(doc => {
-                const {
-                  adminUserID,
-                  name,
-                  picture,
-                  address,
-                  phoneNumber,
-                  email,
-                  description
-                } = doc.data();
-                company = {
-                  key: doc.id,
-                  doc,
-                  adminUserID,
-                  name,
-                  picture,
-                  address,
-                  phoneNumber,
-                  email,
-                  description
-                };
-              });
-              resolve(company);
-            }
-          });
-      } else {
-        reject(new Error("no company name"));
-      }
-    });
-  };
+  }
 
   getBrandedProducts = (field, query) => {
     return new Observable(observer => {
@@ -222,7 +145,7 @@ export default class FirebaseServices {
         observer.next([]);
       }
     });
-  };
+  }
 
   getWishlist = userID => {
     return new Observable(observer => {
@@ -232,7 +155,11 @@ export default class FirebaseServices {
           .onSnapshot(querySnapshot => {
             const products = [];
             querySnapshot.forEach(doc => {
-              const { userID, productID, gainedCoins } = doc.data();
+              const {
+                userID,
+                productID,
+                gainedCoins
+              } = doc.data()
               products.push({
                 key: doc.id,
                 doc,
@@ -247,7 +174,7 @@ export default class FirebaseServices {
         observer.next([]);
       }
     });
-  };
+  }
 
   getWishListItems = userID => {
     return new Observable(observer => {
@@ -260,11 +187,7 @@ export default class FirebaseServices {
           items.forEach(item => {
             gainedCoins = item.gainedCoins;
             this.productsCollection
-              .where(
-                firebase.firestore.FieldPath.documentId(),
-                "==",
-                item.productID
-              )
+              .where(firebase.firestore.FieldPath.documentId(), "==", item.productID)
               .onSnapshot(querySnapshot => {
                 querySnapshot.forEach(doc => {
                   const {
@@ -292,7 +215,7 @@ export default class FirebaseServices {
                     stock,
                     sponsored,
                     tresholdPercentage,
-                    gainedCoins: item.gainedCoins
+                    gainedCoins
                   });
                 });
                 observer.next(products);
@@ -303,17 +226,17 @@ export default class FirebaseServices {
         observer.next([]);
       }
     });
-  };
+  }
 
   getUserByEmail = email => {
     return new Promise((resolve, reject) => {
       if (email) {
         this.usersCollection
-          .where("email", "==", email)
+          .where('email', '==', email)
           .get()
           .then(snapshot => {
             if (snapshot.empty) {
-              reject(new Error("no email found"));
+              reject(new Error('no email found'))
             } else {
               snapshot.forEach(doc => {
                 const {
@@ -338,23 +261,23 @@ export default class FirebaseServices {
                   points,
                   coins
                 };
-                resolve(user);
+                resolve(user)
               });
             }
           })
           .catch(err => {
-            console.log("Error getting documents", err);
+            console.log('Error getting documents', err);
             reject(err);
           });
       } else {
         reject(new Error("bad email"));
       }
     });
-  };
+  }
 
   getConnectedUser = () => {
     var user = firebase.auth().currentUser;
-    var userEmail = "";
+    var userEmail = '';
     if (user) {
       userEmail = user.email;
       console.log(userEmail);
@@ -364,7 +287,7 @@ export default class FirebaseServices {
     return new Observable(observer => {
       if (userEmail) {
         this.usersCollection
-          .where("email", "==", userEmail)
+          .where('email', '==', userEmail)
           .onSnapshot(querySnapshot => {
             var user = {};
             querySnapshot.forEach(doc => {
@@ -391,6 +314,7 @@ export default class FirebaseServices {
                 coins
               };
             });
+            console.log(user);
             observer.next(user);
           });
       } else {
@@ -398,9 +322,9 @@ export default class FirebaseServices {
         observer.next({});
       }
     });
-  };
+  }
 
-  getUser = userID => {
+  getUser = (userID) => {
     return new Observable(observer => {
       if (userID) {
         this.usersCollection
@@ -438,7 +362,9 @@ export default class FirebaseServices {
         observer.next({});
       }
     });
-  };
+  }
+
+
 
   getDevice = deviceID => {
     return new Observable(observer => {
@@ -448,7 +374,12 @@ export default class FirebaseServices {
           .onSnapshot(querySnapshot => {
             var device = {};
             querySnapshot.forEach(doc => {
-              const { apiKey, calories, distance, steps } = doc.data();
+              const {
+                apiKey,
+                calories,
+                distance,
+                steps
+              } = doc.data();
               device = {
                 key: doc.id,
                 doc,
@@ -464,25 +395,31 @@ export default class FirebaseServices {
         observer.next({});
       }
     });
-  };
+  }
 
   getDevices = () => {
     return new Observable(observer => {
-      this.connectedDevicesCollection.onSnapshot(querySnapshot => {
-        const devices = [];
-        querySnapshot.forEach(doc => {
-          const { apiKey, calories, distance, steps } = doc.data();
-          devices.push({
-            key: doc.id,
-            doc,
-            apiKey,
-            calories,
-            distance,
-            steps
+      this.connectedDevicesCollection
+        .onSnapshot(querySnapshot => {
+          const devices = [];
+          querySnapshot.forEach(doc => {
+            const {
+              apiKey,
+              calories,
+              distance,
+              steps
+            } = doc.data();
+            devices.push({
+              key: doc.id,
+              doc,
+              apiKey,
+              calories,
+              distance,
+              steps
+            });
           });
+          observer.next(devices);
         });
-        observer.next(devices);
-      });
     });
   };
 
@@ -521,36 +458,37 @@ export default class FirebaseServices {
         observer.next({});
       }
     });
-  };
+  }
 
   getBrands = () => {
     return new Observable(observer => {
-      this.brandsCollection.onSnapshot(querySnapshot => {
-        const brands = [];
-        querySnapshot.forEach(doc => {
-          const {
-            adminUserID,
-            name,
-            picture,
-            address,
-            phoneNumber,
-            email,
-            description
-          } = doc.data();
-          brands.push({
-            key: doc.id,
-            doc,
-            adminUserID,
-            name,
-            picture,
-            address,
-            phoneNumber,
-            email,
-            description
+      this.brandsCollection
+        .onSnapshot(querySnapshot => {
+          const brands = [];
+          querySnapshot.forEach(doc => {
+            const {
+              adminUserID,
+              name,
+              picture,
+              address,
+              phoneNumber,
+              email,
+              description
+            } = doc.data();
+            brands.push({
+              key: doc.id,
+              doc,
+              adminUserID,
+              name,
+              picture,
+              address,
+              phoneNumber,
+              email,
+              description
+            });
           });
+          observer.next(brands);
         });
-        observer.next(brands);
-      });
     });
   };
 
@@ -585,38 +523,39 @@ export default class FirebaseServices {
           });
       }
     });
-  };
+  }
 
   getCompanies = () => {
     return new Observable(observer => {
-      this.companiesCollection.onSnapshot(querySnapshot => {
-        const companies = [];
-        querySnapshot.forEach(doc => {
-          const {
-            adminUserID,
-            name,
-            picture,
-            address,
-            phoneNumber,
-            email
-          } = doc.data();
-          companies.push({
-            key: doc.id,
-            doc,
-            adminUserID,
-            name,
-            picture,
-            address,
-            phoneNumber,
-            email
+      this.companiesCollection
+        .onSnapshot(querySnapshot => {
+          const companies = [];
+          querySnapshot.forEach(doc => {
+            const {
+              adminUserID,
+              name,
+              picture,
+              address,
+              phoneNumber,
+              email
+            } = doc.data();
+            companies.push({
+              key: doc.id,
+              doc,
+              adminUserID,
+              name,
+              picture,
+              address,
+              phoneNumber,
+              email
+            });
           });
+          observer.next(companies);
         });
-        observer.next(companies);
-      });
     });
   };
 
-  getCompanyEmployees = companyID => {
+  getCompanyEmployees = (companyID) => {
     return new Observable(observer => {
       if (companyID) {
         this.usersCollection
@@ -654,17 +593,17 @@ export default class FirebaseServices {
         observer.next([]);
       }
     });
-  };
+  }
 
-  getCompanyByName = companyName => {
+  getCompanyByName = (companyName) => {
     return new Promise((resolve, reject) => {
       if (companyName) {
         this.companiesCollection
-          .where("name", "==", companyName)
+          .where('name', "==", companyName)
           .get()
           .then(querySnapshot => {
             if (querySnapshot.empty) {
-              reject(new Error("no company found"));
+              reject(new Error('no company found'))
             } else {
               var company = {};
               querySnapshot.forEach(doc => {
@@ -691,10 +630,10 @@ export default class FirebaseServices {
             }
           });
       } else {
-        reject(new Error("no company name"));
+        reject(new Error('no company name'));
       }
     });
-  };
+  }
 
   addToWishlist = (productID, userID) => {
     if (productID && userID) {
@@ -707,7 +646,7 @@ export default class FirebaseServices {
     } else {
       console.log("Cannot add to wishlist. productID or userID missing");
     }
-  };
+  }
 
   addProduct = product => {
     if (product) {
@@ -720,74 +659,77 @@ export default class FirebaseServices {
   createUser = user => {
     return new Promise((resolve, reject) => {
       if (user) {
-        this.usersCollection
-          .add(user)
+        this.usersCollection.add(user)
           .then(docRef => resolve(docRef.id))
           .catch(err => {
             console.log(err);
-            reject(err);
+            reject(err)
           });
       } else {
-        reject(new Error("No user given"));
+        reject(new Error('No user given'));
       }
     });
-  };
+  }
 
-  createCompany = company => {
+  createCompany = (company) => {
     if (company) {
-      this.companiesCollection
-        .add(company)
+      this.companiesCollection.add(company)
         .then(docRef => {
           return docRef.id;
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err))
     } else {
       console.log("Cannot add company");
     }
-  };
+  }
 
-  createBrand = brand => {
+  createBrand = (brand) => {
     if (brand) {
-      this.brandsCollection
-        .add(brand)
+      this.brandsCollection.add(brand)
         .then(docRef => {
           return docRef.id;
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err))
     } else {
       console.log("Cannot add brand");
     }
-  };
+  }
 
   deleteProduct = product => {
     if (product) {
-      this.wishlistsCollection
-        .where("productID", "==", product.key)
+      this.wishlistsCollection.where("productID", "==", product.key)
         .get()
         .then(querySnapshot => {
-          querySnapshot.forEach(doc => doc.ref.delete());
+          querySnapshot.forEach(doc => doc.ref.delete())
         });
     } else {
       console.log("Cannot delete product");
     }
-  };
+  }
+
+  deleteItemFromDashboard = _key => {
+    if (_key) {
+      this.productsCollection.doc(_key).delete()
+    }
+    else {
+      console.log("Cannot delete product");
+    }
+  }
 
   editProduct = (p, _key) => {
     if (p) {
-      this.productsCollection.doc(_key).set(
-        {
-          category: p.category,
-          description: p.description,
-          name: p.name,
-          picture: p.picture,
-          price: p.price,
-          stock: p.stock,
-          tresholdPercentage: p.tresholdPercentage
-        },
-        { merge: true }
-      );
+      this.productsCollection.doc(_key).set({
+        category: p.category,
+        description: p.description,
+        name: p.name,
+        picture: p.picture,
+        price: p.price,
+        stock: p.stock,
+        tresholdPercentage: p.tresholdPercentage
+      }, { merge: true })
 
-      console.log("updating:  " + _key);
+      //console.log("updating:  " + _key);
     }
-  };
+  }
+
 }
