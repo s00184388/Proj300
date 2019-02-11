@@ -48,6 +48,17 @@ export class EmployeeForm extends Component {
       this.setState(newState);
     };
 
+    createAuthUser=()=>{
+      firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.pwd1)
+          .then((user) => {
+            this.props.history.push('/');
+            this.props.role=this.state.role;
+          })
+          .catch((error) => {
+            this.setState({ error: error });
+          }); 
+    }
+
 
     handleOptionChange = changeEvent => {
       this.setState({
@@ -75,15 +86,7 @@ export class EmployeeForm extends Component {
             role:this.state.role
         }
         console.log('works');
-        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.pwd1)
-          .then((user) => {
-            this.props.history.push('/');
-            this.props.role=this.state.role;
-          })
-          .catch((error) => {
-            this.setState({ error: error });
-          }); 
-        
+        this.createAuthUser();
         fs.createUser(user);
 
         console.log(user);
@@ -108,6 +111,7 @@ export class EmployeeForm extends Component {
         adminUserID:adminUserID
         }
         fs.createCompany(company);
+        this.createAuthUser();
       })
       .catch(err=>console.log(err));
     }
@@ -131,6 +135,7 @@ export class EmployeeForm extends Component {
             adminUserID:adminUserID
           }
         fs.createBrand(brand);
+        this.createAuthUser();
         })
         .catch(err=>console.log(err));
     }

@@ -1,0 +1,8 @@
+.links {
+    border: 2px solid #ffffff;
+    border-radius: 0px;  
+  }
+  .links:hover {
+    border: none;
+    border-radius: 0px;
+  }

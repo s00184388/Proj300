@@ -29,6 +29,7 @@ import { Login } from "./Pages/Login";
 import EmployeeForm from "./Pages/Registering/EmployeeForm";
 import Brands from "./Pages/Brands";
 import Brand from "./Pages/Brand";
+import UserProfile from './Pages/UserProfile';
 
 const fs = new FirebaseServices();
 
@@ -105,6 +106,10 @@ class App extends Component {
       return <Rewards user={this.state.user} />;
     };
 
+    const MyProfile = props => {
+      return <UserProfile user={this.state.user} {...props} />;
+    };
+
     const MyBrand = props => {
       return <Brand user={this.state.user} {...props} />;
     };
@@ -130,6 +135,7 @@ class App extends Component {
                 <Route path="/wishlist" component={MyWishlist} />
                 <Route exact path="/brands" component={Brands} />
                 <Route path="/brands/:brandName" component={MyBrand} />
+                <Route path='/profile' component={MyProfile}></Route>
                 <PrivateRoute path={"/admin"} component={Admin} />
                 <PrivateRoute
                   path={"/companyDashboard"}

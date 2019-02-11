@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link,Redirect } from "react-router-dom";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import firebase from "firebase";
@@ -18,12 +18,15 @@ export class Navbar extends React.Component {
     this.handleLogout = this.handleLogout.bind(this);
   }
 
-  handleLogout = async event => {
-    await firebase.auth().signOut();
+  handleLogout = () => {
+    firebase.auth().signOut();
     sessionStorage.clear();
     this.setState({
       authenticated: false
     });
+    return(
+      <Redirect to='/login' />
+    ) 
   };
 
   componentDidMount() {
@@ -39,6 +42,7 @@ export class Navbar extends React.Component {
   }
 
   render() {
+  
     const Round = props => {
       var letter = "";
       var role = "";
@@ -87,9 +91,7 @@ export class Navbar extends React.Component {
                   </p>
                   <li>
                     <div className="row ml-2">
-                      <button className="btn-sm btn btn-success col-lg-5 mr-2">
-                        My Profile
-                      </button>
+                       <Link to='profile' className='btn-sm btn btn-success col-lg-5 mr-2'>My Profile</Link> 
                       <button
                         className="btn btn-sm btn-danger col-lg-5"
                         onClick={this.handleLogout}
@@ -223,6 +225,7 @@ export class Navbar extends React.Component {
                     >
                       Login
                     </Link>
+                    <Redirect to='/'></Redirect>
                   </div>
                 </div>
               </div>
