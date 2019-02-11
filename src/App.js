@@ -86,7 +86,7 @@ class App extends Component {
               user: user,
               userRole: user.role,
               userEmail: user.email,
-              coins:user.coins
+              coins: user.coins
             });
           })
         );
@@ -135,8 +135,12 @@ class App extends Component {
                 <Route path="/wishlist" component={MyWishlist} />
                 <Route exact path="/brands" component={Brands} />
                 <Route path="/brands/:brandName" component={MyBrand} />
+<<<<<<< HEAD
                 <Route path='/profile' component={MyProfile}></Route>
                 <PrivateRoute path={"/admin"} component={Admin} />
+=======
+                <Route path={"/admin"} component={Admin} />
+>>>>>>> 83fcdc618885738ed5a21685fe15c4d7e1d447cd
                 <PrivateRoute
                   path={"/companyDashboard"}
                   component={CompanyDashboard}
