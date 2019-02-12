@@ -1,5 +1,5 @@
 import React from "react";
-import { Link,Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import firebase from "firebase";
@@ -24,9 +24,7 @@ export class Navbar extends React.Component {
     this.setState({
       authenticated: false
     });
-    return(
-      <Redirect to='/login' />
-    ) 
+    return <Redirect to="/login" />;
   };
 
   componentDidMount() {
@@ -42,7 +40,6 @@ export class Navbar extends React.Component {
   }
 
   render() {
-  
     const Round = props => {
       var letter = "";
       var role = "";
@@ -85,13 +82,20 @@ export class Navbar extends React.Component {
                       </p>
                     </div>
                   </div>
-                  <p className="text-center small p-0">You have {this.props.coins} K</p>
+                  <p className="text-center small p-0">
+                    You have {this.props.coins} K
+                  </p>
                   <p className="text-center small p-0">
                     {this.props.userEmail}
                   </p>
                   <li>
                     <div className="row ml-2">
-                       <Link to='profile' className='btn-sm btn btn-success col-lg-5 mr-2'>My Profile</Link> 
+                      <Link
+                        to="profile"
+                        className="btn-sm btn btn-success col-lg-5 mr-2"
+                      >
+                        My Profile
+                      </Link>
                       <button
                         className="btn btn-sm btn-danger col-lg-5"
                         onClick={this.handleLogout}
@@ -225,7 +229,6 @@ export class Navbar extends React.Component {
                     >
                       Login
                     </Link>
-                    <Redirect to='/'></Redirect>
                   </div>
                 </div>
               </div>

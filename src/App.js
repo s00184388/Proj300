@@ -29,7 +29,7 @@ import { Login } from "./Pages/Login";
 import EmployeeForm from "./Pages/Registering/EmployeeForm";
 import Brands from "./Pages/Brands";
 import Brand from "./Pages/Brand";
-import UserProfile from './Pages/UserProfile';
+import UserProfile from "./Pages/UserProfile";
 
 const fs = new FirebaseServices();
 
@@ -135,12 +135,8 @@ class App extends Component {
                 <Route path="/wishlist" component={MyWishlist} />
                 <Route exact path="/brands" component={Brands} />
                 <Route path="/brands/:brandName" component={MyBrand} />
-<<<<<<< HEAD
-                <Route path='/profile' component={MyProfile}></Route>
-                <PrivateRoute path={"/admin"} component={Admin} />
-=======
+                <Route path="/profile" component={MyProfile} />
                 <Route path={"/admin"} component={Admin} />
->>>>>>> 83fcdc618885738ed5a21685fe15c4d7e1d447cd
                 <PrivateRoute
                   path={"/companyDashboard"}
                   component={CompanyDashboard}
@@ -156,7 +152,7 @@ class App extends Component {
               <div>
                 <PrivateRoute path="/rewards" component={MyRewards} />
                 <PrivateRoute path="/wishlist" component={MyWishlist} />
-                <PrivateRoute path={"/admin"} component={Admin} />
+                <Route path={"/admin"} component={Admin} />
                 <Route
                   path={"/companyDashboard"}
                   component={CompanyDashboard}
@@ -172,7 +168,7 @@ class App extends Component {
                 {console.log(this.state.userRole + "esti brandAdmin!")}
                 <PrivateRoute path="/rewards" component={MyRewards} />
                 <PrivateRoute path="/wishlist" component={MyWishlist} />
-                <PrivateRoute path={"/admin"} component={Admin} />
+                <Route path={"/admin"} component={Admin} />
                 <PrivateRoute
                   path={"/companyDashboard"}
                   component={CompanyDashboard}
@@ -185,7 +181,7 @@ class App extends Component {
               <div>
                 <PrivateRoute path="/rewards" component={MyRewards} />
                 <PrivateRoute path="/wishlist" component={MyWishlist} />
-                <PrivateRoute path={"/admin"} component={Admin} />
+                <Route path={"/admin"} component={Admin} />
                 <PrivateRoute
                   path={"/companyDashboard"}
                   component={CompanyDashboard}

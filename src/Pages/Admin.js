@@ -12,7 +12,7 @@ const customStyles = {
   content: {
     top: "50%",
     left: "50%",
-    right: "auto",
+    right: "30%",
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)"
@@ -27,6 +27,7 @@ class TableRow extends Component {
     };
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.submitEdit = this.submitEdit.bind(this);
   }
 
   openModal() {
@@ -35,6 +36,17 @@ class TableRow extends Component {
 
   closeModal() {
     this.setState({ modalIsOpen: false });
+  }
+
+  submitEdit(e) {
+    e.preventDefault();
+    console.log(e);
+  }
+
+  delete(e) {
+    e.preventDefault();
+    //firebaseServices.productsCollection.doc()
+    //console.log(this.state....);
   }
 
   render() {
@@ -49,8 +61,8 @@ class TableRow extends Component {
         <td key={`${row.key}percentage`}>{row.tresholdPercentage}</td>
         <td key={`${row.key}edit`}>
           <button className="btn btn-primary" onClick={this.openModal}>
-            Edit
-          </button>{" "}
+            View
+          </button>
           <Modal
             isOpen={this.state.modalIsOpen}
             onRequestClose={this.closeModal}
@@ -61,16 +73,102 @@ class TableRow extends Component {
             <h4>{row.key}</h4>
             <br />
             <form>
-              <div className="form-group">
-                <label htmlFor="nameInput">Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="nameInput"
-                  placeholder="Edit name"
-                  defaultValue={row.name}
-                />
+              <div className="row">
+                <div className="form-group">
+                  <label htmlFor="nameInput">Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="nameInput"
+                    placeholder="Edit name"
+                    defaultValue={row.name}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="descriptionInput">Description</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="descriptionInput"
+                    placeholder="Edit description"
+                    defaultValue={row.description}
+                  />
+                </div>
               </div>
+              <div className="row">
+                <div className="form-group">
+                  <label htmlFor="cateogoryInput">Cateogory</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="cateogoryInput"
+                    placeholder="Edit cateogory"
+                    defaultValue={row.cateogory}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="priceInput">Price</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="priceInput"
+                    placeholder="Edit price"
+                    defaultValue={row.price}
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <div className="form-group">
+                  <label htmlFor="stockInput">Stock</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="priceInput"
+                    placeholder="Edit price"
+                    defaultValue={row.price}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="tresholdPercentageInput">
+                    Treshold Percentage
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="tresholdPercentageInput"
+                    placeholder="Edit tresholdPercentage"
+                    defaultValue={row.tresholdPercentage}
+                  />
+                </div>
+              </div>
+              <div className="row">
+                <div className="form-group">
+                  <label htmlFor="companyIDInput">CompanyID</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="companyIDInput"
+                    placeholder="Edit companyID"
+                    defaultValue={row.companyID}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="pictureInput">Picture</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="pictureInput"
+                    placeholder="Edit picture"
+                    defaultValue={row.picture}
+                  />
+                </div>
+              </div>
+              <button className="btn btn-success" onClick={this.submitEdit}>
+                Submit
+              </button>
+              <button className="btn btn-danger" onClick={this.delete}>
+                Delete
+              </button>
             </form>
           </Modal>
         </td>
