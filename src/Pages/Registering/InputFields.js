@@ -11,6 +11,7 @@ const InputField=(props)=>{
                 onChange={props.onChange}
                 value={props.value}
                 />
+            <div className="small">{props.error}</div>
         </div>
     )
 }

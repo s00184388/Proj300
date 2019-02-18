@@ -623,7 +623,7 @@ export default class FirebaseServices {
           .get()
           .then(querySnapshot => {
             if (querySnapshot.empty) {
-              reject(new Error("no company found"));
+              reject(new Error("Please check your inputs!"));
             } else {
               var company = {};
               querySnapshot.forEach(doc => {
@@ -650,7 +650,7 @@ export default class FirebaseServices {
             }
           });
       } else {
-        reject(new Error("no company name"));
+        reject(new Error("Please choose a company!"));
       }
     });
   };
