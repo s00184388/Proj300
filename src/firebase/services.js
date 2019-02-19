@@ -301,7 +301,8 @@ export default class FirebaseServices {
                   deviceID,
                   companyID,
                   points,
-                  coins
+                  coins,
+                  approved
                 } = doc.data();
                 var user = {
                   key: doc.id,
@@ -313,7 +314,8 @@ export default class FirebaseServices {
                   deviceID,
                   companyID,
                   points,
-                  coins
+                  coins,
+                  approved
                 };
                 resolve(user);
               });
@@ -353,7 +355,8 @@ export default class FirebaseServices {
                 deviceID,
                 companyID,
                 points,
-                coins
+                coins,
+                approved
               } = doc.data();
               user = {
                 key: doc.id,
@@ -365,7 +368,8 @@ export default class FirebaseServices {
                 deviceID,
                 companyID,
                 points,
-                coins
+                coins,
+                approved
               };
             });
             console.log(user);
@@ -394,7 +398,8 @@ export default class FirebaseServices {
                 deviceID,
                 companyID,
                 points,
-                coins
+                coins,
+                approved
               } = doc.data();
               user = {
                 key: doc.id,
@@ -406,7 +411,8 @@ export default class FirebaseServices {
                 deviceID,
                 companyID,
                 points,
-                coins
+                coins,
+                approved
               };
             });
             observer.next(user);
@@ -431,7 +437,8 @@ export default class FirebaseServices {
             deviceID,
             companyID,
             points,
-            coins
+            coins,
+            approved
           } = doc.data();
           var user = {
             key: doc.id,
@@ -443,7 +450,8 @@ export default class FirebaseServices {
             deviceID,
             companyID,
             points,
-            coins
+            coins,
+            approved
           };
           users.push(user);
         });
