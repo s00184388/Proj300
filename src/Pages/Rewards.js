@@ -11,6 +11,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import FirebaseServices from "../firebase/services";
 import Modal from "react-modal";
 import ProductModal from "../Components/ProductModal";
+import ReactLoading from "react-loading";
 
 const firebaseServices = new FirebaseServices();
 Modal.setAppElement("#root");
@@ -489,7 +490,8 @@ class ProductContainer extends React.Component {
       wishlist: [],
       companyProductList: [],
       sponsoredProductList: [],
-      company: {}
+      company: {},
+      fetchInProgress: true
     };
     this.subscriptions = [];
     this.isInWishlist = this.isInWishlist.bind(this);
@@ -497,6 +499,7 @@ class ProductContainer extends React.Component {
     this.userKey = "";
   }
   componentWillReceiveProps(nextProps) {
+    this.setState({ fetchInProgress: true });
     this.userKey = nextProps.user.key;
     this.subscriptions.push(
       firebaseServices.getWishlist(this.userKey).subscribe(items => {
@@ -510,14 +513,20 @@ class ProductContainer extends React.Component {
                 firebaseServices
                   .getProducts("companyID", this.state.company.key)
                   .subscribe(products =>
-                    this.setState({ companyProductList: products })
+                    this.setState({
+                      companyProductList: products,
+                      fetchInProgress: false
+                    })
                   )
               );
               this.subscriptions.push(
                 firebaseServices
                   .getSponsoredProducts()
                   .subscribe(sponsoredProds => {
-                    this.setState({ sponsoredProductList: sponsoredProds });
+                    this.setState({
+                      sponsoredProductList: sponsoredProds,
+                      fetchInProgress: false
+                    });
                   })
               );
             })
@@ -568,6 +577,7 @@ class ProductContainer extends React.Component {
     var sponsoredProducts = this.state.sponsoredProductList;
     var products = companyProducts.concat(sponsoredProducts);
     const wishlist = this.props.wishlist;
+    const fetchInProgress = this.state.fetchInProgress;
     if (this.props.affordableChecked) {
       products = products.filter(this.filterbyAffordable(userCoins));
     }
@@ -595,7 +605,22 @@ class ProductContainer extends React.Component {
         <Product product={product} user={user} wishlist={wishlist} />
       </div>
     ));
-    return <div className="row p-0">{listProducts}</div>;
+    return (
+      <div>
+        {fetchInProgress ? (
+          <div className="col d-flex justify-content-center">
+            <ReactLoading
+              type={"spinningBubbles"}
+              color={"#fff"}
+              height={640}
+              width={256}
+            />
+          </div>
+        ) : (
+          <div className="row p-0">{listProducts}</div>
+        )}
+      </div>
+    );
   }
 }
 
