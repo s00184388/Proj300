@@ -207,6 +207,25 @@ export default class FirebaseServices {
     });
   };
 
+  getAllWishlists = () => {
+    return new Observable(observer => {
+      this.wishlistsCollection.onSnapshot(querySnapshot => {
+        const products = [];
+        querySnapshot.forEach(doc => {
+          const { userID, productID, gainedCoins } = doc.data();
+          products.push({
+            key: doc.id,
+            doc,
+            userID,
+            productID,
+            gainedCoins
+          });
+        });
+        observer.next(products);
+      });
+    });
+  };
+
   getWishListItems = userID => {
     return new Observable(observer => {
       var wishlist = [];
@@ -282,7 +301,8 @@ export default class FirebaseServices {
                   deviceID,
                   companyID,
                   points,
-                  coins
+                  coins,
+                  approved
                 } = doc.data();
                 var user = {
                   key: doc.id,
@@ -294,7 +314,8 @@ export default class FirebaseServices {
                   deviceID,
                   companyID,
                   points,
-                  coins
+                  coins,
+                  approved
                 };
                 resolve(user);
               });
@@ -334,7 +355,8 @@ export default class FirebaseServices {
                 deviceID,
                 companyID,
                 points,
-                coins
+                coins,
+                approved
               } = doc.data();
               user = {
                 key: doc.id,
@@ -346,7 +368,8 @@ export default class FirebaseServices {
                 deviceID,
                 companyID,
                 points,
-                coins
+                coins,
+                approved
               };
             });
             console.log(user);
@@ -375,7 +398,8 @@ export default class FirebaseServices {
                 deviceID,
                 companyID,
                 points,
-                coins
+                coins,
+                approved
               } = doc.data();
               user = {
                 key: doc.id,
@@ -387,7 +411,8 @@ export default class FirebaseServices {
                 deviceID,
                 companyID,
                 points,
-                coins
+                coins,
+                approved
               };
             });
             observer.next(user);
@@ -396,6 +421,42 @@ export default class FirebaseServices {
         console.log("no email to search with");
         observer.next({});
       }
+    });
+  };
+
+  getAllUsers = () => {
+    return new Observable(observer => {
+      this.usersCollection.onSnapshot(querySnapshot => {
+        var users = [];
+        querySnapshot.forEach(doc => {
+          const {
+            firstName,
+            lastName,
+            role,
+            email,
+            deviceID,
+            companyID,
+            points,
+            coins,
+            approved
+          } = doc.data();
+          var user = {
+            key: doc.id,
+            doc,
+            firstName,
+            lastName,
+            role,
+            email,
+            deviceID,
+            companyID,
+            points,
+            coins,
+            approved
+          };
+          users.push(user);
+        });
+        observer.next(users);
+      });
     });
   };
 
@@ -430,14 +491,23 @@ export default class FirebaseServices {
       this.connectedDevicesCollection.onSnapshot(querySnapshot => {
         const devices = [];
         querySnapshot.forEach(doc => {
-          const { apiKey, calories, distance, steps } = doc.data();
+          const {
+            api,
+            apiClientID,
+            distance,
+            userID,
+            accessToken,
+            refreshToken
+          } = doc.data();
           devices.push({
             key: doc.id,
             doc,
-            apiKey,
-            calories,
+            api,
+            apiClientID,
             distance,
-            steps
+            userID,
+            accessToken,
+            refreshToken
           });
         });
         observer.next(devices);

@@ -6,6 +6,7 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
 import FirebaseServices from "../firebase/services";
+import ReactLoading from "react-loading";
 
 library.add(faInfoCircle);
 
@@ -425,16 +426,18 @@ export class Wishlist extends React.Component {
     this.subscriptions = [];
     this.state = {
       products: [],
-      user: props.user
+      user: props.user,
+      fetchInProgress: true
     };
   }
   componentDidMount() {
-    console.log(this.state.user);
-
+    this.setState({ fetchInProgress: true });
     this.subscriptions.push(
       firebaseServices
         .getWishListItems(this.state.user.key)
-        .subscribe(prod => this.setState({ products: prod }))
+        .subscribe(prod =>
+          this.setState({ products: prod, fetchInProgress: false })
+        )
     );
   }
 
@@ -445,30 +448,46 @@ export class Wishlist extends React.Component {
   render() {
     const user = this.state.user;
     const userID = user.key;
+    const fetchInProgress = this.state.fetchInProgress;
     const listProd = this.state.products.map(product => (
       <Products product={product} key={product.key} user={user} />
     ));
     return (
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-md-8 py-4">{listProd}</div>
-          <div className="col-md-2">
-            <a
-              href={`https://stravakudos.herokuapp.com/strava/authorize?userID=${userID}`}
-              className="btn btn-primary"
-            >
-              Connect with Strava
-            </a>
+      <div
+        className={
+          fetchInProgress
+            ? "container-fluid d-flex justify-content-center"
+            : "container-fluid"
+        }
+      >
+        {fetchInProgress ? (
+          <ReactLoading
+            type={"spinningBubbles"}
+            color={"#fff"}
+            height={640}
+            width={256}
+          />
+        ) : (
+          <div className="row">
+            <div className="col-md-8 py-4">{listProd}</div>
+            <div className="col-md-2">
+              <a
+                href={`https://stravakudos.herokuapp.com/strava/authorize?userID=${userID}`}
+                className="btn btn-primary"
+              >
+                Connect with Strava
+              </a>
+            </div>
+            <div className="col-md-2">
+              <a
+                href={`https://stravakudos.herokuapp.com/fitbit/authorize?userID=${userID}`}
+                className="btn btn-primary"
+              >
+                Connect with Fitbit
+              </a>
+            </div>
           </div>
-          <div className="col-md-2">
-            <a
-              href={`https://stravakudos.herokuapp.com/fitbit/authorize?userID=${userID}`}
-              className="btn btn-primary"
-            >
-              Connect with Fitbit
-            </a>
-          </div>
-        </div>
+        )}
       </div>
     );
   }
