@@ -5,6 +5,7 @@ import firebase from "../../firebase/firebase";
 import  InputField from  '../Registering/InputFields'
 import Radio from "../Registering/Checkboxes";
 import { Link } from "react-router-dom";
+import { Alert,AlertContainer } from "react-bs-notifier";
 
 const fs = new FirebaseServices();
 
@@ -14,6 +15,7 @@ export class EmployeeForm extends Component {
       this.state = {
         fields: {},
         errors:{},
+        created:false,
         //employee details
         selectedOption:'employee',
         coins:0,
@@ -22,19 +24,8 @@ export class EmployeeForm extends Component {
         deviceID:'',
         role:'employee',
         //company
-        companyName:'',
-        companyAddress:'',
-        companyPhoneNumber:'',
-        companyEmail:'companyAdmin@gmail.com',
-        //
-        brandName:'',
-        brandAddress:'',
-        brandPhoneNumber:'',
-        brandEmail:'brandAdmin@gmail.com',
-        brandPicture:'http://imgur.com',
-        brandDescription:'Product Description',
-        //validation errors
         authError:'',
+        companyError:'',
       }
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
@@ -46,71 +37,90 @@ export class EmployeeForm extends Component {
       //each field from the form is stored in the  state
       let fields = this.state.fields;
       let errors = {};
-      let formIsValid = true;
-
+      let formIsValid;  
+      
       if (!fields["firstName"]) {
-        formIsValid = false;
-        errors["firstName"] = "*Please enter your first name.";
-      }
+          formIsValid=false;
+          errors["firstName"] = "*Please enter your first name.";
+         
+        }
 
       if (typeof fields["firstName"] !== "undefined") {
         if (!fields["firstName"].match(/^[a-zA-Z ]*$/)) {
-          formIsValid = false;
+          formIsValid = false
           errors["firstName"] = "*Please enter alphabet characters only.";
         }
       }
 
       if (!fields["lastName"]) {
-        formIsValid = false;
+        formIsValid = false
         errors["lastName"] = "*Please enter your last name.";
       }
 
       if (typeof fields["lastName"] !== "undefined") {
         if (!fields["lastName"].match(/^[a-zA-Z ]*$/)) {
-          formIsValid = false;
+          formIsValid = false
           errors["lastName"] = "*Please enter alphabet characters only.";
+       
         }
       }
 
+      //general user mail
       if (!fields["email"]) {
         formIsValid = false;
         errors["email"] = "*Please enter your email-ID.";
       }
 
-      if (typeof fields["email"] !== "undefined") {
+      //companyEmail/brandEmail and employee email
+      if (typeof fields["email"] !== "undefined" || 
+          typeof fields["companyEmail"] !== "undefined"||  
+          typeof fields["brandEmail"] !== "undefined") {
         //regular expression for email validation
         var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
         if (!pattern.test(fields["email"])) {
           formIsValid = false;
           errors["email"] = "*Please enter valid email-ID.";
         }
-      }
-
-      //for company email
-      if (!fields["companyEmail"]) {
-        formIsValid = false;
-        errors["companyEmail"] = "*Please enter company's email.";
-      }
-
-      if (typeof fields["companyEmail"] !== "undefined") {
-        //regular expression for email validation
-        var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
         if (!pattern.test(fields["companyEmail"])) {
           formIsValid = false;
-          errors["companyEmail"] = "*Please enter valid email";
+          errors["companyEmail"] = "*Please enter valid email-ID.";
         }
       }
 
-      if (!fields["companyName"]) {
-        formIsValid = false;
-        errors["companyName"] = "*Please enter Company's name.";
-      }
+      //for company email
+      if(this.state.role==='companyAdmin')
+      {
+        if (!fields["companyEmail"]) {
+          formIsValid = false;
+          errors["companyEmail"] = "*Please enter Company's email"
+        }
 
-      if (!fields["companyAddress"]) {
-        formIsValid = false;
-        errors["companyAddress"] = "*Please enter Company's adress.";
-      }
+        if (!fields["companyName"]) {
+          formIsValid = false;
+          errors["companyName"] = "*Please enter Company's name."; 
+        }
 
+        if (!fields["companyAddress"]) {
+          formIsValid = false;
+          errors["companyAddress"] = "*Please enter Company's adress.";
+        }
+      }else
+      if(this.state.role==='brandAdmin'){
+          if (!fields["brandName"]) {
+            formIsValid = false;
+            errors["brandName"] = "*Please enter Brand's name.";
+          }
+
+          if (!fields["brandAddress"]) {
+            formIsValid = false;
+            errors["brandAddress"] = "*Please enter Brand's adress.";
+          }
+
+          if (!fields["brandEmail"]) {
+            formIsValid = false;
+            errors["brandEmail"] = "*Please enter brand's email."; 
+          }
+      }
       if (!fields["pwd1"]) {
         formIsValid = false;
         errors["pwd1"] = "*Please enter your password.";
@@ -126,39 +136,35 @@ export class EmployeeForm extends Component {
           errors["pwd1"] = "*Passwords don't match.";
           errors["pwd2"] = "*Passwords don't match.";
       }
-      
+     
       this.setState({
-        errors: errors
+        errors: errors,
       });
-      return formIsValid===true;
-    }
+      return true;
+       
+  }
 
     handleChange = e => {
       let fields = this.state.fields;
      // let newState = {};
       fields[e.target.name] = e.target.value;
       this.setState(fields);
+      console.log(this.state.fields);
     };
 
     createAuthUser=()=>{
-      var err='';
       console.log(this.state.fields);
       firebase.auth().createUserWithEmailAndPassword(this.state.fields.email, this.state.fields.pwd1)
           .then((user) => {
             this.props.history.push('/');
-            //this.props.role=this.state.role;
-          }).catch((error) => {
-            this.err=error;
-            console.log(this.err);
-            //this.setState({ authError: error });
-          });          
-      
-      if(err!=='' || undefined){
-        return false;
+            this.props.role=this.state.role;
+          }).catch((err)=>{
+            this.setState({ authError: err.message }, () => {
+              console.log(this.state.authError, 'error');
+              return false;
+            });
+          })          
       }
-      else return true;
-    }
-
 
     handleOptionChange = changeEvent => {
       this.setState({
@@ -168,117 +174,121 @@ export class EmployeeForm extends Component {
         });
       console.log(changeEvent.target.value)
     };
-  
     handleSubmit=e=>{
       e.preventDefault();   
-     if(this.validate())
-      {
-        let fields = {};
-          /*fields["firstName"] =this.state.fields.firstName;
-          fields["lastName"] = this.state.fields.lastName;
-          fields["email"] = this.state.fields.email;
-          fields["pwd1"] =this.state.fields.pwd1;
-          fields["pwd2"] =this.state.fields.pwd2;*/
+      let fields = {};
               fields["firstName"] =this.state.fields.firstName;
               fields["lastName"] = this.state.fields.lastName;
               fields["email"] = this.state.fields.email;
               fields["pwd1"] =this.state.fields.pwd1;
               fields["pwd2"] =this.state.fields.pwd2;
+              //company fields
               fields["companyName"]=this.state.fields.companyName;
               fields["companyEmail"]=this.state.fields.companyEmail;
               fields["companyAdress"]=this.state.fields.companyAddress;
-              fields["companyPhoneNumber"]=this.state.fields.companyPhoneNumber;
-                 
-          if(this.state.role==='employee'){
-            fs.getCompanyByName(this.state.companyName)
-            .then(company=>{
-              let user = {
-                firstName:fields["firstName"],
-                lastName: fields["lastName"],
-                email: fields["email"],
-                coins:0,
-                companyID:company.key,
-                deviceID:this.state.deviceID,
-                points:0,
-                role:this.state.role
-            }
-            console.log(this.createAuthUser());
-            if(this.createAuthUser()!==false)
-            {
-              fs.createUser(user);
-            }
-            })
-            .catch((err)=>{
-              this.setState({error:err}); 
-              alert(this.state.error);
-            });
-      }
-    else
-        if(this.state.role==='companyAdmin')
-        {
-          let user = {
-              firstName:fields["firstName"],
-              lastName: fields["lastName"],
-              email:fields["email"],
-              role:this.state.role
-          }          
-          console.log('Step1.User data for company inserted in db');
-          
-          fs.createUser(user).then(adminUserID=>{
-              let company={
-                name:fields["companyName"],
-                address:fields["companyAdress"],
-                //phoneNumber:fields["companyPhoneNumber"],
-                email:fields["companyEmail"],
-                adminUserID:adminUserID
+              //brand fields;
+              fields["brandName"]=this.state.fields.brandName;
+              fields["brandAddress"]=this.state.fields.brandAddress;
+              fields["brandEmail"]=this.state.fields.brandEmail;  
+              console.log(this.validate());   
+              if(this.validate())
+              {
+                if(this.state.role==='employee')
+                  {
+                    fs.getCompanyByName(this.state.companyName)
+                    .then(company=>{
+                      let user = {
+                        firstName:fields["firstName"],
+                        lastName: fields["lastName"],
+                        email: fields["email"],
+                        coins:0,
+                        companyID:company.key,
+                        deviceID:this.state.deviceID,
+                        points:0,
+                        role:this.state.role
+                    }
+                    this.createAuthUser(user);
+                  }).catch((err)=>{
+                    this.setState({ companyError: err.message}, () => {
+                      console.log(this.state.companyError, 'error');
+                    });
+                  }) 
+                }     
+            else 
+              if(this.state.role==='companyAdmin')
+              {
+                  let user = {
+                      firstName:fields["firstName"],
+                      lastName: fields["lastName"],
+                      email:fields["email"],
+                      role:this.state.role
+                  }          
+                    console.log('Step1.User data for company inserted in db');
+                    fs.createUser(user).then(adminUserID=>{
+                        let company={
+                          name:fields["companyName"],
+                          address:fields["companyAdress"],
+                          email:fields["companyEmail"],
+                          adminUserID:adminUserID
+                        }
+                        fs.createCompany(company);
+                        this.createAuthUser();
+                      })
+                      .catch((err)=>{
+                        this.setState({err:err.message}); 
+                      });
+                  console.log(this.state.role);
+                    }
+                else
+                if(this.state.role==='brandAdmin'){   
+                console.log('brand ad')   
+                console.log('Step1. Brands')          
+                
+                let user = {
+                  firstName:fields["firstName"],
+                  lastName: fields["lastName"],
+                  email:fields["email"],
+                  role:this.state.role
+                } 
+                fs.createUser(user).then(adminUserID=>{
+                    let brand={
+                      name:fields["brandName"],
+                      address:fields["brandAddress"],
+                      email:fields["brandEmail"],
+                      adminUserID:adminUserID
+                    }
+                  fs.createBrand(brand);
+                  this.createAuthUser();
+                  })
+                  .catch((err)=>{
+                    this.setState({error:err}); 
+                    alert(this.state.error);
+                  });
               }
-              fs.createCompany(company);
-              this.createAuthUser();
-              console.log('Step2.Company created');
-            })
-            .catch((err)=>{
-              this.setState({error:err}); 
-              alert(this.state.error);
-            });
-        }
-      }
-        else 
-
-        if(this.state.role==='brandAdmin'){ 
-          
-          let user = {
-            firstName:this.state.firstName,
-            lastName: this.state.lastName,
-            email:this.state.email,
-            role:this.state.role
+            }
           }
-          //
-          fs.createUser(user).then(adminUserID=>{
-              let brand={
-                name:this.state.brandName,
-                address:this.state.brandAddress,
-                phoneNumber:this.state.brandPhoneNumber,
-                email:this.state.brandEmail,
-                picture:this.state.brandPicture,
-                description:this.state.brandDescription,
-                adminUserID:adminUserID
-              }
-            fs.createBrand(brand);
-            this.createAuthUser();
-            })
-            .catch(err=>console.log(err));
-        }
-    }
+        
     render(){
         const companies = ['Overstock', 'Kudos Health', 'DHL', 'Continental'];
         const options = companies.map(opt =>
             <option key={opt}>{opt}</option>)
         const{firstName,lastName,email,pwd1,pwd2}=this.state.fields;
         const{role}=this.state;
-        const {companyEmail,brandPhoneNumber,companyAddress,companyName,brandAddress,brandName} = this.state.fields;
+        const {companyEmail,brandEmail,companyAddress,companyName,brandAddress,brandName} = this.state.fields;
         //employee selection
      return( 
           <div className="container pt-5">
+              {this.state.companyError!='' ?(
+                <AlertContainer>
+                    <Alert type="danger">{this.state.companyError}</Alert>
+                </AlertContainer>
+              ):null
+              }
+              {this.state.authError!='' ?(
+                <AlertContainer>
+                    <Alert type="danger">{this.state.authError}</Alert>
+                </AlertContainer>
+              ):null}
               <div className='form-register py-3'>
                 <div className='text-white text-center pt-2'>
                     <h4 className='text-white'>Sign Up as</h4>
@@ -343,37 +353,40 @@ export class EmployeeForm extends Component {
                           </div> :
                           (role==="brandAdmin" ?
                           <div className='container'>
-                       <form onSubmit={this.handleSubmit}>
-                         <div className="row">
-                                <InputField name='firstName' type='text' placeholder='First name' value={firstName || ''} onChange={this.handleChange}></InputField>
-                                <InputField name='lastName' type='text' placeholder='Last name' value={lastName || ''} onChange={this.handleChange}></InputField>
-                         </div>
-                         <div className='row'>
-                           <InputField name='email' type='text' placeholder='Personal Email' value={email || ''} onChange={this.handleChange}></InputField>
-                           <InputField name='brandName' type='text' placeholder='Brand Name' value={brandName} onChange={this.handleChange}></InputField>
-                         </div>
-                         <div className='row'>
-                           <InputField name='brandPhoneNumber' type='text' placeholder='Phone Number' value={brandPhoneNumber} onChange={this.handleChange}></InputField>
-                           <InputField name='brandAddress'type='text' placeholder='Brand Adress' value={brandAddress} onChange={this.handleChange}></InputField>
-                         </div>
-                         <div className='row'>
-                           <InputField name='pwd1' type='password' placeholder='Password' value={pwd1} onChange={this.handleChange}></InputField>
-                           <InputField name='pwd2' type='password' placeholder='Confirm Password' value={pwd2} onChange={this.handleChange}></InputField>
-                         </div>
-                         <div className='row mx-auto pt-2'>
-                           <div className='col-lg-4'>
-                             <button className="btn btn-warning btn-sm col-lg-12  text-white btn-sm" id="formSubmit" type="submit" onClick={this.handleSubmit}>
-                               Submit
-                            </button>
-                           </div>
-                           <div className='col-lg-4'>
-                            
-                           </div>
-                           <div className='col-lg-4'>
-                             <Link to='/login' className='btn btn-warning btn-sm text-white col-lg-12'>Back to Login</Link>
-                           </div>
-                         </div>
-                       </form>
+                          <h6 className='text-white'>User Data</h6>
+                            <form onSubmit={this.handleSubmit}>
+                              <div className="row">
+                                      <InputField name='firstName' type='text' placeholder='First name' value={firstName || ''} onChange={this.handleChange} error={this.state.errors.firstName} ></InputField>
+                                      <InputField name='lastName' type='text' placeholder='Last name' value={lastName || ''} onChange={this.handleChange} error={this.state.errors.lastName}></InputField>
+                              </div>
+                              <div className='row'>
+                                <InputField name='email' type='text' placeholder='Personal Email' value={email || ''} onChange={this.handleChange} error={this.state.errors.email}></InputField>
+                                <InputField name='brandName' type='text' placeholder='Brand Name' value={brandName|| ''} onChange={this.handleChange} error={this.state.errors.brandName}></InputField>
+                              </div>
+                              <h6 className='text-white'>Brand Details</h6>
+                              <div className='row'>
+                                <InputField name='brandEmail' type='text' placeholder='Brand Email' value={brandEmail || ''} onChange={this.handleChange} error={this.state.errors.brandEmail}></InputField>
+                                <InputField name='brandAddress'type='text' placeholder='Brand Address' value={brandAddress || ''} onChange={this.handleChange} error={this.state.errors.brandAddress}></InputField>
+                              </div>
+                              <div className='row'>
+                                <InputField name='pwd1' type='password' placeholder='Password' value={pwd1 || ''} onChange={this.handleChange} error={this.state.errors.pwd1}></InputField>
+                                <InputField name='pwd2' type='password' placeholder='Confirm Password' value={pwd2 || ''} onChange={this.handleChange} error={this.state.errors.pwd2}></InputField>
+                              </div>
+                              <hr></hr>
+                              <div className='row mx-auto pt-2'>
+                                <div className='col-lg-4'>
+                                  <button className="btn btn-warning btn-sm col-lg-12  text-white btn-sm" id="formSubmit" type="submit" onClick={this.handleSubmit}>
+                                    Submit
+                                  </button>
+                                </div>
+                                <div className='col-lg-4'>
+                                  
+                                </div>
+                                <div className='col-lg-4'>
+                                  <Link to='/login' className='btn btn-warning btn-sm text-white col-lg-12'>Back to Login</Link>
+                                </div>
+                              </div>
+                            </form>
                      </div> : <div className='container'>
                               <h6 className='text-white'>User Data</h6>
                               <form onSubmit={this.handleSubmit}>
@@ -385,7 +398,6 @@ export class EmployeeForm extends Component {
                                   <InputField name='email' type='text' placeholder='User Email' value={email || ''} onChange={this.handleChange} error={this.state.errors.email}></InputField>
                                   <InputField name='companyName' type='text' placeholder='Company Name' value={companyName || ''} onChange={this.handleChange} error={this.state.errors.companyName}></InputField>
                                 </div>
-                                <hr></hr>
                                 <h6 className='text-white'>Company Details</h6>
                                 <div className='row'>
                                   <InputField name='companyEmail' type='text' placeholder='Company email' value={companyEmail || ''} onChange={this.handleChange} error={this.state.errors.companyEmail}></InputField>
@@ -395,6 +407,7 @@ export class EmployeeForm extends Component {
                                   <InputField name='pwd1'  type='password' placeholder='Password' value={pwd1 || ''} onChange={this.handleChange} error={this.state.errors.pwd1}></InputField>
                                   <InputField name='pwd2' type='password' placeholder='Confirm Password' value={pwd2 || ''} onChange={this.handleChange} error={this.state.errors.pwd2}></InputField>
                                 </div>
+                                <hr></hr>
                                 <div className='row mx-auto pt-2'>
                                   <div className='col-lg-4'>
                                     <button className="btn btn-warning btn-sm col-lg-12  text-white btn-sm" id="formSubmit" type="submit" onClick={this.handleSubmit}>
