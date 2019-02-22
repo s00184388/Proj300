@@ -1,11 +1,20 @@
-.centered {
-    position: fixed;
+/*.centered {
+    position:fixed;
     top: 50%;
-    left: 50%;
-    /* bring your own prefixes */
-    transform: translate(-50%, -50%);
-  }
+    left:50%;
+    transform: translate(-50%,-50%);
+    width: 400px;
+    height: 400px;
+  }*/
 
   .btnColor{
       background-color: #FFCB2B;
   }
+
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: auto;
+  top: 50%;
+}

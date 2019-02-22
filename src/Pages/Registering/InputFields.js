@@ -2,7 +2,7 @@ import React from 'react';
 
 const InputField=(props)=>{
     return(
-        <div className='form-group input-group-sm col-sm-6'>
+        <div className='form-group input-group-sm col-sm'>
             <input
                 className="form-control"
                 name={props.name}

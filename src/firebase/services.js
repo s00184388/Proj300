@@ -271,7 +271,7 @@ export default class FirebaseServices {
           .get()
           .then(snapshot => {
             if (snapshot.empty) {
-              reject(new Error("no email found"));
+              reject(new Error("*No email found"));
             } else {
               snapshot.forEach(doc => {
                 const {
@@ -301,11 +301,11 @@ export default class FirebaseServices {
             }
           })
           .catch(err => {
-            console.log("Error getting documents", err);
+            console.log("*Error getting documents", err);
             reject(err);
           });
       } else {
-        reject(new Error("bad email"));
+        reject(new Error("*No email found"));
       }
     });
   };
@@ -683,7 +683,8 @@ export default class FirebaseServices {
           .add(user)
           .then(docRef => resolve(docRef.id))
           .catch(err => {
-            console.log(err);
+            alert('Auth:' + err);
+            //console.log(err);
             reject(err);
           });
       } else {

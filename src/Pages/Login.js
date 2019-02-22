@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import "./CssPages/Login.css";
 import fire from "firebase";
 import FirebaseServices from "../firebase/services";
-
 const fs = new FirebaseServices();
+
 
 export class Login extends Component {
   constructor(props){
@@ -14,6 +14,7 @@ export class Login extends Component {
       email:'',
       password:'',
       error:'',
+      AuthPass:'',
       authenticated:'false',
       searchedUser:props.searchedUser,
     };
@@ -44,14 +45,15 @@ export class Login extends Component {
         console.log(this.state.searchedUser);        
       })
       .catch((error)=>{
-        console.log(error)
+        this.setState({
+          AuthPass:error.message,
+        })
       });
     })
     .catch(err=>{
       console.log(err);
-      this.setState({error: err,
+      this.setState({error: err.message,
       authenticated:false})
-      alert(err.message);
     });
     console.log(this.state.error);
   }
@@ -59,16 +61,12 @@ export class Login extends Component {
     const { email, password} = this.state;
   
     return (
-      <div className="container">
-            <div className="card col-lg-4 centered registerCard">
-                <div className="card-block">
-                  <div className="card-title text-center text-white pt-2">
-                      <h4>Login</h4>
-                      <hr></hr>
-                  </div>
-                  <div className="card-body">
-                      <form className="mx-auto" onSubmit={this.handleSubmit}>
-                          <div className="form-group  input-group-sm ">
+      <div className='container pt-5'>
+        <div className='form-signin py-3'>
+         <h4 className='text-white text-center' >Please Sign In</h4>
+              <hr />
+              <form className="mx-auto pt-4" onSubmit={this.handleSubmit}>
+                   <div className="form-group  input-group-sm">
                               <input
                                   id="email"
                                   className="form-control"
@@ -78,6 +76,9 @@ export class Login extends Component {
                                   onChange={this.handleChange}
                                   value={email}
                                    />
+                                  { this.state.error?(
+                              <div className="small text-white text-center">{this.state.error}</div>
+                            ):null}
                           </div>
                           <div className="form-group input-group-sm">
                             <input
@@ -89,25 +90,22 @@ export class Login extends Component {
                               onChange={this.handleChange}
                               value={password}
                             />
+                            { this.state.AuthPass?(
+                              <div className="small text-white text-center">{'*' + this.state.AuthPass}</div>
+                            ):null}
                           </div>
-                          <div className='row mx-auto pt-2'>
-                                <div className='col-lg-5'>
-                                  <button className="btn btn-warning btn-sm col-lg-12  text-white btn-sm" id="formSubmit" type="submit" onClick={this.handleSubmit}>
-                                    Login
-                                  </button>
-                                </div>
-                                <div className='col-lg-2'>
-                                  <p className='text-white'>OR</p>
-                                </div>
-                                <div className='col-lg-5'>
-                                  <Link to='/register' className='btn btn-warning btn-sm text-white col-lg-12'>Register</Link>
-                                </div>
-                          </div> 
-                      </form>
-                  </div>
-                </div>
-            </div>
-        </div>
+                          <div className='d-flex justify-content-center pt-3'>
+                            <button className="btn btn-warning btn-sm text-white col-lg-12" id="formSubmit" type="submit" onClick={this.handleSubmit}>
+                                Login
+                            </button>
+                          </div>
+                          <p className='pt-4 text-white text-center'>No account yet? Sign up on KudosHealth.</p>                             
+                          <div className='d-flex justify-content-center '>
+                            <Link to='/register' className='btn btn-warning btn-sm text-white col-lg-12'>Register</Link>
+                          </div>   
+                    </form>
+               </div>
+         </div>
     );
   }
 }

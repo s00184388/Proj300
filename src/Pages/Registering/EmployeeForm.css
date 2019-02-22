@@ -1,6 +1,7 @@
-.registerCard{
-    background-color: #01AEF0;
-    border-color: beige;
-    border: 2px  solid beige;
-
-}
+.form-register {
+    width: 100%;
+    max-width: 600px;
+    padding: 15px;
+    margin: auto;
+    top: 50%;
+  }
