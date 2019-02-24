@@ -26,11 +26,12 @@ export class EmployeeForm extends Component {
       //company
       authError: "",
       companyError: "",
-      companies: []
+      companies: [],
+      brands: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-
+    this.nameFree = this.nameFree.bind(this);
     this.subscriptions = [];
   }
 
@@ -216,6 +217,28 @@ export class EmployeeForm extends Component {
     });
     console.log(changeEvent.target.value);
   };
+
+  nameFree(name, role) {
+    let found = false;
+    console.log("Comparing:" + name);
+    if (role === "company") {
+      this.state.companies.forEach(comp => {
+        if (comp.name === name) {
+          console.log("found " + comp.name);
+          found = true;
+        }
+      });
+    } else if (role === "brand") {
+      this.state.brands.forEach(br => {
+        if (br.name === name) {
+          found = true;
+        }
+      });
+    }
+    if (!found) return true;
+    else return false;
+  }
+
   handleSubmit = e => {
     e.preventDefault();
     let fields = {};
@@ -267,9 +290,13 @@ export class EmployeeForm extends Component {
           address: fields["companyAdress"],
           email: fields["companyEmail"]
         };
-        console.log("Step1.User data for company inserted in db");
+        if (this.nameFree(fields["companyName"], "company")) {
+          console.log("Step1.User data for company inserted in db");
+          this.createAuthUser(user, company, null);
+        } else {
+          alert("There is already a company with that name");
+        }
 
-        this.createAuthUser(user, company, null);
         console.log(this.state.role);
       } else if (this.state.role === "brandAdmin") {
         console.log("brand ad");
@@ -286,7 +313,13 @@ export class EmployeeForm extends Component {
           address: fields["brandAddress"],
           email: fields["brandEmail"]
         };
-        this.createAuthUser(user, null, brand);
+
+        if (this.nameFree(fields["brandName"], "brand")) {
+          console.log("Step1.User data for bramd inserted in db");
+          this.createAuthUser(user, null, brand);
+        } else {
+          alert("There is already a brand with that name");
+        }
       }
     }
   };
@@ -296,6 +329,9 @@ export class EmployeeForm extends Component {
       fs
         .getCompanies()
         .subscribe(companies => this.setState({ companies: companies }))
+    );
+    this.subscriptions.push(
+      fs.getBrands().subscribe(brands => this.setState({ brands: brands }))
     );
   }
 
