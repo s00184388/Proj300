@@ -275,6 +275,9 @@ export default class FirebaseServices {
                 observer.next(products);
               });
           });
+          if (items.length == 0) {
+            observer.next([]);
+          }
         });
       } else {
         observer.next([]);

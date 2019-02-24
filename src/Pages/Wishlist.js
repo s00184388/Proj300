@@ -309,6 +309,7 @@ class Products extends React.Component {
       recipient.email = company.email;
       recipient.name = company.name;
     }
+
     return (
       <div className="row py-4">
         <div className="col-md-12">
@@ -447,10 +448,9 @@ export class Wishlist extends React.Component {
 
   render() {
     const user = this.state.user;
-    const userID = user.key;
+    const products = this.state.products;
     const fetchInProgress = this.state.fetchInProgress;
-    console.log(fetchInProgress);
-    const listProd = this.state.products.map(product => (
+    const listProd = products.map(product => (
       <Products product={product} key={product.key} user={user} />
     ));
     return (
@@ -468,10 +468,12 @@ export class Wishlist extends React.Component {
             height={640}
             width={256}
           />
-        ) : (
+        ) : products.length > 0 ? (
           <div className="row">
             <div className="col-md-8 py-4">{listProd}</div>
           </div>
+        ) : (
+          <h4 style={{ color: "white" }}>No products in wishlist</h4>
         )}
       </div>
     );
