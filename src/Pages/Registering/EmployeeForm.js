@@ -40,7 +40,7 @@ export class EmployeeForm extends Component {
     //each field from the form is stored in the  state
     let fields = this.state.fields;
     let errors = {};
-    let formIsValid;
+    let formIsValid = true;
 
     if (!fields["firstName"]) {
       formIsValid = false;
@@ -143,7 +143,8 @@ export class EmployeeForm extends Component {
     this.setState({
       errors: errors
     });
-    return true;
+
+    return formIsValid;
   };
 
   handleChange = e => {
