@@ -302,7 +302,8 @@ export default class FirebaseServices {
                   companyID,
                   points,
                   coins,
-                  approved
+                  approved,
+                  created
                 } = doc.data();
                 var user = {
                   key: doc.id,
@@ -315,7 +316,8 @@ export default class FirebaseServices {
                   companyID,
                   points,
                   coins,
-                  approved
+                  approved,
+                  created
                 };
                 resolve(user);
               });
@@ -356,7 +358,8 @@ export default class FirebaseServices {
                 companyID,
                 points,
                 coins,
-                approved
+                approved,
+                created
               } = doc.data();
               user = {
                 key: doc.id,
@@ -369,7 +372,8 @@ export default class FirebaseServices {
                 companyID,
                 points,
                 coins,
-                approved
+                approved,
+                created
               };
             });
             console.log(user);
@@ -399,7 +403,8 @@ export default class FirebaseServices {
                 companyID,
                 points,
                 coins,
-                approved
+                approved,
+                created
               } = doc.data();
               user = {
                 key: doc.id,
@@ -412,7 +417,8 @@ export default class FirebaseServices {
                 companyID,
                 points,
                 coins,
-                approved
+                approved,
+                created
               };
             });
             observer.next(user);
@@ -438,7 +444,8 @@ export default class FirebaseServices {
             companyID,
             points,
             coins,
-            approved
+            approved,
+            created
           } = doc.data();
           var user = {
             key: doc.id,
@@ -451,7 +458,8 @@ export default class FirebaseServices {
             companyID,
             points,
             coins,
-            approved
+            approved,
+            created
           };
           users.push(user);
         });
@@ -468,20 +476,64 @@ export default class FirebaseServices {
           .onSnapshot(querySnapshot => {
             var device = {};
             querySnapshot.forEach(doc => {
-              const { apiKey, calories, distance, steps } = doc.data();
+              const {
+                accessToken,
+                refreshToken,
+                api,
+                distance,
+                apiClientID,
+                userID
+              } = doc.data();
               device = {
                 key: doc.id,
                 doc,
-                apiKey,
-                calories,
+                accessToken,
+                api,
+                apiClientID,
                 distance,
-                steps
+                refreshToken,
+                userID
               };
             });
             observer.next(device);
           });
       } else {
         observer.next({});
+      }
+    });
+  };
+
+  getDevicebyUser = userID => {
+    return new Promise((resolve, reject) => {
+      if (userID) {
+        this.connectedDevicesCollection
+          .where("userID", "==", userID)
+          .onSnapshot(querySnapshot => {
+            var device = {};
+            querySnapshot.forEach(doc => {
+              const {
+                accessToken,
+                refreshToken,
+                api,
+                distance,
+                apiClientID,
+                userID
+              } = doc.data();
+              device = {
+                key: doc.id,
+                doc,
+                accessToken,
+                api,
+                apiClientID,
+                distance,
+                refreshToken,
+                userID
+              };
+            });
+            resolve(device);
+          });
+      } else {
+        reject(new Error("No userID to search with"));
       }
     });
   };

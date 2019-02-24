@@ -449,6 +449,7 @@ export class Wishlist extends React.Component {
     const user = this.state.user;
     const userID = user.key;
     const fetchInProgress = this.state.fetchInProgress;
+    console.log(fetchInProgress);
     const listProd = this.state.products.map(product => (
       <Products product={product} key={product.key} user={user} />
     ));
@@ -470,22 +471,6 @@ export class Wishlist extends React.Component {
         ) : (
           <div className="row">
             <div className="col-md-8 py-4">{listProd}</div>
-            <div className="col-md-2">
-              <a
-                href={`https://stravakudos.herokuapp.com/strava/authorize?userID=${userID}`}
-                className="btn btn-primary"
-              >
-                Connect with Strava
-              </a>
-            </div>
-            <div className="col-md-2">
-              <a
-                href={`https://stravakudos.herokuapp.com/fitbit/authorize?userID=${userID}`}
-                className="btn btn-primary"
-              >
-                Connect with Fitbit
-              </a>
-            </div>
           </div>
         )}
       </div>

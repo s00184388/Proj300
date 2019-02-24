@@ -6,6 +6,7 @@ import InputField from "../Registering/InputFields";
 import Radio from "../Registering/Checkboxes";
 import { Link } from "react-router-dom";
 import { Alert, AlertContainer } from "react-bs-notifier";
+import { firestore } from "firebase";
 
 const fs = new FirebaseServices();
 
@@ -153,7 +154,7 @@ export class EmployeeForm extends Component {
         console.log("role for creating: " + this.state.role);
         if (this.state.role === "employee") {
           console.log("creating employee");
-          fs.createUser(user);
+          fs.createUser(user).catch(err => console.log(err));
         } else if (this.state.role === "companyAdmin") {
           console.log("creating companyAdmin");
           var userID;
@@ -268,7 +269,8 @@ export class EmployeeForm extends Component {
               companyID: company.key,
               deviceID: this.state.deviceID,
               points: 0,
-              role: this.state.role
+              role: this.state.role,
+              created: firestore.Timestamp.fromDate(new Date())
             };
             this.createAuthUser(user, null, null);
           })
@@ -283,7 +285,8 @@ export class EmployeeForm extends Component {
           lastName: fields["lastName"],
           email: fields["email"],
           role: this.state.role,
-          companyID: ""
+          companyID: "",
+          created: firestore.Timestamp.fromDate(new Date())
         };
         let company = {
           name: fields["companyName"],
@@ -306,7 +309,8 @@ export class EmployeeForm extends Component {
           lastName: fields["lastName"],
           email: fields["email"],
           role: this.state.role,
-          brandID: ""
+          brandID: "",
+          created: firestore.Timestamp.fromDate(new Date())
         };
         let brand = {
           name: fields["brandName"],
