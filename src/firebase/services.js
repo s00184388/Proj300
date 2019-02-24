@@ -753,7 +753,7 @@ export default class FirebaseServices {
           .add(user)
           .then(docRef => resolve(docRef.id))
           .catch(err => {
-            alert('Auth:' + err);
+            alert("Auth:" + err);
             //console.log(err);
             reject(err);
           });
@@ -764,29 +764,35 @@ export default class FirebaseServices {
   };
 
   createCompany = company => {
-    if (company) {
-      this.companiesCollection
-        .add(company)
-        .then(docRef => {
-          return docRef.id;
-        })
-        .catch(err => console.log(err));
-    } else {
-      console.log("Cannot add company");
-    }
+    return new Promise((resolve, reject) => {
+      if (company) {
+        this.companiesCollection
+          .add(company)
+          .then(docRef => resolve(docRef.id))
+          .catch(err => {
+            console.log(err);
+            reject(err);
+          });
+      } else {
+        reject(new Error("No company given"));
+      }
+    });
   };
 
   createBrand = brand => {
-    if (brand) {
-      this.brandsCollection
-        .add(brand)
-        .then(docRef => {
-          return docRef.id;
-        })
-        .catch(err => console.log(err));
-    } else {
-      console.log("Cannot add brand");
-    }
+    return new Promise((resolve, reject) => {
+      if (brand) {
+        this.brandsCollection
+          .add(brand)
+          .then(docRef => resolve(docRef.id))
+          .catch(err => {
+            console.log(err);
+            reject(err);
+          });
+      } else {
+        reject(new Error("no brand given"));
+      }
+    });
   };
 
   deleteProduct = product => {

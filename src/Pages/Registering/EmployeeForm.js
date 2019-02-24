@@ -25,10 +25,13 @@ export class EmployeeForm extends Component {
       role: "employee",
       //company
       authError: "",
-      companyError: ""
+      companyError: "",
+      companies: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+
+    this.subscriptions = [];
   }
 
   //validation function. Returns if the form is valid or not,
@@ -160,37 +163,53 @@ export class EmployeeForm extends Component {
       )
       .then(() => {
         this.props.history.push("/");
-        //this.props.role = this.state.role;
         console.log("role for creating: " + this.state.role);
         if (this.state.role === "employee") {
           console.log("creating employee");
           fs.createUser(user);
         } else if (this.state.role === "companyAdmin") {
           console.log("creating companyAdmin");
+          var userID;
           fs.createUser(user)
             .then(adminUserID => {
+              userID = adminUserID;
               let comp = {
                 name: company.name,
                 address: company.address,
                 email: company.email,
                 adminUserID: adminUserID
               };
-              fs.createCompany(comp);
+              fs.createCompany(comp)
+                .then(compID => {
+                  console.log("update company admin");
+                  fs.usersCollection
+                    .doc(userID)
+                    .update({ companyID: compID })
+                    .catch(err => console.log(err));
+                })
+                .catch(err => console.log(err));
             })
             .catch(err => {
               this.setState({ err: err.message });
             });
         } else if (this.state.role === "brandAdmin") {
           console.log("creating brandAdmin");
+          let userID;
           fs.createUser(user)
             .then(adminUserID => {
+              userID = adminUserID;
               let br = {
                 name: brand.name,
                 address: brand.address,
                 email: brand.email,
                 adminUserID: adminUserID
               };
-              fs.createBrand(br);
+              fs.createBrand(br).then(brID => {
+                fs.usersCollection
+                  .doc(userID)
+                  .update({ brandID: brID })
+                  .catch(err => console.log(err));
+              });
             })
             .catch(err => {
               this.setState({ error: err });
@@ -254,7 +273,8 @@ export class EmployeeForm extends Component {
           firstName: fields["firstName"],
           lastName: fields["lastName"],
           email: fields["email"],
-          role: this.state.role
+          role: this.state.role,
+          companyID: ""
         };
         let company = {
           name: fields["companyName"],
@@ -272,7 +292,8 @@ export class EmployeeForm extends Component {
           firstName: fields["firstName"],
           lastName: fields["lastName"],
           email: fields["email"],
-          role: this.state.role
+          role: this.state.role,
+          brandID: ""
         };
         let brand = {
           name: fields["brandName"],
@@ -284,8 +305,21 @@ export class EmployeeForm extends Component {
     }
   };
 
+  componentDidMount() {
+    this.subscriptions.push(
+      fs
+        .getCompanies()
+        .subscribe(companies => this.setState({ companies: companies }))
+    );
+  }
+
+  componentWillUnmount() {
+    this.subscriptions.forEach(obs => obs.unsubscribe());
+  }
   render() {
-    const companies = ["Overstock", "Kudos Health", "DHL", "Continental"];
+    const companyList = this.state.companies;
+    const companies = [];
+    companyList.forEach(comp => companies.push(comp.name));
     const options = companies.map(opt => <option key={opt}>{opt}</option>);
     const { firstName, lastName, email, pwd1, pwd2 } = this.state.fields;
     const { role } = this.state;
@@ -380,7 +414,7 @@ export class EmployeeForm extends Component {
                   <div className="row">
                     <InputField
                       name="email"
-                      type="text"
+                      type="email"
                       placeholder="Email"
                       value={email || ""}
                       onChange={this.handleChange}
@@ -468,7 +502,7 @@ export class EmployeeForm extends Component {
                   <div className="row">
                     <InputField
                       name="email"
-                      type="text"
+                      type="email"
                       placeholder="Personal Email"
                       value={email || ""}
                       onChange={this.handleChange}
@@ -487,7 +521,7 @@ export class EmployeeForm extends Component {
                   <div className="row">
                     <InputField
                       name="brandEmail"
-                      type="text"
+                      type="email"
                       placeholder="Brand Email"
                       value={brandEmail || ""}
                       onChange={this.handleChange}
@@ -569,7 +603,7 @@ export class EmployeeForm extends Component {
                   <div className="row">
                     <InputField
                       name="email"
-                      type="text"
+                      type="email"
                       placeholder="User Email"
                       value={email || ""}
                       onChange={this.handleChange}
@@ -588,7 +622,7 @@ export class EmployeeForm extends Component {
                   <div className="row">
                     <InputField
                       name="companyEmail"
-                      type="text"
+                      type="email"
                       placeholder="Company email"
                       value={companyEmail || ""}
                       onChange={this.handleChange}
