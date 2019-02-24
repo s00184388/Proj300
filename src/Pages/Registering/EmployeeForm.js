@@ -66,37 +66,22 @@ export class EmployeeForm extends Component {
       }
     }
 
-    //general user mail
-    if (!fields["email"]) {
-      formIsValid = false;
-      errors["email"] = "*Please enter your email-ID.";
-    }
+    //regular expression for email validation
+    var pattern = new RegExp(
+      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
+    );
 
-    //companyEmail/brandEmail and employee email
-    if (
-      typeof fields["email"] !== "undefined" ||
-      typeof fields["companyEmail"] !== "undefined" ||
-      typeof fields["brandEmail"] !== "undefined"
-    ) {
-      //regular expression for email validation
-      var pattern = new RegExp(
-        /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-      );
-      if (!pattern.test(fields["email"])) {
-        formIsValid = false;
-        errors["email"] = "*Please enter valid email-ID.";
-      }
-      if (!pattern.test(fields["companyEmail"])) {
-        formIsValid = false;
-        errors["companyEmail"] = "*Please enter valid email-ID.";
-      }
+    //general user mail
+    if (!fields["email"] || !pattern.test(fields["email"])) {
+      formIsValid = false;
+      errors["email"] = "*Please enter a valid email.";
     }
 
     //for company email
     if (this.state.role === "companyAdmin") {
-      if (!fields["companyEmail"]) {
+      if (!fields["companyEmail"] || !pattern.test(fields["companyEmail"])) {
         formIsValid = false;
-        errors["companyEmail"] = "*Please enter Company's email";
+        errors["companyEmail"] = "*Please enter a valid Company's email";
       }
 
       if (!fields["companyName"]) {
@@ -119,9 +104,9 @@ export class EmployeeForm extends Component {
         errors["brandAddress"] = "*Please enter Brand's adress.";
       }
 
-      if (!fields["brandEmail"]) {
+      if (!fields["brandEmail"] || !pattern.test(fields["brandEmail"])) {
         formIsValid = false;
-        errors["brandEmail"] = "*Please enter brand's email.";
+        errors["brandEmail"] = "*Please enter a valid brand's email.";
       }
     }
     if (!fields["pwd1"]) {
@@ -415,7 +400,7 @@ export class EmployeeForm extends Component {
                   <div className="row">
                     <InputField
                       name="email"
-                      type="email"
+                      type="text"
                       placeholder="Email"
                       value={email || ""}
                       onChange={this.handleChange}
@@ -503,7 +488,7 @@ export class EmployeeForm extends Component {
                   <div className="row">
                     <InputField
                       name="email"
-                      type="email"
+                      type="text"
                       placeholder="Personal Email"
                       value={email || ""}
                       onChange={this.handleChange}
@@ -522,7 +507,7 @@ export class EmployeeForm extends Component {
                   <div className="row">
                     <InputField
                       name="brandEmail"
-                      type="email"
+                      type="text"
                       placeholder="Brand Email"
                       value={brandEmail || ""}
                       onChange={this.handleChange}
@@ -604,7 +589,7 @@ export class EmployeeForm extends Component {
                   <div className="row">
                     <InputField
                       name="email"
-                      type="email"
+                      type="text"
                       placeholder="User Email"
                       value={email || ""}
                       onChange={this.handleChange}
@@ -623,7 +608,7 @@ export class EmployeeForm extends Component {
                   <div className="row">
                     <InputField
                       name="companyEmail"
-                      type="email"
+                      type="text"
                       placeholder="Company email"
                       value={companyEmail || ""}
                       onChange={this.handleChange}
