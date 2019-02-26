@@ -6,6 +6,7 @@ import InputField from "../Registering/InputFields";
 import Radio from "../Registering/Checkboxes";
 import { Link } from "react-router-dom";
 import { Alert, AlertContainer } from "react-bs-notifier";
+import { firestore } from "firebase";
 
 const fs = new FirebaseServices();
 
@@ -25,10 +26,14 @@ export class EmployeeForm extends Component {
       role: "employee",
       //company
       authError: "",
-      companyError: ""
+      companyError: "",
+      companies: [],
+      brands: []
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.nameFree = this.nameFree.bind(this);
+    this.subscriptions = [];
   }
 
   //validation function. Returns if the form is valid or not,
@@ -37,7 +42,7 @@ export class EmployeeForm extends Component {
     //each field from the form is stored in the  state
     let fields = this.state.fields;
     let errors = {};
-    let formIsValid;
+    let formIsValid = true;
 
     if (!fields["firstName"]) {
       formIsValid = false;
@@ -63,37 +68,22 @@ export class EmployeeForm extends Component {
       }
     }
 
-    //general user mail
-    if (!fields["email"]) {
-      formIsValid = false;
-      errors["email"] = "*Please enter your email-ID.";
-    }
+    //regular expression for email validation
+    var pattern = new RegExp(
+      /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
+    );
 
-    //companyEmail/brandEmail and employee email
-    if (
-      typeof fields["email"] !== "undefined" ||
-      typeof fields["companyEmail"] !== "undefined" ||
-      typeof fields["brandEmail"] !== "undefined"
-    ) {
-      //regular expression for email validation
-      var pattern = new RegExp(
-        /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
-      );
-      if (!pattern.test(fields["email"])) {
-        formIsValid = false;
-        errors["email"] = "*Please enter valid email-ID.";
-      }
-      if (!pattern.test(fields["companyEmail"])) {
-        formIsValid = false;
-        errors["companyEmail"] = "*Please enter valid email-ID.";
-      }
+    //general user mail
+    if (!fields["email"] || !pattern.test(fields["email"])) {
+      formIsValid = false;
+      errors["email"] = "*Please enter a valid email.";
     }
 
     //for company email
     if (this.state.role === "companyAdmin") {
-      if (!fields["companyEmail"]) {
+      if (!fields["companyEmail"] || !pattern.test(fields["companyEmail"])) {
         formIsValid = false;
-        errors["companyEmail"] = "*Please enter Company's email";
+        errors["companyEmail"] = "*Please enter a valid Company's email";
       }
 
       if (!fields["companyName"]) {
@@ -116,9 +106,9 @@ export class EmployeeForm extends Component {
         errors["brandAddress"] = "*Please enter Brand's adress.";
       }
 
-      if (!fields["brandEmail"]) {
+      if (!fields["brandEmail"] || !pattern.test(fields["brandEmail"])) {
         formIsValid = false;
-        errors["brandEmail"] = "*Please enter brand's email.";
+        errors["brandEmail"] = "*Please enter a valid brand's email.";
       }
     }
     if (!fields["pwd1"]) {
@@ -140,7 +130,8 @@ export class EmployeeForm extends Component {
     this.setState({
       errors: errors
     });
-    return true;
+
+    return formIsValid;
   };
 
   handleChange = e => {
@@ -160,37 +151,53 @@ export class EmployeeForm extends Component {
       )
       .then(() => {
         this.props.history.push("/");
-        //this.props.role = this.state.role;
         console.log("role for creating: " + this.state.role);
         if (this.state.role === "employee") {
           console.log("creating employee");
-          fs.createUser(user);
+          fs.createUser(user).catch(err => console.log(err));
         } else if (this.state.role === "companyAdmin") {
           console.log("creating companyAdmin");
+          var userID;
           fs.createUser(user)
             .then(adminUserID => {
+              userID = adminUserID;
               let comp = {
                 name: company.name,
                 address: company.address,
                 email: company.email,
                 adminUserID: adminUserID
               };
-              fs.createCompany(comp);
+              fs.createCompany(comp)
+                .then(compID => {
+                  console.log("update company admin");
+                  fs.usersCollection
+                    .doc(userID)
+                    .update({ companyID: compID })
+                    .catch(err => console.log(err));
+                })
+                .catch(err => console.log(err));
             })
             .catch(err => {
               this.setState({ err: err.message });
             });
         } else if (this.state.role === "brandAdmin") {
           console.log("creating brandAdmin");
+          let userID;
           fs.createUser(user)
             .then(adminUserID => {
+              userID = adminUserID;
               let br = {
                 name: brand.name,
                 address: brand.address,
                 email: brand.email,
                 adminUserID: adminUserID
               };
-              fs.createBrand(br);
+              fs.createBrand(br).then(brID => {
+                fs.usersCollection
+                  .doc(userID)
+                  .update({ brandID: brID })
+                  .catch(err => console.log(err));
+              });
             })
             .catch(err => {
               this.setState({ error: err });
@@ -211,6 +218,28 @@ export class EmployeeForm extends Component {
     });
     console.log(changeEvent.target.value);
   };
+
+  nameFree(name, role) {
+    let found = false;
+    console.log("Comparing:" + name);
+    if (role === "company") {
+      this.state.companies.forEach(comp => {
+        if (comp.name === name) {
+          console.log("found " + comp.name);
+          found = true;
+        }
+      });
+    } else if (role === "brand") {
+      this.state.brands.forEach(br => {
+        if (br.name === name) {
+          found = true;
+        }
+      });
+    }
+    if (!found) return true;
+    else return false;
+  }
+
   handleSubmit = e => {
     e.preventDefault();
     let fields = {};
@@ -240,7 +269,8 @@ export class EmployeeForm extends Component {
               companyID: company.key,
               deviceID: this.state.deviceID,
               points: 0,
-              role: this.state.role
+              role: this.state.role,
+              created: firestore.Timestamp.fromDate(new Date())
             };
             this.createAuthUser(user, null, null);
           })
@@ -254,16 +284,22 @@ export class EmployeeForm extends Component {
           firstName: fields["firstName"],
           lastName: fields["lastName"],
           email: fields["email"],
-          role: this.state.role
+          role: this.state.role,
+          companyID: "",
+          created: firestore.Timestamp.fromDate(new Date())
         };
         let company = {
           name: fields["companyName"],
           address: fields["companyAdress"],
           email: fields["companyEmail"]
         };
-        console.log("Step1.User data for company inserted in db");
+        if (this.nameFree(fields["companyName"], "company")) {
+          console.log("Step1.User data for company inserted in db");
+          this.createAuthUser(user, company, null);
+        } else {
+          alert("There is already a company with that name");
+        }
 
-        this.createAuthUser(user, company, null);
         console.log(this.state.role);
       } else if (this.state.role === "brandAdmin") {
         console.log("brand ad");
@@ -272,20 +308,44 @@ export class EmployeeForm extends Component {
           firstName: fields["firstName"],
           lastName: fields["lastName"],
           email: fields["email"],
-          role: this.state.role
+          role: this.state.role,
+          brandID: "",
+          created: firestore.Timestamp.fromDate(new Date())
         };
         let brand = {
           name: fields["brandName"],
           address: fields["brandAddress"],
           email: fields["brandEmail"]
         };
-        this.createAuthUser(user, null, brand);
+
+        if (this.nameFree(fields["brandName"], "brand")) {
+          console.log("Step1.User data for bramd inserted in db");
+          this.createAuthUser(user, null, brand);
+        } else {
+          alert("There is already a brand with that name");
+        }
       }
     }
   };
 
+  componentDidMount() {
+    this.subscriptions.push(
+      fs
+        .getCompanies()
+        .subscribe(companies => this.setState({ companies: companies }))
+    );
+    this.subscriptions.push(
+      fs.getBrands().subscribe(brands => this.setState({ brands: brands }))
+    );
+  }
+
+  componentWillUnmount() {
+    this.subscriptions.forEach(obs => obs.unsubscribe());
+  }
   render() {
-    const companies = ["Overstock", "Kudos Health", "DHL", "Continental"];
+    const companyList = this.state.companies;
+    const companies = [];
+    companyList.forEach(comp => companies.push(comp.name));
     const options = companies.map(opt => <option key={opt}>{opt}</option>);
     const { firstName, lastName, email, pwd1, pwd2 } = this.state.fields;
     const { role } = this.state;

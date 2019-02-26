@@ -275,6 +275,9 @@ export default class FirebaseServices {
                 observer.next(products);
               });
           });
+          if (items.length == 0) {
+            observer.next([]);
+          }
         });
       } else {
         observer.next([]);
@@ -302,7 +305,8 @@ export default class FirebaseServices {
                   companyID,
                   points,
                   coins,
-                  approved
+                  approved,
+                  created
                 } = doc.data();
                 var user = {
                   key: doc.id,
@@ -315,7 +319,8 @@ export default class FirebaseServices {
                   companyID,
                   points,
                   coins,
-                  approved
+                  approved,
+                  created
                 };
                 resolve(user);
               });
@@ -356,7 +361,8 @@ export default class FirebaseServices {
                 companyID,
                 points,
                 coins,
-                approved
+                approved,
+                created
               } = doc.data();
               user = {
                 key: doc.id,
@@ -369,7 +375,8 @@ export default class FirebaseServices {
                 companyID,
                 points,
                 coins,
-                approved
+                approved,
+                created
               };
             });
             console.log(user);
@@ -399,7 +406,8 @@ export default class FirebaseServices {
                 companyID,
                 points,
                 coins,
-                approved
+                approved,
+                created
               } = doc.data();
               user = {
                 key: doc.id,
@@ -412,7 +420,8 @@ export default class FirebaseServices {
                 companyID,
                 points,
                 coins,
-                approved
+                approved,
+                created
               };
             });
             observer.next(user);
@@ -438,7 +447,8 @@ export default class FirebaseServices {
             companyID,
             points,
             coins,
-            approved
+            approved,
+            created
           } = doc.data();
           var user = {
             key: doc.id,
@@ -451,7 +461,8 @@ export default class FirebaseServices {
             companyID,
             points,
             coins,
-            approved
+            approved,
+            created
           };
           users.push(user);
         });
@@ -468,20 +479,64 @@ export default class FirebaseServices {
           .onSnapshot(querySnapshot => {
             var device = {};
             querySnapshot.forEach(doc => {
-              const { apiKey, calories, distance, steps } = doc.data();
+              const {
+                accessToken,
+                refreshToken,
+                api,
+                distance,
+                apiClientID,
+                userID
+              } = doc.data();
               device = {
                 key: doc.id,
                 doc,
-                apiKey,
-                calories,
+                accessToken,
+                api,
+                apiClientID,
                 distance,
-                steps
+                refreshToken,
+                userID
               };
             });
             observer.next(device);
           });
       } else {
         observer.next({});
+      }
+    });
+  };
+
+  getDevicebyUser = userID => {
+    return new Promise((resolve, reject) => {
+      if (userID) {
+        this.connectedDevicesCollection
+          .where("userID", "==", userID)
+          .onSnapshot(querySnapshot => {
+            var device = {};
+            querySnapshot.forEach(doc => {
+              const {
+                accessToken,
+                refreshToken,
+                api,
+                distance,
+                apiClientID,
+                userID
+              } = doc.data();
+              device = {
+                key: doc.id,
+                doc,
+                accessToken,
+                api,
+                apiClientID,
+                distance,
+                refreshToken,
+                userID
+              };
+            });
+            resolve(device);
+          });
+      } else {
+        reject(new Error("No userID to search with"));
       }
     });
   };
@@ -757,7 +812,7 @@ export default class FirebaseServices {
           .add(user)
           .then(docRef => resolve(docRef.id))
           .catch(err => {
-            alert('Auth:' + err);
+            alert("Auth:" + err);
             //console.log(err);
             reject(err);
           });
@@ -768,29 +823,35 @@ export default class FirebaseServices {
   };
 
   createCompany = company => {
-    if (company) {
-      this.companiesCollection
-        .add(company)
-        .then(docRef => {
-          return docRef.id;
-        })
-        .catch(err => console.log(err));
-    } else {
-      console.log("Cannot add company");
-    }
+    return new Promise((resolve, reject) => {
+      if (company) {
+        this.companiesCollection
+          .add(company)
+          .then(docRef => resolve(docRef.id))
+          .catch(err => {
+            console.log(err);
+            reject(err);
+          });
+      } else {
+        reject(new Error("No company given"));
+      }
+    });
   };
 
   createBrand = brand => {
-    if (brand) {
-      this.brandsCollection
-        .add(brand)
-        .then(docRef => {
-          return docRef.id;
-        })
-        .catch(err => console.log(err));
-    } else {
-      console.log("Cannot add brand");
-    }
+    return new Promise((resolve, reject) => {
+      if (brand) {
+        this.brandsCollection
+          .add(brand)
+          .then(docRef => resolve(docRef.id))
+          .catch(err => {
+            console.log(err);
+            reject(err);
+          });
+      } else {
+        reject(new Error("no brand given"));
+      }
+    });
   };
 
   getBrandByName = brandName => {
