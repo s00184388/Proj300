@@ -141,6 +141,41 @@ export class EmployeeForm extends Component {
     console.log(this.state.fields);
   };
 
+  getCompanyAndSendConfirmationEmail(employee) {
+    fs.getCompany(employee.companyID).subscribe(comp => {
+      if (comp.email) {
+        var data = {
+          company: {
+            email: comp.email,
+            name: comp.name
+          },
+          employee: {
+            firstName: employee.firstName,
+            lastName: employee.lastName,
+            key: employee.key,
+            email: employee.email
+          }
+        };
+        var url = `http://stravakudos.herokuapp.com/mail/sendConfirmationEmail`;
+        fetch(url, {
+          method: "POST", // *GET, POST, PUT, DELETE, etc.
+          mode: "cors", // no-cors, cors, *same-origin
+          cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+          credentials: "same-origin", // include, *same-origin, omit
+          headers: {
+            "Content-Type": "application/json"
+            // "Content-Type": "application/x-www-form-urlencoded",
+          },
+          redirect: "follow", // manual, *follow, error
+          referrer: "no-referrer", // no-referrer, *client
+          body: JSON.stringify(data) // body data type must match "Content-Type" header
+        })
+          .then(response => console.log(response)) // parses response to JSON
+          .catch(err => console.log(err));
+      }
+    });
+  }
+
   createAuthUser = (user, company, brand) => {
     console.log(this.state.fields);
     firebase
@@ -152,9 +187,15 @@ export class EmployeeForm extends Component {
       .then(() => {
         this.props.history.push("/");
         console.log("role for creating: " + this.state.role);
+
         if (this.state.role === "employee") {
           console.log("creating employee");
-          fs.createUser(user).catch(err => console.log(err));
+          fs.createUser(user)
+            .then(userKey => {
+              user.key = userKey;
+              this.getCompanyAndSendConfirmationEmail(user);
+            })
+            .catch(err => console.log(err));
         } else if (this.state.role === "companyAdmin") {
           console.log("creating companyAdmin");
           var userID;
@@ -270,7 +311,8 @@ export class EmployeeForm extends Component {
               deviceID: this.state.deviceID,
               points: 0,
               role: this.state.role,
-              created: firestore.Timestamp.fromDate(new Date())
+              created: firestore.Timestamp.fromDate(new Date()),
+              approved: false
             };
             this.createAuthUser(user, null, null);
           })
@@ -319,7 +361,7 @@ export class EmployeeForm extends Component {
         };
 
         if (this.nameFree(fields["brandName"], "brand")) {
-          console.log("Step1.User data for bramd inserted in db");
+          console.log("Step1.User data for brand inserted in db");
           this.createAuthUser(user, null, brand);
         } else {
           alert("There is already a brand with that name");
