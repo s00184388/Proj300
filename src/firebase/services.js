@@ -740,11 +740,15 @@ export default class FirebaseServices {
 
   addProduct = product => {
     if (product) {
-      this.productsCollection.add(product);
+      this.productsCollection.add(product).then(()=>{
+        console.log('Product Added')
+      }).catch(err=>{
+        alert('Error at adding products!')
+      });
     } else {
-      console.log("Cannot add product");
+      alert("Cannot add product");
     }
-  };
+}
 
   createUser = user => {
     return new Promise((resolve, reject) => {
@@ -787,6 +791,48 @@ export default class FirebaseServices {
     } else {
       console.log("Cannot add brand");
     }
+  };
+
+  getBrandByName = brandName => {
+    return new Promise((resolve, reject) => {
+      if (brandName) {
+        this.brandsCollection
+          .where("name", "==", brandName)
+          .get()
+          .then(querySnapshot => {
+            if (querySnapshot.empty) {
+              reject(new Error("no company found"));
+            } else {
+              var company = {};
+              querySnapshot.forEach(doc => {
+                const {
+                  adminUserID,
+                  name,
+                  picture,
+                  address,
+                  phoneNumber,
+                  email,
+                  description
+                } = doc.data();
+                company = {
+                  key: doc.id,
+                  doc,
+                  adminUserID,
+                  name,
+                  picture,
+                  address,
+                  phoneNumber,
+                  email,
+                  description
+                };
+              });
+              resolve(company);
+            }
+          });
+      } else {
+        reject(new Error("no company name"));
+      }
+    });
   };
 
   deleteProduct = product => {

@@ -114,6 +114,10 @@ class App extends Component {
       return <Brand user={this.state.user} {...props} />;
     };
 
+    const MyCompanyDashboard = props => {
+      return <CompanyDashboard companyID={this.state.user.companyID} {...props} />;
+    };
+
     const MyWishlist = props => {
       return <Wishlist user={this.state.user} />;
     };
@@ -155,7 +159,7 @@ class App extends Component {
                 <Route path={"/admin"} component={Admin} />
                 <Route
                   path={"/companyDashboard"}
-                  component={CompanyDashboard}
+                  component={MyCompanyDashboard}
                 />
                 <PrivateRoute
                   path={"/brandDashboard"}
