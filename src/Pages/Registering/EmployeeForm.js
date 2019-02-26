@@ -142,38 +142,40 @@ export class EmployeeForm extends Component {
   };
 
   getCompanyAndSendConfirmationEmail(employee) {
-    fs.getCompany(employee.companyID).subscribe(comp => {
-      if (comp.email) {
-        var data = {
-          company: {
-            email: comp.email,
-            name: comp.name
-          },
-          employee: {
-            firstName: employee.firstName,
-            lastName: employee.lastName,
-            key: employee.key,
-            email: employee.email
-          }
-        };
-        var url = `http://stravakudos.herokuapp.com/mail/sendConfirmationEmail`;
-        fetch(url, {
-          method: "POST", // *GET, POST, PUT, DELETE, etc.
-          mode: "cors", // no-cors, cors, *same-origin
-          cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-          credentials: "same-origin", // include, *same-origin, omit
-          headers: {
-            "Content-Type": "application/json"
-            // "Content-Type": "application/x-www-form-urlencoded",
-          },
-          redirect: "follow", // manual, *follow, error
-          referrer: "no-referrer", // no-referrer, *client
-          body: JSON.stringify(data) // body data type must match "Content-Type" header
-        })
-          .then(response => console.log(response)) // parses response to JSON
-          .catch(err => console.log(err));
-      }
-    });
+    this.subscriptions.push(
+      fs.getCompany(employee.companyID).subscribe(comp => {
+        if (comp.email) {
+          var data = {
+            company: {
+              email: comp.email,
+              name: comp.name
+            },
+            employee: {
+              firstName: employee.firstName,
+              lastName: employee.lastName,
+              key: employee.key,
+              email: employee.email
+            }
+          };
+          var url = `http://stravakudos.herokuapp.com/mail/sendConfirmationEmail`;
+          fetch(url, {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            mode: "cors", // no-cors, cors, *same-origin
+            cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: "same-origin", // include, *same-origin, omit
+            headers: {
+              "Content-Type": "application/json"
+              // "Content-Type": "application/x-www-form-urlencoded",
+            },
+            redirect: "follow", // manual, *follow, error
+            referrer: "no-referrer", // no-referrer, *client
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+          })
+            .then(response => console.log(response)) // parses response to JSON
+            .catch(err => console.log(err));
+        }
+      })
+    );
   }
 
   createAuthUser = (user, company, brand) => {
