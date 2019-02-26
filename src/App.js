@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import firebase from "firebase";
+import ReactLoading from "react-loading";
 
 //styling
 import "./App.css";
@@ -62,22 +63,27 @@ class App extends Component {
       authenticated: false,
       userRole: "",
       userName: "",
-      user: {}
+      user: {},
+      fetchInProgress: true
     };
   }
 
   componentDidMount() {
+    this.setState({ fetchInProgress: true });
     firebase.auth().onAuthStateChanged(authenticated => {
       authenticated
         ? this.setState(() => ({
-            authenticated: true
+            authenticated: true,
+            fetchInProgress: false
           }))
         : this.setState(() => ({
-            authenticated: false
+            authenticated: false,
+            fetchInProgress: false
           }));
     });
 
     firebase.auth().onAuthStateChanged(() => {
+      this.setState({ fetchInProgress: true });
       if (this.state.authenticated) {
         this.subscriptions.push(
           fs.getConnectedUser().subscribe(user => {
@@ -86,10 +92,13 @@ class App extends Component {
               user: user,
               userRole: user.role,
               userEmail: user.email,
-              coins: user.coins
+              coins: user.coins,
+              fetchInProgress: false
             });
           })
         );
+      } else {
+        this.setState({ fetchInProgress: false });
       }
     });
   }
@@ -101,6 +110,7 @@ class App extends Component {
   render() {
     const name = this.state.user.firstName + " " + this.state.user.lastName;
     const userEmail = this.state.user.email;
+    const fetchInProgress = this.state.fetchInProgress;
 
     const MyRewards = props => {
       return <Rewards user={this.state.user} />;
@@ -115,93 +125,115 @@ class App extends Component {
     };
 
     const MyCompanyDashboard = props => {
-      return <CompanyDashboard companyID={this.state.user.companyID} {...props} />;
+      return (
+        <CompanyDashboard companyID={this.state.user.companyID} {...props} />
+      );
     };
 
     const MyWishlist = props => {
       return <Wishlist user={this.state.user} />;
     };
     return (
-      <Router>
-        <div>
-          <div style={{ height: "100%" }}>
-            <Navbar
-              userName={this.state.user.firstName}
-              authenticated={this.state.authenticated}
-              userRole={this.state.user.role}
-              name={name}
-              userEmail={userEmail}
-              coins={this.state.coins}
-            />
-            {this.state.userRole === "employee" && (
-              <div>
-                <Route exact path="/rewards" component={MyRewards} />
-                <Route path="/wishlist" component={MyWishlist} />
-                <Route exact path="/brands" component={Brands} />
-                <Route path="/brands/:brandName" component={MyBrand} />
-                <Route path="/profile" component={MyProfile} />
-                <Route path={"/admin"} component={Admin} />
-                <PrivateRoute
-                  path={"/companyDashboard"}
-                  component={CompanyDashboard}
+      <div
+        className={
+          fetchInProgress
+            ? "container d-flex justify-content-center"
+            : "container"
+        }
+      >
+        {fetchInProgress ? (
+          <ReactLoading
+            type={"spinningBubbles"}
+            color={"#fff"}
+            height={640}
+            width={256}
+          />
+        ) : (
+          <Router>
+            <div>
+              <div style={{ height: "100%" }}>
+                <Navbar
+                  userName={this.state.user.firstName}
+                  authenticated={this.state.authenticated}
+                  userRole={this.state.user.role}
+                  name={name}
+                  userEmail={userEmail}
+                  coins={this.state.coins}
                 />
-                <PrivateRoute
-                  path={"/brandDashboard"}
-                  component={BrandDashboard}
-                />
-              </div>
-            )}
+                {this.state.userRole === "employee" && (
+                  <div>
+                    <Route exact path="/rewards" component={MyRewards} />
+                    <Route path="/wishlist" component={MyWishlist} />
+                    <Route exact path="/brands" component={Brands} />
+                    <Route path="/brands/:brandName" component={MyBrand} />
+                    <Route path="/profile" component={MyProfile} />
+                    <Route path={"/admin"} component={Admin} />
+                    <PrivateRoute
+                      path={"/companyDashboard"}
+                      component={CompanyDashboard}
+                    />
+                    <PrivateRoute
+                      path={"/brandDashboard"}
+                      component={BrandDashboard}
+                    />
+                  </div>
+                )}
 
-            {this.state.userRole === "companyAdmin" && (
-              <div>
-                <PrivateRoute path="/rewards" component={MyRewards} />
-                <PrivateRoute path="/wishlist" component={MyWishlist} />
-                <Route path={"/admin"} component={Admin} />
-                <Route
-                  path={"/companyDashboard"}
-                  component={MyCompanyDashboard}
-                />
-                <PrivateRoute
-                  path={"/brandDashboard"}
-                  component={BrandDashboard}
-                />
-              </div>
-            )}
-            {this.state.userRole === "brandAdmin" && (
-              <div>
-                {console.log(this.state.userRole + "esti brandAdmin!")}
-                <PrivateRoute path="/rewards" component={MyRewards} />
-                <PrivateRoute path="/wishlist" component={MyWishlist} />
-                <Route path={"/admin"} component={Admin} />
-                <PrivateRoute
-                  path={"/companyDashboard"}
-                  component={CompanyDashboard}
-                />
-                <Route path={"/brandDashboard"} component={BrandDashboard} />
-              </div>
-            )}
+                {this.state.userRole === "companyAdmin" && (
+                  <div>
+                    <PrivateRoute path="/rewards" component={MyRewards} />
+                    <PrivateRoute path="/wishlist" component={MyWishlist} />
+                    <Route path={"/admin"} component={Admin} />
+                    <Route
+                      path={"/companyDashboard"}
+                      component={MyCompanyDashboard}
+                    />
+                    <PrivateRoute
+                      path={"/brandDashboard"}
+                      component={BrandDashboard}
+                    />
+                  </div>
+                )}
+                {this.state.userRole === "brandAdmin" && (
+                  <div>
+                    {console.log(this.state.userRole + "esti brandAdmin!")}
+                    <PrivateRoute path="/rewards" component={MyRewards} />
+                    <PrivateRoute path="/wishlist" component={MyWishlist} />
+                    <Route path={"/admin"} component={Admin} />
+                    <PrivateRoute
+                      path={"/companyDashboard"}
+                      component={CompanyDashboard}
+                    />
+                    <Route
+                      path={"/brandDashboard"}
+                      component={BrandDashboard}
+                    />
+                  </div>
+                )}
 
-            {this.state.userRole === null && (
-              <div>
-                <PrivateRoute path="/rewards" component={MyRewards} />
-                <PrivateRoute path="/wishlist" component={MyWishlist} />
-                <Route path={"/admin"} component={Admin} />
-                <PrivateRoute
-                  path={"/companyDashboard"}
-                  component={CompanyDashboard}
-                />
-                <PrivateRoute
-                  path={"/brandDashboard"}
-                  component={BrandDashboard}
-                />
+                {this.state.userRole === null && (
+                  <div>
+                    <PrivateRoute path="/rewards" component={MyRewards} />
+                    <PrivateRoute path="/wishlist" component={MyWishlist} />
+                    <Route path={"/admin"} component={Admin} />
+                    <PrivateRoute
+                      path={"/companyDashboard"}
+                      component={CompanyDashboard}
+                    />
+                    <PrivateRoute
+                      path={"/brandDashboard"}
+                      component={BrandDashboard}
+                    />
+                  </div>
+                )}
+                <Route exact path="/" component={Home} />
+                <Route path="/login" component={Login} />
+                <Route path="/register" component={EmployeeForm} />
               </div>
-            )}
-            <Route exact path="/" component={Home} />
-            <Route path="/login" component={Login} />
-            <Route path="/register" component={EmployeeForm} />
-          </div>
-        </div>
-      </Router>
+            </div>
+          </Router>
+        )}
+      </div>
     );
   }
 }
