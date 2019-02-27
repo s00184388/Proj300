@@ -303,6 +303,7 @@ export default class FirebaseServices {
                   email,
                   deviceID,
                   companyID,
+                  brandID,
                   points,
                   coins,
                   approved,
@@ -317,6 +318,7 @@ export default class FirebaseServices {
                   email,
                   deviceID,
                   companyID,
+                  brandID,
                   points,
                   coins,
                   approved,
@@ -359,6 +361,7 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
+                brandID,
                 points,
                 coins,
                 approved,
@@ -373,6 +376,7 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
+                brandID,
                 points,
                 coins,
                 approved,
@@ -404,6 +408,7 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
+                brandID,
                 points,
                 coins,
                 approved,
@@ -418,6 +423,7 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
+                brandID,
                 points,
                 coins,
                 approved,
@@ -445,6 +451,7 @@ export default class FirebaseServices {
             email,
             deviceID,
             companyID,
+            brandID,
             points,
             coins,
             approved,
@@ -459,6 +466,7 @@ export default class FirebaseServices {
             email,
             deviceID,
             companyID,
+            brandID,
             points,
             coins,
             approved,
@@ -795,15 +803,18 @@ export default class FirebaseServices {
 
   addProduct = product => {
     if (product) {
-      this.productsCollection.add(product).then(()=>{
-        console.log('Product Added')
-      }).catch(err=>{
-        alert('Error at adding products! Check your inputs')
-      });
+      this.productsCollection
+        .add(product)
+        .then(() => {
+          console.log("Product Added");
+        })
+        .catch(err => {
+          alert("Error at adding products! Check your inputs");
+        });
     } else {
       alert("Cannot add product");
     }
-}
+  };
 
   createUser = user => {
     return new Promise((resolve, reject) => {
