@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import Modal from 'react-modal';
 import BrandProductEditingModal from '../Components/editProductModal';
+import FileUploader from 'react-firebase-file-uploader';
 
 
 library.add(faArrowDown);
@@ -27,7 +28,8 @@ class ProductForm extends Component {
       companyID: '',
       description: '',
       name: '',
-      picture: '',
+      picture: null,
+      picURL: '',
       price: 0,
       stock: 0,
       sponsored: true,
@@ -43,8 +45,16 @@ class ProductForm extends Component {
   handleChange = e => {
     let newState = {};
     newState[e.target.name] = e.target.value;
+    if(e.target.name == "picture"){
+      this.setState({
+        picture: e.target.files[0]
+      })
+      console.log(e.target.files[0]);
+    }
+    else{
     this.setState(newState);
-  };
+    console.log(newState.picture);
+  }};
 
   handleSubmit = (e, message) => {
     e.preventDefault();
@@ -55,6 +65,7 @@ class ProductForm extends Component {
       description: this.state.description,
       name: this.state.name,
       picture: this.state.picture,
+      picURL: this.state.picURL,
       price: this.state.price,
       stock: this.state.stock,
       sponsored: true,
@@ -71,6 +82,7 @@ class ProductForm extends Component {
       description: '',
       name: '',
       picture: '',
+      picURL: '',
       price: 0,
       stock: 0,
       sponsored: true,
@@ -131,10 +143,9 @@ class ProductForm extends Component {
             id="formPicture"
             className="form-control"
             name="picture"
-            type="text"
-            placeholder="Enter Product Image URL (e.g. https://)"
+            type="file"
+            accept="image/png,image/jpeg"
             onChange={this.handleChange}
-            value={this.state.picture}
           />
         </div>
         <div className="form-group">
