@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { DropdownList } from 'react-widgets'
 import "./CssPages/CompanyDashboard.css";
 import FirebaseServices from "../firebase/services";
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
@@ -12,26 +10,20 @@ library.add(faArrowDown);
 
 //constant
 const fs = new FirebaseServices();
-//components
 
+//components
 class ProductForm extends Component {
   constructor() {
     super();
-
     this.state = {
       fields: {},
       errors: {},
-      //brand fields will be converted into brand object on submit
-      //brandName: "",
-      //brandPic: "",
-      //name: "",
-      //description: "",
-      //picURL: "",
       quantity: 0,
       price: 0,
       remaining: 0,
       category:"",
       categoryOptions: ['Electronics', 'Shoes', 'Sports', 'Others'],
+      showingAlert:false
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -42,7 +34,7 @@ class ProductForm extends Component {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState({fields});
-    console.log(this.state.fields);
+    //console.log(this.state.fields);
   };
 
   validate=()=>{
@@ -70,10 +62,21 @@ class ProductForm extends Component {
       errors["description"] = "*Please enter the product's description";
     }
 
-    if (!fields["picURL"]) {
+    if (!fields["quantity"]) {
       formIsValid = false;
-      errors["picURL"] = "*Please enter the product's image URL";
-    } 
+      errors["quantity"] = "*Quantity cannot be empty";
+    }
+    
+    if (!fields["price"]) {
+      formIsValid = false;
+      errors["price"] = "*Price field cannot be empty";
+    }
+
+    if (!fields["category"]) {
+      formIsValid = false;
+      errors["category"] = "*Please choose a category!";
+    }
+
 
     this.setState({
       errors: errors
@@ -94,6 +97,9 @@ class ProductForm extends Component {
     fields["name"] = this.state.fields.name;
     fields["description"] = this.state.fields.description;
     fields["picURL"] = this.state.fields.picURL;
+    fields["quantity"]=this.state.fields.quantity;
+    fields["price"]=this.state.fields.price;
+    fields["category"]=this.state.fields.category;
       
     let product = {
       brand: {
@@ -103,30 +109,29 @@ class ProductForm extends Component {
       name: fields["name"],
       description: fields["description"],
       picURL:fields["picURL"],
-      quantity: this.state.fields.quantity,
-      price: this.state.fields.price,
+      quantity: fields["quantity"],
+      price: fields["price"],
       remaining:this.state.remaining,
       category: this.state.fields.category,
       sponsored: false,
-      //companyName: this.props.companyName
+      companyID: this.props.companyID
     };
 
     console.log(this.validate());
     if(this.validate()){
-      if(fs.addProduct(product)){
-        this.setState({
-          successfulAddedProduct:'Product added in the database!'
-        },()=>{
+      fs.addProduct(product)
+      this.setState({
+          fields:"",
+          errors:"",
+          showingAlert:true
+        });
+        setTimeout(() => {
           this.setState({
-            fields:"",
-            errors:""
+            showingAlert: false
           });
-          console.log(this.state.successfulAddedProduct)
-        })
-      }
+        }, 5000);
     console.log(product)  
     }
-    console.log(this.state.fields);
   };
 
   render() {
@@ -136,11 +141,19 @@ class ProductForm extends Component {
       <option key={opt}>{opt}</option>)
     return (
       <div className='container'>
+
+          {this.state.showingAlert===true ? (  
+            <AlertContainer>
+               <Alert type="success" headline="Success!">
+                 <strong>You're product has been added!</strong> 
+               </Alert>
+          </AlertContainer>    
+          ) : null}
        <h6 className="text-white">Add  a Product:  </h6>
        <hr></hr>
         <form onSubmit={this.handleSubmit}>
         <div className='row'>
-            <div className="form-group input-group-sm col-sm-6">
+            <div className="form-group input-group-sm col-sm">
               <input
                 id="formBrandName"
                 className="form-control"
@@ -152,11 +165,12 @@ class ProductForm extends Component {
               />
               <div className="text-white"><small>{this.state.errors.brandName}</small></div>
             </div>
-            <div className="form-group input-group-sm col-sm-6">
+            <div className="form-group input-group-sm col-sm">
             <select id="categoryList" name="category" className="form-control" defaultValue="" onChange={this.handleChange}>
               <option value="" disabled hidden>Product Category</option>
               {options}
             </select>
+            <div className="text-white"><small>{this.state.errors.category}</small></div>
           </div>
         </div>
         <div className="form-group input-group-sm ">
@@ -222,6 +236,7 @@ class ProductForm extends Component {
                 onChange={this.handleChange}
                 value={this.state.fields.price || ""}
               />
+              <div className="text-white"><small>{this.state.errors.price}</small></div>
             </div>
             <div className="form-group input-group-sm col-sm-6">
               <label htmlFor='formQuantity' className='text-white'>
@@ -236,6 +251,7 @@ class ProductForm extends Component {
                 onChange={this.handleChange}
                 value={this.state.fields.quantity || ""}
               />
+              <div className="text-white"><small>{this.state.errors.quantity}</small></div>
             </div>
           </div>
           <div className='d-flex justify-content-center pt-3'>
@@ -243,10 +259,8 @@ class ProductForm extends Component {
                 Submit Product
               </button>
           </div>
-          
-      </form>
-      </div>    
-      
+      </form> 
+    </div>     
     );
   }
 }
@@ -312,7 +326,9 @@ export class CompanyDashboard extends Component {
     super(props);
     this.subscriptions = [];
     this.state={
-      company:{}
+      company:{},
+      companyName:'',
+      companyID:''
     }
   }
     
@@ -321,9 +337,12 @@ export class CompanyDashboard extends Component {
         this.subscriptions.push(
           fs.getCompanies(this.props.companyID).subscribe(company=>{
             this.setState({
-              company
+              company,
+              companyName:company[0].name,
+              companyID:company[0].key
             },()=>{
-              //console.log(this.state.company);
+              console.log(this.state.companyID);
+              console.log(this.state.companyName)
             })
           })
         )}
@@ -333,21 +352,15 @@ export class CompanyDashboard extends Component {
       }
   
   render() {
-    //console.log(this.state.company.name)
     return (
       <div className="container">
-        {this.state.successfulAddedProduct ? (
-            <AlertContainer>
-              <Alert type="success">{this.state.successfulAddedProduct}</Alert>
-            </AlertContainer>
-          ) : null}
-        <h4 className="text-center text-white py-3"> <strong>{}</strong> Dashboard </h4>
+        <h4 className="text-center text-white py-3"> <strong>{this.state.companyName}</strong> Dashboard </h4>
         <div className="row">
-          <div className="col-sm-6">
-            <ProductForm companyName={this.state.company.name}/>
+          <div className="col-lg-6">
+            <ProductForm companyName={this.state.companyName} companyID={this.props.companyID}/>
           </div>
-          <div className="col-md-6">
-            <CompanyInfo companyName={this.state.company.name}/>
+          <div className="col-lg-6">
+            <CompanyInfo companyName={this.state.companyName}/>
           </div>
         </div>
       </div>

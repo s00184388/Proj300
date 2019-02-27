@@ -798,7 +798,7 @@ export default class FirebaseServices {
       this.productsCollection.add(product).then(()=>{
         console.log('Product Added')
       }).catch(err=>{
-        alert('Error at adding products!')
+        alert('Error at adding products! Check your inputs')
       });
     } else {
       alert("Cannot add product");
