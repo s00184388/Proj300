@@ -797,16 +797,12 @@ export default class FirebaseServices {
   addProduct = product => {
     this.brandImagesCollection = this.brandImgdb.child(product.picture.name);
     if (product) {
-<<<<<<< HEAD
-      //this.productsCollection.add(product);
-      this.brandImagesCollection.put(product.picture);
-=======
+      this.brandImagesCollection.put(product.picture).then(product.picURL = this.brandImgdb.child(product.picture.name).fullPath);
       this.productsCollection.add(product).then(()=>{
         console.log('Product Added')
       }).catch(err=>{
         alert('Error at adding products! Check your inputs')
       });
->>>>>>> a14ed28fc67605fdbf6bf4ce81a3d8cfa6a0f7bd
     } else {
       alert("Cannot add product");
     }
