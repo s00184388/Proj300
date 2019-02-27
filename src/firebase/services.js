@@ -797,12 +797,20 @@ export default class FirebaseServices {
   addProduct = product => {
     this.brandImagesCollection = this.brandImgdb.child(product.picture.name);
     if (product) {
+<<<<<<< HEAD
       //this.productsCollection.add(product);
       this.brandImagesCollection.put(product.picture);
+=======
+      this.productsCollection.add(product).then(()=>{
+        console.log('Product Added')
+      }).catch(err=>{
+        alert('Error at adding products! Check your inputs')
+      });
+>>>>>>> a14ed28fc67605fdbf6bf4ce81a3d8cfa6a0f7bd
     } else {
-      console.log("Cannot add product");
+      alert("Cannot add product");
     }
-  };
+}
 
   createUser = user => {
     return new Promise((resolve, reject) => {
@@ -849,6 +857,48 @@ export default class FirebaseServices {
           });
       } else {
         reject(new Error("no brand given"));
+      }
+    });
+  };
+
+  getBrandByName = brandName => {
+    return new Promise((resolve, reject) => {
+      if (brandName) {
+        this.brandsCollection
+          .where("name", "==", brandName)
+          .get()
+          .then(querySnapshot => {
+            if (querySnapshot.empty) {
+              reject(new Error("no company found"));
+            } else {
+              var company = {};
+              querySnapshot.forEach(doc => {
+                const {
+                  adminUserID,
+                  name,
+                  picture,
+                  address,
+                  phoneNumber,
+                  email,
+                  description
+                } = doc.data();
+                company = {
+                  key: doc.id,
+                  doc,
+                  adminUserID,
+                  name,
+                  picture,
+                  address,
+                  phoneNumber,
+                  email,
+                  description
+                };
+              });
+              resolve(company);
+            }
+          });
+      } else {
+        reject(new Error("no company name"));
       }
     });
   };

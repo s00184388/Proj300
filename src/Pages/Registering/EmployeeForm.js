@@ -5,8 +5,9 @@ import firebase from "../../firebase/firebase";
 import InputField from "../Registering/InputFields";
 import Radio from "../Registering/Checkboxes";
 import { Link } from "react-router-dom";
-import { Alert, AlertContainer } from "react-bs-notifier";
+import { Alert, AlertContainer} from "react-bs-notifier";
 import { firestore } from "firebase";
+import ReactLoading from "react-loading";
 
 const fs = new FirebaseServices();
 
@@ -28,7 +29,8 @@ export class EmployeeForm extends Component {
       authError: "",
       companyError: "",
       companies: [],
-      brands: []
+      brands: [],
+      fetchInProgress: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -141,7 +143,51 @@ export class EmployeeForm extends Component {
     console.log(this.state.fields);
   };
 
+  getCompanyAndSendConfirmationEmail(employee) {
+    this.setState({ fetchInProgress: true });
+    this.subscriptions.push(
+      fs.getCompany(employee.companyID).subscribe(comp => {
+        if (comp.email) {
+          var data = {
+            company: {
+              email: comp.email,
+              name: comp.name
+            },
+            employee: {
+              firstName: employee.firstName,
+              lastName: employee.lastName,
+              key: employee.key,
+              email: employee.email
+            }
+          };
+          var url = `http://stravakudos.herokuapp.com/mail/sendConfirmationEmail`;
+          fetch(url, {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            mode: "cors", // no-cors, cors, *same-origin
+            cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: "same-origin", // include, *same-origin, omit
+            headers: {
+              "Content-Type": "application/json"
+              // "Content-Type": "application/x-www-form-urlencoded",
+            },
+            redirect: "follow", // manual, *follow, error
+            referrer: "no-referrer", // no-referrer, *client
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+          })
+            .then(() => {
+              this.setState({ fetchInProgress: false });
+            })
+            .catch(err => {
+              console.log(err);
+              this.setState({ fetchInProgress: false });
+            });
+        }
+      })
+    );
+  }
+
   createAuthUser = (user, company, brand) => {
+    this.setState({ fetchInProgress: true });
     console.log(this.state.fields);
     firebase
       .auth()
@@ -152,9 +198,19 @@ export class EmployeeForm extends Component {
       .then(() => {
         this.props.history.push("/");
         console.log("role for creating: " + this.state.role);
+
         if (this.state.role === "employee") {
           console.log("creating employee");
-          fs.createUser(user).catch(err => console.log(err));
+          fs.createUser(user)
+            .then(userKey => {
+              user.key = userKey;
+              this.getCompanyAndSendConfirmationEmail(user);
+              this.setState({ fetchInProgress: false });
+            })
+            .catch(err => {
+              console.log(err);
+              this.setState({ fetchInProgress: false });
+            });
         } else if (this.state.role === "companyAdmin") {
           console.log("creating companyAdmin");
           var userID;
@@ -174,8 +230,12 @@ export class EmployeeForm extends Component {
                     .doc(userID)
                     .update({ companyID: compID })
                     .catch(err => console.log(err));
+                  this.setState({ fetchInProgress: false });
                 })
-                .catch(err => console.log(err));
+                .catch(err => {
+                  console.log(err);
+                  this.setState({ fetchInProgress: false });
+                });
             })
             .catch(err => {
               this.setState({ err: err.message });
@@ -196,7 +256,13 @@ export class EmployeeForm extends Component {
                 fs.usersCollection
                   .doc(userID)
                   .update({ brandID: brID })
-                  .catch(err => console.log(err));
+                  .then(() => {
+                    this.setState({ fetchInProgress: false });
+                  })
+                  .catch(err => {
+                    console.log(err);
+                    this.setState({ fetchInProgress: false });
+                  });
               });
             })
             .catch(err => {
@@ -206,7 +272,7 @@ export class EmployeeForm extends Component {
         }
       })
       .catch(err => {
-        console.log(err);
+        this.setState({ authError: err.message });
       });
   };
 
@@ -270,7 +336,8 @@ export class EmployeeForm extends Component {
               deviceID: this.state.deviceID,
               points: 0,
               role: this.state.role,
-              created: firestore.Timestamp.fromDate(new Date())
+              created: firestore.Timestamp.fromDate(new Date()),
+              approved: false
             };
             this.createAuthUser(user, null, null);
           })
@@ -319,7 +386,7 @@ export class EmployeeForm extends Component {
         };
 
         if (this.nameFree(fields["brandName"], "brand")) {
-          console.log("Step1.User data for bramd inserted in db");
+          console.log("Step1.User data for brand inserted in db");
           this.createAuthUser(user, null, brand);
         } else {
           alert("There is already a brand with that name");
@@ -329,13 +396,20 @@ export class EmployeeForm extends Component {
   };
 
   componentDidMount() {
+    this.setState({ fetchInProgress: true });
     this.subscriptions.push(
       fs
         .getCompanies()
-        .subscribe(companies => this.setState({ companies: companies }))
+        .subscribe(companies =>
+          this.setState({ companies: companies, fetchInProgress: false })
+        )
     );
     this.subscriptions.push(
-      fs.getBrands().subscribe(brands => this.setState({ brands: brands }))
+      fs
+        .getBrands()
+        .subscribe(brands =>
+          this.setState({ brands: brands, fetchInProgress: false })
+        )
     );
   }
 
@@ -349,6 +423,7 @@ export class EmployeeForm extends Component {
     const options = companies.map(opt => <option key={opt}>{opt}</option>);
     const { firstName, lastName, email, pwd1, pwd2 } = this.state.fields;
     const { role } = this.state;
+    const fetchInProgress = this.state.fetchInProgress;
     const {
       companyEmail,
       brandEmail,
@@ -359,355 +434,372 @@ export class EmployeeForm extends Component {
     } = this.state.fields;
     //employee selection
     return (
-      <div className="container pt-5">
-        {this.state.companyError != "" ? (
+      <div
+        className={
+          fetchInProgress
+            ? "container d-flex justify-content-center"
+            : "container"
+        }
+      >
+        {fetchInProgress ? (
+          <ReactLoading
+            type={"spinningBubbles"}
+            color={"#fff"}
+            height={640}
+            width={256}
+          />
+        ) : (
+          <div className="container pt-5">
+            {this.state.companyError != "" ? (
           <AlertContainer>
-            <Alert type="danger">{this.state.companyError}</Alert>
+            <Alert type="danger" headline="Something went wrong!">{this.state.companyError}</Alert>
           </AlertContainer>
         ) : null}
         {this.state.authError != "" ? (
           <AlertContainer>
             <Alert type="danger">{this.state.authError}</Alert>
           </AlertContainer>
-        ) : null}
-        <div className="form-register py-3">
-          <div className="text-white text-center pt-2">
-            <h4 className="text-white">Sign Up as</h4>
-            <p className="pt-2">
-              You can sign up now on KudosHealth. It's what all fitness lovers
-              are doing nowadays!
-            </p>
-          </div>
-          <div className="row pt-4 text-white font-weight-bold">
-            <div className="col-sm-4 ">
-              <div className="d-flex justify-content-start">
-                <Radio
-                  name="employee"
-                  value="employee"
-                  label="Employee"
-                  checked={this.state.selectedOption === "employee"}
-                  onChange={this.handleOptionChange}
-                />
+        ) : null} 
+            <div className="form-register py-3">
+              <div className="text-white text-center pt-2">
+                <h4 className="text-white">Sign Up as</h4>
+                <p className="pt-2">
+                  You can sign up now on KudosHealth. It's what all fitness
+                  lovers are doing nowadays!
+                </p>
               </div>
-            </div>
-            <div className="col-sm-4">
-              <div className="d-flex justify-content-center mr-5">
-                <Radio
-                  name="company"
-                  value="companyAdmin"
-                  label="Company"
-                  checked={this.state.selectedOption === "companyAdmin"}
-                  onChange={this.handleOptionChange}
-                />
-              </div>
-            </div>
-            <div className="col-sm-3">
-              <div className="d-flex justify-content-end">
-                <Radio
-                  name="brand"
-                  value="brandAdmin"
-                  label="Brand"
-                  checked={this.state.selectedOption === "brandAdmin"}
-                  onChange={this.handleOptionChange}
-                />
-              </div>
-            </div>
-          </div>
-          <hr />
-          <div className="card-body p-0">
-            {role === "employee" ? (
-              <div className="container">
-                <h6 className="text-white">Employee User Data</h6>
-                <form className="pt-2" onSubmit={this.handleSubmit}>
-                  <div className="row">
-                    <InputField
-                      name="firstName"
-                      type="text"
-                      placeholder="First name"
-                      value={firstName || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.firstName}
-                    />
-                    <InputField
-                      name="lastName"
-                      type="text"
-                      placeholder="Last name"
-                      value={lastName || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.lastName}
+              <div className="row pt-4 text-white font-weight-bold">
+                <div className="col-sm-4 ">
+                  <div className="d-flex justify-content-start">
+                    <Radio
+                      name="employee"
+                      value="employee"
+                      label="Employee"
+                      checked={this.state.selectedOption === "employee"}
+                      onChange={this.handleOptionChange}
                     />
                   </div>
-                  <div className="row">
-                    <InputField
-                      name="email"
-                      type="text"
-                      placeholder="Email"
-                      value={email || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.email}
+                </div>
+                <div className="col-sm-4">
+                  <div className="d-flex justify-content-center mr-5">
+                    <Radio
+                      name="company"
+                      value="companyAdmin"
+                      label="Company"
+                      checked={this.state.selectedOption === "companyAdmin"}
+                      onChange={this.handleOptionChange}
                     />
-                    <div className="col-sm-6">
-                      <div className="form-group input-group-sm">
-                        <select
-                          id="companyList"
-                          name="companyName"
-                          className="form-control input-group-sm"
-                          defaultValue=""
+                  </div>
+                </div>
+                <div className="col-sm-3">
+                  <div className="d-flex justify-content-end">
+                    <Radio
+                      name="brand"
+                      value="brandAdmin"
+                      label="Brand"
+                      checked={this.state.selectedOption === "brandAdmin"}
+                      onChange={this.handleOptionChange}
+                    />
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <div className="card-body p-0">
+                {role === "employee" ? (
+                  <div className="container">
+                    <h6 className="text-white">Employee User Data</h6>
+                    <form className="pt-2" onSubmit={this.handleSubmit}>
+                      <div className="row">
+                        <InputField
+                          name="firstName"
+                          type="text"
+                          placeholder="First name"
+                          value={firstName || ""}
                           onChange={this.handleChange}
-                        >
-                          <option value="" disabled hidden>
-                            Select a Company
-                          </option>
-                          {options}
-                        </select>
+                          error={this.state.errors.firstName}
+                        />
+                        <InputField
+                          name="lastName"
+                          type="text"
+                          placeholder="Last name"
+                          value={lastName || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.lastName}
+                        />
                       </div>
-                    </div>
+                      <div className="row">
+                        <InputField
+                          name="email"
+                          type="text"
+                          placeholder="Email"
+                          value={email || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.email}
+                        />
+                        <div className="col-sm-6">
+                          <div className="form-group input-group-sm">
+                            <select
+                              id="companyList"
+                              name="companyName"
+                              className="form-control input-group-sm"
+                              defaultValue=""
+                              onChange={this.handleChange}
+                            >
+                              <option value="" disabled hidden>
+                                Select a Company
+                              </option>
+                              {options}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <InputField
+                          name="pwd1"
+                          type="password"
+                          placeholder="Password"
+                          value={pwd1 || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.pwd1}
+                        />
+                        <InputField
+                          name="pwd2"
+                          type="password"
+                          placeholder="Confirm Password"
+                          value={pwd2 || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.pwd2}
+                        />
+                      </div>
+                      <div className="row mx-auto pt-2">
+                        <div className="col-lg-4">
+                          <button
+                            className="btn btn-warning btn-sm col-lg-12  text-white btn-sm"
+                            id="formSubmit"
+                            type="submit"
+                          >
+                            Submit
+                          </button>
+                        </div>
+                        <div className="col-lg-4" />
+                        <div className="col-lg-4">
+                          <Link
+                            to="/login"
+                            className="btn btn-warning btn-sm text-white col-lg-12"
+                          >
+                            Back to Login
+                          </Link>
+                        </div>
+                      </div>
+                    </form>
                   </div>
-                  <div className="row">
-                    <InputField
-                      name="pwd1"
-                      type="password"
-                      placeholder="Password"
-                      value={pwd1 || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.pwd1}
-                    />
-                    <InputField
-                      name="pwd2"
-                      type="password"
-                      placeholder="Confirm Password"
-                      value={pwd2 || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.pwd2}
-                    />
+                ) : role === "brandAdmin" ? (
+                  <div className="container">
+                    <h6 className="text-white">User Data</h6>
+                    <form onSubmit={this.handleSubmit}>
+                      <div className="row">
+                        <InputField
+                          name="firstName"
+                          type="text"
+                          placeholder="First name"
+                          value={firstName || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.firstName}
+                        />
+                        <InputField
+                          name="lastName"
+                          type="text"
+                          placeholder="Last name"
+                          value={lastName || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.lastName}
+                        />
+                      </div>
+                      <div className="row">
+                        <InputField
+                          name="email"
+                          type="text"
+                          placeholder="Personal Email"
+                          value={email || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.email}
+                        />
+                        <InputField
+                          name="brandName"
+                          type="text"
+                          placeholder="Brand Name"
+                          value={brandName || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.brandName}
+                        />
+                      </div>
+                      <h6 className="text-white">Brand Details</h6>
+                      <div className="row">
+                        <InputField
+                          name="brandEmail"
+                          type="text"
+                          placeholder="Brand Email"
+                          value={brandEmail || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.brandEmail}
+                        />
+                        <InputField
+                          name="brandAddress"
+                          type="text"
+                          placeholder="Brand Address"
+                          value={brandAddress || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.brandAddress}
+                        />
+                      </div>
+                      <div className="row">
+                        <InputField
+                          name="pwd1"
+                          type="password"
+                          placeholder="Password"
+                          value={pwd1 || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.pwd1}
+                        />
+                        <InputField
+                          name="pwd2"
+                          type="password"
+                          placeholder="Confirm Password"
+                          value={pwd2 || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.pwd2}
+                        />
+                      </div>
+                      <hr />
+                      <div className="row mx-auto pt-2">
+                        <div className="col-lg-4">
+                          <button
+                            className="btn btn-warning btn-sm col-lg-12  text-white btn-sm"
+                            id="formSubmit"
+                            type="submit"
+                            onClick={this.handleSubmit}
+                          >
+                            Submit
+                          </button>
+                        </div>
+                        <div className="col-lg-4" />
+                        <div className="col-lg-4">
+                          <Link
+                            to="/login"
+                            className="btn btn-warning btn-sm text-white col-lg-12"
+                          >
+                            Back to Login
+                          </Link>
+                        </div>
+                      </div>
+                    </form>
                   </div>
-                  <div className="row mx-auto pt-2">
-                    <div className="col-lg-4">
-                      <button
-                        className="btn btn-warning btn-sm col-lg-12  text-white btn-sm"
-                        id="formSubmit"
-                        type="submit"
-                      >
-                        Submit
-                      </button>
-                    </div>
-                    <div className="col-lg-4" />
-                    <div className="col-lg-4">
-                      <Link
-                        to="/login"
-                        className="btn btn-warning btn-sm text-white col-lg-12"
-                      >
-                        Back to Login
-                      </Link>
-                    </div>
+                ) : (
+                  <div className="container">
+                    <h6 className="text-white">User Data</h6>
+                    <form onSubmit={this.handleSubmit}>
+                      <div className="row">
+                        <InputField
+                          name="firstName"
+                          type="text"
+                          placeholder="First name"
+                          value={firstName || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.firstName}
+                        />
+                        <InputField
+                          name="lastName"
+                          type="text"
+                          placeholder="Last name"
+                          value={lastName || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.lastName}
+                        />
+                      </div>
+                      <div className="row">
+                        <InputField
+                          name="email"
+                          type="text"
+                          placeholder="User Email"
+                          value={email || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.email}
+                        />
+                        <InputField
+                          name="companyName"
+                          type="text"
+                          placeholder="Company Name"
+                          value={companyName || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.companyName}
+                        />
+                      </div>
+                      <h6 className="text-white">Company Details</h6>
+                      <div className="row">
+                        <InputField
+                          name="companyEmail"
+                          type="text"
+                          placeholder="Company email"
+                          value={companyEmail || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.companyEmail}
+                        />
+                        <InputField
+                          name="companyAddress"
+                          type="text"
+                          placeholder="Company Adress"
+                          value={companyAddress || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.companyAddress}
+                        />
+                      </div>
+                      <div className="row">
+                        <InputField
+                          name="pwd1"
+                          type="password"
+                          placeholder="Password"
+                          value={pwd1 || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.pwd1}
+                        />
+                        <InputField
+                          name="pwd2"
+                          type="password"
+                          placeholder="Confirm Password"
+                          value={pwd2 || ""}
+                          onChange={this.handleChange}
+                          error={this.state.errors.pwd2}
+                        />
+                      </div>
+                      <hr />
+                      <div className="row mx-auto pt-2">
+                        <div className="col-lg-4">
+                          <button
+                            className="btn btn-warning btn-sm col-lg-12  text-white btn-sm"
+                            id="formSubmit"
+                            type="submit"
+                            onClick={this.handleSubmit}
+                          >
+                            Submit
+                          </button>
+                        </div>
+                        <div className="col-lg-4" />
+                        <div className="col-lg-4">
+                          <Link
+                            to="/login"
+                            className="btn btn-warning btn-sm text-white col-lg-12"
+                          >
+                            Back to Login
+                          </Link>
+                        </div>
+                      </div>
+                    </form>
                   </div>
-                </form>
+                )}
               </div>
-            ) : role === "brandAdmin" ? (
-              <div className="container">
-                <h6 className="text-white">User Data</h6>
-                <form onSubmit={this.handleSubmit}>
-                  <div className="row">
-                    <InputField
-                      name="firstName"
-                      type="text"
-                      placeholder="First name"
-                      value={firstName || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.firstName}
-                    />
-                    <InputField
-                      name="lastName"
-                      type="text"
-                      placeholder="Last name"
-                      value={lastName || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.lastName}
-                    />
-                  </div>
-                  <div className="row">
-                    <InputField
-                      name="email"
-                      type="text"
-                      placeholder="Personal Email"
-                      value={email || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.email}
-                    />
-                    <InputField
-                      name="brandName"
-                      type="text"
-                      placeholder="Brand Name"
-                      value={brandName || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.brandName}
-                    />
-                  </div>
-                  <h6 className="text-white">Brand Details</h6>
-                  <div className="row">
-                    <InputField
-                      name="brandEmail"
-                      type="text"
-                      placeholder="Brand Email"
-                      value={brandEmail || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.brandEmail}
-                    />
-                    <InputField
-                      name="brandAddress"
-                      type="text"
-                      placeholder="Brand Address"
-                      value={brandAddress || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.brandAddress}
-                    />
-                  </div>
-                  <div className="row">
-                    <InputField
-                      name="pwd1"
-                      type="password"
-                      placeholder="Password"
-                      value={pwd1 || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.pwd1}
-                    />
-                    <InputField
-                      name="pwd2"
-                      type="password"
-                      placeholder="Confirm Password"
-                      value={pwd2 || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.pwd2}
-                    />
-                  </div>
-                  <hr />
-                  <div className="row mx-auto pt-2">
-                    <div className="col-lg-4">
-                      <button
-                        className="btn btn-warning btn-sm col-lg-12  text-white btn-sm"
-                        id="formSubmit"
-                        type="submit"
-                        onClick={this.handleSubmit}
-                      >
-                        Submit
-                      </button>
-                    </div>
-                    <div className="col-lg-4" />
-                    <div className="col-lg-4">
-                      <Link
-                        to="/login"
-                        className="btn btn-warning btn-sm text-white col-lg-12"
-                      >
-                        Back to Login
-                      </Link>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            ) : (
-              <div className="container">
-                <h6 className="text-white">User Data</h6>
-                <form onSubmit={this.handleSubmit}>
-                  <div className="row">
-                    <InputField
-                      name="firstName"
-                      type="text"
-                      placeholder="First name"
-                      value={firstName || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.firstName}
-                    />
-                    <InputField
-                      name="lastName"
-                      type="text"
-                      placeholder="Last name"
-                      value={lastName || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.lastName}
-                    />
-                  </div>
-                  <div className="row">
-                    <InputField
-                      name="email"
-                      type="text"
-                      placeholder="User Email"
-                      value={email || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.email}
-                    />
-                    <InputField
-                      name="companyName"
-                      type="text"
-                      placeholder="Company Name"
-                      value={companyName || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.companyName}
-                    />
-                  </div>
-                  <h6 className="text-white">Company Details</h6>
-                  <div className="row">
-                    <InputField
-                      name="companyEmail"
-                      type="text"
-                      placeholder="Company email"
-                      value={companyEmail || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.companyEmail}
-                    />
-                    <InputField
-                      name="companyAddress"
-                      type="text"
-                      placeholder="Company Adress"
-                      value={companyAddress || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.companyAddress}
-                    />
-                  </div>
-                  <div className="row">
-                    <InputField
-                      name="pwd1"
-                      type="password"
-                      placeholder="Password"
-                      value={pwd1 || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.pwd1}
-                    />
-                    <InputField
-                      name="pwd2"
-                      type="password"
-                      placeholder="Confirm Password"
-                      value={pwd2 || ""}
-                      onChange={this.handleChange}
-                      error={this.state.errors.pwd2}
-                    />
-                  </div>
-                  <hr />
-                  <div className="row mx-auto pt-2">
-                    <div className="col-lg-4">
-                      <button
-                        className="btn btn-warning btn-sm col-lg-12  text-white btn-sm"
-                        id="formSubmit"
-                        type="submit"
-                        onClick={this.handleSubmit}
-                      >
-                        Submit
-                      </button>
-                    </div>
-                    <div className="col-lg-4" />
-                    <div className="col-lg-4">
-                      <Link
-                        to="/login"
-                        className="btn btn-warning btn-sm text-white col-lg-12"
-                      >
-                        Back to Login
-                      </Link>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   }

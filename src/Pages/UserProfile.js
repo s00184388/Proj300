@@ -273,13 +273,13 @@ export class Panel extends Component {
                     ) : (
                       <div>
                         <a
-                          href={`https://stravakudos.herokuapp.com/strava/authorize?userID=${userID}`}
+                          href={`https://stravakudos.herokuapp.com/strava/authorize?userId=${userID}`}
                           className="btn btn-sm btn-warning col-lg-6"
                         >
                           Strava
                         </a>
                         <a
-                          href={`https://stravakudos.herokuapp.com/fitbit/authorize?userID=${userID}`}
+                          href={`https://stravakudos.herokuapp.com/fitbit/authorize?userId=${userID}`}
                           className="btn btn-sm btn-warning col-lg-6"
                         >
                           Fitbit
