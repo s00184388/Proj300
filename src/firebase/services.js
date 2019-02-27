@@ -5,6 +5,7 @@ import firebase from "firebase";
 export default class FirebaseServices {
   constructor() {
     this.db = fire.firestore();
+    this.brandImgdb = fire.storage().ref("BrandImages/");
     this.db.settings({
       timestampsInSnapshots: true
     });
@@ -802,7 +803,15 @@ export default class FirebaseServices {
   };
 
   addProduct = product => {
+    this.brandImagesCollection = this.brandImgdb.child(product.picture.name);
     if (product) {
+      this.brandImagesCollection
+        .put(product.picture)
+        .then(
+          (product.picURL = this.brandImgdb.child(
+            product.picture.name
+          ).fullPath)
+        );
       this.productsCollection
         .add(product)
         .then(() => {
