@@ -9,6 +9,8 @@ firebaseDb.settings({ timestampsInSnapshots: true });
 const wishlistsCollection = firebaseAdmin.firestore().collection("Wishlists");
 const usersCollection = firebaseAdmin.firestore().collection("Users");
 const productsCollection = firebaseAdmin.firestore().collection("Products");
+const brandsCollection = firebaseAdmin.firestore().collection("Brands");
+const companiesCollection = firebaseAdmin.firestore().collection("Companies");
 const devicesCollection = firebaseAdmin
   .firestore()
   .collection("Connected_Devices");
@@ -115,6 +117,30 @@ exports.deleteDevice = functions.firestore
         return console.log("Device deleted");
       })
       .catch(err => console.log(err));
+  });
+
+exports.deleteBrand = functions.firestore
+  .document("Brands/{brandId}")
+  .onDelete((snap, context) => {
+    var brandId = snap.id;
+    console.log(`deleted brandId: ${brandId}`);
+    console.log(`deleted brand: ${snap.data().name}`);
+    return usersCollection.doc(snap.data().adminUserID).delete();
+  });
+
+exports.deleteAdmin = functions.firestore
+  .document("Users/{UserId}")
+  .onDelete((snap, context) => {
+    var userId = snap.id;
+    if (snap.data().role === "brandAdmin") {
+      console.log(`deleted brand admin id: ${userId}`);
+      console.log(`deleted brandId: ${snap.data().brandID}`);
+      return brandsCollection.doc(snap.data().brandID).delete();
+    } else if (snap.data().role === "companyAdmin") {
+      console.log(`deleted company Admin id: ${userId}`);
+      console.log(`deleted brandId: ${snap.data().companyID}`);
+      return companiesCollection.doc(snap.data().companyID).delete();
+    }
   });
 
 exports.deleteRegisteredUser = functions.firestore
