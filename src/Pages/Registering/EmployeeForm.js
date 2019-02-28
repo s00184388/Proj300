@@ -5,7 +5,7 @@ import firebase from "../../firebase/firebase";
 import InputField from "../Registering/InputFields";
 import Radio from "../Registering/Checkboxes";
 import { Link } from "react-router-dom";
-import { Alert, AlertContainer} from "react-bs-notifier";
+import { Alert, AlertContainer } from "react-bs-notifier";
 import { firestore } from "firebase";
 import ReactLoading from "react-loading";
 
@@ -30,7 +30,8 @@ export class EmployeeForm extends Component {
       companyError: "",
       companies: [],
       brands: [],
-      fetchInProgress: false
+      fetchInProgress: false,
+      showingAlert: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -266,14 +267,21 @@ export class EmployeeForm extends Component {
               });
             })
             .catch(err => {
-              this.setState({ error: err });
-              alert(this.state.error);
+              this.setState({
+                authError: err.message,
+                showingAlert: true
+              });
             });
         }
       })
       .catch(err => {
-        this.setState({ authError: err.message });
+        this.setState({ authError: err.message, showingAlert: true });
       });
+    setTimeout(() => {
+      this.setState({
+        showingAlert: false
+      });
+    }, 2000);
   };
 
   handleOptionChange = changeEvent => {
@@ -361,10 +369,11 @@ export class EmployeeForm extends Component {
           email: fields["companyEmail"]
         };
         if (this.nameFree(fields["companyName"], "company")) {
-          console.log("Step1.User data for company inserted in db");
           this.createAuthUser(user, company, null);
         } else {
-          alert("There is already a company with that name");
+          this.setState({
+            companyError: "There is already a company with the same name!"
+          });
         }
 
         console.log(this.state.role);
@@ -389,7 +398,9 @@ export class EmployeeForm extends Component {
           console.log("Step1.User data for brand inserted in db");
           this.createAuthUser(user, null, brand);
         } else {
-          alert("There is already a brand with that name");
+          this.setState({
+            companyError: "There is already a brand with the same name!"
+          });
         }
       }
     }
@@ -445,21 +456,26 @@ export class EmployeeForm extends Component {
           <ReactLoading
             type={"spinningBubbles"}
             color={"#fff"}
-            height={640}
-            width={256}
+            height={400}
+            width={200}
           />
         ) : (
           <div className="container pt-5">
-            {this.state.companyError != "" ? (
-          <AlertContainer>
-            <Alert type="danger" headline="Something went wrong!">{this.state.companyError}</Alert>
-          </AlertContainer>
-        ) : null}
-        {this.state.authError != "" ? (
-          <AlertContainer>
-            <Alert type="danger">{this.state.authError}</Alert>
-          </AlertContainer>
-        ) : null} 
+            {this.state.companyError != "" &&
+            this.state.showingAlert === true ? (
+              <AlertContainer>
+                <Alert type="danger" headline="Something went wrong!">
+                  {this.state.companyError}
+                </Alert>
+              </AlertContainer>
+            ) : null}
+            {this.state.authError != "" && this.state.showingAlert === true ? (
+              <AlertContainer>
+                <Alert type="danger" headline="Something went wrong!">
+                  {this.state.authError}
+                </Alert>
+              </AlertContainer>
+            ) : null}
             <div className="form-register py-3">
               <div className="text-white text-center pt-2">
                 <h4 className="text-white">Sign Up as</h4>

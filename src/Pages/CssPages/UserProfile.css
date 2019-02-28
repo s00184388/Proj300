@@ -1,8 +1,26 @@
-.links {
-    border: 2px solid #ffffff;
-    border-radius: 0px;  
-  }
-  .links:hover {
-    border: none;
-    border-radius: 0px;
-  }
+.link {
+  background-color: inherit;
+  border: none;
+  float: center;
+  text-align: center;
+  outline: none;
+  cursor: pointer;
+  padding: 5px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+  width: 33%;
+  background-color: #f36104;
+  border-radius: 4px;
+  color: #ffffff;
+}
+
+/* Change background color of buttons on hover */
+.link:hover {
+  background-color: #ccc;
+}
+
+/* Create an active/current tablink class */
+.link.active {
+  background-color: #ffff;
+  color: #556080;
+}
