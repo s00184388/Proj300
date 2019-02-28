@@ -212,7 +212,7 @@ export class EmployeeForm extends Component {
                     .sendEmailVerification()
                     .then(() => {
                       alert(`email sent. 
-\You won't receive any points or cannot buy anything unless you verifiy your email`);
+\You won't receive any points or cannot buy anything until you verifiy your email`);
                     })
                     .catch(err => {
                       console.log(err);
@@ -237,6 +237,25 @@ export class EmployeeForm extends Component {
           var userID;
           fs.createUser(user)
             .then(adminUserID => {
+              var currentUser = firebase.auth().currentUser;
+              currentUser
+                .updateProfile({ displayName: user.firstName })
+                .then(() => {
+                  currentUser
+                    .sendEmailVerification()
+                    .then(() => {
+                      alert(`email sent. 
+\You won't be able to accept employees until you verifiy your email`);
+                    })
+                    .catch(err => {
+                      console.log(err);
+                      this.setState({ fetchInProgress: false });
+                    });
+                })
+                .catch(err => {
+                  console.log(err);
+                  this.setState({ fetchInProgress: false });
+                });
               userID = adminUserID;
               let comp = {
                 name: company.name,
