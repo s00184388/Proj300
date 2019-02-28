@@ -341,6 +341,9 @@ export default class FirebaseServices {
 
   getConnectedUser = () => {
     var user = firebase.auth().currentUser;
+    console.log("connected user:");
+    console.log(user.providerData);
+    console.log("user verified:" + user.emailVerified);
     var userEmail = "";
     if (user) {
       userEmail = user.email;

@@ -152,7 +152,8 @@ export class EmployeeForm extends Component {
           var data = {
             company: {
               email: comp.email,
-              name: comp.name
+              name: comp.name,
+              key: comp.key
             },
             employee: {
               firstName: employee.firstName,
@@ -204,6 +205,26 @@ export class EmployeeForm extends Component {
           console.log("creating employee");
           fs.createUser(user)
             .then(userKey => {
+              var currentUser = firebase.auth().currentUser;
+              currentUser
+                .updateProfile({ displayName: user.firstName })
+                .then(() => {
+                  currentUser
+                    .sendEmailVerification()
+                    .then(() => {
+                      alert(`email sent. 
+\You won't receive any points or cannot buy anything until you verifiy your email`);
+                    })
+                    .catch(err => {
+                      console.log(err);
+                      this.setState({ fetchInProgress: false });
+                    });
+                })
+                .catch(err => {
+                  console.log(err);
+                  this.setState({ fetchInProgress: false });
+                });
+
               user.key = userKey;
               this.getCompanyAndSendConfirmationEmail(user);
               this.setState({ fetchInProgress: false });
@@ -217,6 +238,25 @@ export class EmployeeForm extends Component {
           var userID;
           fs.createUser(user)
             .then(adminUserID => {
+              var currentUser = firebase.auth().currentUser;
+              currentUser
+                .updateProfile({ displayName: user.firstName })
+                .then(() => {
+                  currentUser
+                    .sendEmailVerification()
+                    .then(() => {
+                      alert(`email sent. 
+\You won't be able to accept employees until you verifiy your email`);
+                    })
+                    .catch(err => {
+                      console.log(err);
+                      this.setState({ fetchInProgress: false });
+                    });
+                })
+                .catch(err => {
+                  console.log(err);
+                  this.setState({ fetchInProgress: false });
+                });
               userID = adminUserID;
               let comp = {
                 name: company.name,
