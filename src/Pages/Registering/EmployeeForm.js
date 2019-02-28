@@ -272,7 +272,7 @@ export class EmployeeForm extends Component {
         }
       })
       .catch(err => {
-        this.setState({ authError: err.message });
+        this.setState({ authError: err.message, fetchInProgress: false });
       });
   };
 
