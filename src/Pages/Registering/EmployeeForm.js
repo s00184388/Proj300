@@ -152,7 +152,8 @@ export class EmployeeForm extends Component {
           var data = {
             company: {
               email: comp.email,
-              name: comp.name
+              name: comp.name,
+              key: comp.key
             },
             employee: {
               firstName: employee.firstName,
