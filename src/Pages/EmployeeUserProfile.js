@@ -17,12 +17,19 @@ class Sidepage extends Component {
     super(props);
     this.state = {
       hasDevice: false,
-      emailConfirmed: firebase.auth().currentUser.emailVerified
+      emailConfirmed: false
     };
     this.timeConverter = this.timeConverter.bind(this);
     this.hasDevice = this.hasDevice.bind(this);
     this.hasDevice(this.props.user.key);
     this.resendConfirmation = this.resendConfirmation.bind(this);
+  }
+
+  componentDidMount() {
+    var currentUser = firebase.auth().currentUser;
+    if (currentUser) {
+      this.setState({ emailConfirmed: currentUser.emailVerified });
+    }
   }
 
   timeConverter(UNIX_timestamp) {
