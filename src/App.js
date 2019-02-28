@@ -31,6 +31,8 @@ import EmployeeForm from "./Pages/Registering/EmployeeForm";
 import Brands from "./Pages/Brands";
 import Brand from "./Pages/Brand";
 import EmployeeUserProfile from "./Pages/EmployeeUserProfile";
+import CompanyProfile from "./Pages/CompanyProfile";
+import BrandProfile from "./Pages/BrandProfile";
 
 const fs = new FirebaseServices();
 
@@ -120,6 +122,19 @@ class App extends Component {
       return <EmployeeUserProfile user={this.state.user} {...props} />;
     };
 
+    const MyCompanyProfile = props => {
+      return (
+        <CompanyProfile
+          user={this.state.user}
+          companyID={this.state.user.companyID}
+        />
+      );
+    };
+
+    const MyBrandProfile = props => {
+      return <BrandProfile user={this.state.user} {...props} />;
+    };
+
     const MyBrand = props => {
       return <Brand user={this.state.user} {...props} />;
     };
@@ -189,6 +204,10 @@ class App extends Component {
                     <PrivateRoute path="/wishlist" component={MyWishlist} />
                     <Route path={"/admin"} component={Admin} />
                     <Route
+                      path={"/companyProfile"}
+                      component={MyCompanyProfile}
+                    />
+                    <Route
                       path={"/companyDashboard"}
                       component={MyCompanyDashboard}
                     />
@@ -204,6 +223,7 @@ class App extends Component {
                     <PrivateRoute path="/rewards" component={MyRewards} />
                     <PrivateRoute path="/wishlist" component={MyWishlist} />
                     <Route path={"/admin"} component={Admin} />
+                    <Route path={"/brandProfile"} component={MyBrandProfile} />
                     <PrivateRoute
                       path={"/companyDashboard"}
                       component={MyCompanyDashboard}

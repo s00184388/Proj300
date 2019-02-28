@@ -63,51 +63,65 @@ export class Navbar extends React.Component {
     const User = props => {
       return (
         <div className="pull-right">
-          <ul className="pull-right ml-5 p-4">
-            <li className="dropdown row">
-              <div
-                className="dropdown-toggle text-white rows p-1"
-                data-toggle="dropdown"
-              >
-                Welcome, {this.props.userName}!
-              </div>
-              <Round />
-              <ul className="dropdown-menu customMenu">
-                <div className="navbar-login ">
-                  <div className="row">
-                    <div className="mx-auto row">
-                      <FontAwesomeIcon icon={faUser} className="fa-lg mr-2" />
-                      <p className="text-center p-0">
-                        <strong>{this.props.name}</strong>
-                      </p>
-                    </div>
+          {/*<ul className="ml-5 p-4">}*/}
+          <li className="dropdown row">
+            <div
+              className="dropdown-toggle text-white rows p-1"
+              data-toggle="dropdown"
+            >
+              Welcome, {this.props.userName}!
+            </div>
+            <Round />
+            <ul id="dropdown" className="dropdown-menu customMenu">
+              <div className="navbar-login ">
+                <div className="row">
+                  <div className="mx-auto row">
+                    <FontAwesomeIcon icon={faUser} className="fa-lg mr-2" />
+                    <p className="text-center p-0">
+                      <strong>{this.props.name}</strong>
+                    </p>
                   </div>
-                  <p className="text-center small p-0">
-                    You have {this.props.coins} K
-                  </p>
-                  <p className="text-center small p-0">
-                    {this.props.userEmail}
-                  </p>
-                  <li>
-                    <div className="row ml-2">
-                      <Link
-                        to="profile"
-                        className="btn-sm btn btn-success col-lg-5 mr-2"
-                      >
-                        My Profile
-                      </Link>
-                      <button
-                        className="btn btn-sm btn-danger col-lg-5"
-                        onClick={this.handleLogout}
-                      >
-                        LogOut
-                      </button>
-                    </div>
-                  </li>
                 </div>
-              </ul>
-            </li>
-          </ul>
+                {this.props.userRole === "employee" && (
+                  <p className="small ml-2 p-0">
+                    <strong>Coins: </strong>
+                    {this.props.coins} K
+                  </p>
+                )}
+                <p className="small ml-2">{this.props.userEmail}</p>
+                <div className="">
+                  {this.props.userRole === "employee" ? (
+                    <Link
+                      to="profile"
+                      className="btn-sm btn btn-success col-sm-11 m-2"
+                    >
+                      My Profile
+                    </Link>
+                  ) : this.props.userRole === "companyAdmin" ? (
+                    <Link
+                      to="companyProfile"
+                      className="btn-sm btn btn-success col-sm-11 m-2"
+                    >
+                      Company Profile
+                    </Link>
+                  ) : (
+                    <Link
+                      to="brandProfile"
+                      className="btn-sm btn btn-success col-sm-11 m-2"
+                    >
+                      Brand Profile
+                    </Link>
+                  )}
+                  <button
+                    className="btn btn-sm btn-danger col-sm-11 m-2"
+                    onClick={this.handleLogout}
+                  >
+                    LogOut
+                  </button>
+                </div>
+              </div>
+            </ul>
+          </li>
         </div>
       );
     };
