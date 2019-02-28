@@ -3,16 +3,26 @@ import "./CssPages/UserProfile.css";
 import FirebaseServices from "../firebase/services";
 import firebase from "firebase";
 import ReactLoading from "react-loading";
+import ReactTooltip from "react-tooltip";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+
+library.add(faInfoCircle);
 
 const fs = new FirebaseServices();
 
 class Sidepage extends Component {
   constructor(props) {
     super(props);
-    this.state = { hasDevice: false };
+    this.state = {
+      hasDevice: false,
+      emailConfirmed: firebase.auth().currentUser.emailVerified
+    };
     this.timeConverter = this.timeConverter.bind(this);
     this.hasDevice = this.hasDevice.bind(this);
     this.hasDevice(this.props.user.key);
+    this.resendConfirmation = this.resendConfirmation.bind(this);
   }
 
   timeConverter(UNIX_timestamp) {
@@ -51,6 +61,16 @@ class Sidepage extends Component {
       });
   }
 
+  resendConfirmation() {
+    firebase
+      .auth()
+      .currentUser.sendEmailVerification()
+      .then(() => {
+        alert("Email Sent!");
+      })
+      .catch(err => console.log(err));
+  }
+
   render() {
     const user = this.props.user;
     const coins = user.coins;
@@ -59,6 +79,7 @@ class Sidepage extends Component {
     const created = this.timeConverter(user.created.seconds);
     const isActive = user.points > 0 ? "Yes" : "No";
     const hasDevice = this.state.hasDevice ? "Yes" : "No";
+    const emailConfirmed = this.state.emailConfirmed ? "Yes" : "No";
     return (
       <div className="col-md-3">
         <ul className="list-group-sm p">
@@ -85,9 +106,46 @@ class Sidepage extends Component {
           </li>
           <li className="list-group-item p">
             <span className="pull-left ">
+              <strong>Active today: </strong>
+            </span>
+            {isActive}
+          </li>
+          <li className="list-group-item p">
+            <span className="pull-left ">
               <strong>Device Connected: </strong>
             </span>
             {hasDevice}
+          </li>
+          <li className="list-group-item p">
+            <span className="pull-left ">
+              <FontAwesomeIcon
+                style={{ marginLeft: "5px" }}
+                data-tip="React-tooltip"
+                data-for="confirmationMailTooltip"
+                icon="info-circle"
+              />
+              <ReactTooltip
+                place="top"
+                type="dark"
+                effect="solid"
+                id="confirmationMailTooltip"
+              >
+                <p>
+                  If email not confirmed, you cannot gain Kudos and buy
+                  products!
+                </p>
+              </ReactTooltip>
+              <strong>Email confirmed: </strong>
+            </span>
+            {emailConfirmed}
+            {emailConfirmed == "No" ? (
+              <button
+                className="btn btn-info"
+                onClick={this.resendConfirmation}
+              >
+                Resend Mail
+              </button>
+            ) : null}
           </li>
         </ul>
       </div>
