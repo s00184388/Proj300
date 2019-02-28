@@ -5,7 +5,7 @@ import firebase from "../../firebase/firebase";
 import InputField from "../Registering/InputFields";
 import Radio from "../Registering/Checkboxes";
 import { Link } from "react-router-dom";
-import { Alert, AlertContainer} from "react-bs-notifier";
+import { Alert, AlertContainer } from "react-bs-notifier";
 import { firestore } from "firebase";
 import ReactLoading from "react-loading";
 
@@ -451,15 +451,17 @@ export class EmployeeForm extends Component {
         ) : (
           <div className="container pt-5">
             {this.state.companyError != "" ? (
-          <AlertContainer>
-            <Alert type="danger" headline="Something went wrong!">{this.state.companyError}</Alert>
-          </AlertContainer>
-        ) : null}
-        {this.state.authError != "" ? (
-          <AlertContainer>
-            <Alert type="danger">{this.state.authError}</Alert>
-          </AlertContainer>
-        ) : null} 
+              <AlertContainer>
+                <Alert type="danger" headline="Something went wrong!">
+                  {this.state.companyError}
+                </Alert>
+              </AlertContainer>
+            ) : null}
+            {this.state.authError != "" ? (
+              <AlertContainer>
+                <Alert type="danger">{this.state.authError}</Alert>
+              </AlertContainer>
+            ) : null}
             <div className="form-register py-3">
               <div className="text-white text-center pt-2">
                 <h4 className="text-white">Sign Up as</h4>
