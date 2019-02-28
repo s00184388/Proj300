@@ -141,7 +141,7 @@ class BuyButton extends React.Component {
       referrer: "no-referrer", // no-referrer, *client
       body: JSON.stringify(data) // body data type must match "Content-Type" header
     })
-      .then(response => console.log(response)) // parses response to JSON
+      .then(response => console.log(response.status)) // parses response to JSON
       .catch(err => console.log(err));
   }
   render() {
