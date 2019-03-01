@@ -143,16 +143,14 @@ class Panel extends Component {
                       <b>Role </b>: Company Admin
                     </p>
                     <hr />
-                    <h6 className="p-3 text-white">Company Details</h6>
+                    <h6 className=" pt-2 text-white">Company Details</h6>
                     <p className="ml-3">
                       <b>Company Name: </b> {this.props.companyName}
                     </p>
                     <p className="ml-3">
                       <b>Adress: </b> {this.props.address}
                     </p>
-                    <p className="ml-3">
-                      <b>Website: </b> {this.props.website}
-                    </p>
+
                     <p className="ml-3">
                       <b>HR Department email: </b> {this.props.companyEmail}
                     </p>
@@ -194,64 +192,237 @@ class Panel extends Component {
                 role="tabpanel"
                 aria-labelledby="nav-settings-tab"
               >
-                <h3 className="p-3 text-white text-center">
-                  Edit User Details
-                </h3>
-                <div className="row">
-                  <div className="form-group input-group-sm col-sm-6">
-                    <label htmlFor="firstNameInput" className="text-white">
-                      First Name
-                    </label>
-                    <input
-                      className="form-control"
-                      name="firstName"
-                      type="text"
-                      id="firstNameInput"
-                      placeholder="First Name"
-                      onChange={this.handleChange}
-                      defaultValue=""
-                    />
+                <div className="col-sm-10 mx-auto">
+                  <h6 className="text-white">Company User Details</h6>
+                  <hr />
+                  <div className="row">
+                    <div className="form-group input-group-sm col-sm-6">
+                      <label
+                        htmlFor="firstNameInput"
+                        className="text-white small"
+                      >
+                        First Name
+                      </label>
+                      <input
+                        className="form-control"
+                        name="firstName"
+                        type="text"
+                        id="firstNameInput"
+                        placeholder="First Name"
+                        onChange={this.handleChange}
+                        defaultValue={user.firstName}
+                      />
+                    </div>
+                    <div className="form-group input-group-sm col-sm-6">
+                      <label
+                        htmlFor="lastNameInput"
+                        className="text-white small"
+                      >
+                        Last Name
+                      </label>
+                      <input
+                        className="form-control"
+                        name="lastName"
+                        type="text"
+                        id="lastNameInput"
+                        placeholder="Last Name"
+                        onChange={this.handleChange}
+                        defaultValue={user.lastName}
+                      />
+                    </div>
                   </div>
-                  <div className="form-group input-group-sm col-sm-6">
-                    <label htmlFor="lastNameInput" className="text-white">
-                      Last Name
-                    </label>
-                    <input
-                      className="form-control"
-                      name="lastName"
-                      type="text"
-                      id="lastNameInput"
-                      placeholder="Last Name"
-                      onChange={this.handleChange}
-                      defaultValue=""
-                    />
+
+                  <h6 className="text-white"> Company Details</h6>
+                  <hr />
+                  <div className="row">
+                    <div className="form-group input-group-sm col-sm-6">
+                      <label htmlFor="companyName" className="text-white small">
+                        Company Name
+                      </label>
+                      <input
+                        className="form-control"
+                        name="companyName"
+                        type="text"
+                        id="companyName"
+                        placeholder="Company Name"
+                        onChange=""
+                        value=""
+                      />
+                    </div>
+                    <div className="form-group input-group-sm col-sm-6">
+                      <label htmlFor="address" className="text-white small">
+                        Address
+                      </label>
+                      <input
+                        className="form-control"
+                        name="address"
+                        type="text"
+                        id="address"
+                        placeholder="Address"
+                        onChange=""
+                        value=""
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="row">
-                  <div className="form-group input-group-sm col-sm-6">
-                    <label htmlFor="emailInput" className="text-white">
-                      Email
-                    </label>
-                    <input
-                      className="form-control"
-                      name="email"
-                      type="email"
-                      id="emailInput"
-                      placeholder="Email"
-                      onChange={this.handleChange}
-                      defaultValue=""
-                    />
+
+                  <div className="row pt-3">
+                    <div className="col-sm-4">
+                      <button
+                        data-toggle="collapse"
+                        data-target="#changeEmail"
+                        className="btn-sm btn-warning text-white col-sm-12"
+                      >
+                        Change Email
+                      </button>
+                    </div>
+
+                    <div className="col-sm-4">
+                      <button
+                        data-toggle="collapse"
+                        data-target="#changePassword"
+                        className="btn-sm btn-warning text-white col-sm-12"
+                      >
+                        Change Password
+                      </button>
+                    </div>
+                    <div className="col-sm-4">
+                      <button
+                        data-toggle="collapse"
+                        data-target="#changeCompanyEmail"
+                        className="btn-sm btn-warning text-white col-sm-12"
+                      >
+                        Change Company Email
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div className="d-flex justify-content-center">
-                  <button
-                    className="btn btn-sm btn-success"
-                    onClick={this.submitEdit}
-                  >
-                    Save Changes
-                  </button>
+
+                  <div id="changeEmail" className="collapse">
+                    <div className="row pt-3">
+                      <div className="form-group input-group-sm col-sm-6">
+                        <label
+                          htmlFor="emailInput"
+                          className="text-white small"
+                        >
+                          User Email
+                        </label>
+                        <input
+                          className="form-control"
+                          name="email"
+                          type="email"
+                          id="emailInput"
+                          placeholder="Email"
+                          onChange={this.handleChange}
+                          defaultValue={user.email}
+                        />
+                      </div>
+                      <div className="form-group input-group-sm col-sm-6">
+                        <label htmlFor="password" className="text-white small">
+                          Password
+                        </label>
+                        <input
+                          className="form-control"
+                          name="password"
+                          type="password"
+                          id="password"
+                          placeholder="Password"
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="collapse" id="changePassword">
+                    <div className="row pt-3">
+                      <div className="form-group input-group-sm col-sm-4">
+                        <label htmlFor="pwd1" className="text-white small">
+                          Old Password
+                        </label>
+                        <input
+                          className="form-control"
+                          name="oldPassword"
+                          type="password"
+                          id="pwd1"
+                          placeholder="Old Password"
+                          onChange=""
+                          value=""
+                        />
+                      </div>
+                      <div className="form-group input-group-sm col-sm-4">
+                        <label htmlFor="pwd2" className="text-white small">
+                          New Password
+                        </label>
+                        <input
+                          className="form-control"
+                          name="newPassword"
+                          type="password"
+                          id="pwd2"
+                          placeholder="New Password"
+                          onChange=""
+                          value=""
+                        />
+                      </div>
+                      <div className="form-group input-group-sm col-sm-4">
+                        <label htmlFor="pwd3" className="text-white small">
+                          Retype new password
+                        </label>
+                        <input
+                          className="form-control"
+                          name="retypePassword"
+                          type="password"
+                          id="pwd3"
+                          placeholder="Retype Password"
+                          onChange=""
+                          value=""
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="collapse" id="changeCompanyEmail">
+                    <div className="row pt-3">
+                      <div className="form-group input-group-sm col-sm-6">
+                        <label
+                          htmlFor="companyEmail"
+                          className="text-white small"
+                        >
+                          Company Email
+                        </label>
+                        <input
+                          className="form-control"
+                          name="companyEmail"
+                          type="text"
+                          id="companyEmail"
+                          placeholder="Company Email"
+                          onChange=""
+                          value=""
+                        />
+                      </div>
+
+                      <div className="form-group input-group-sm col-sm-6">
+                        <label htmlFor="password" className="text-white small">
+                          Password
+                        </label>
+                        <input
+                          className="form-control"
+                          name="password"
+                          type="password"
+                          id="password"
+                          placeholder="Password"
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr />
                 </div>
               </div>
+            </div>
+            <div className="d-flex justify-content-center">
+              <button
+                className="btn btn-sm btn-success"
+                onClick={this.submitEdit}
+              >
+                Save Changes
+              </button>
             </div>
           </div>
         </div>
