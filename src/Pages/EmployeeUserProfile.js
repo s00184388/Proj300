@@ -327,6 +327,7 @@ export class Panel extends Component {
           });
       } else {
         alert("Password and verification password don't match");
+        this.setState({ fetchInProgress: false });
       }
     } else if (this.props.user.email !== this.state.userDetails.email) {
       console.log("email changed");
