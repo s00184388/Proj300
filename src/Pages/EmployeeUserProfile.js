@@ -171,11 +171,16 @@ export class Panel extends Component {
         lastName: this.props.user.lastName,
         email: this.props.user.email
       },
+      passwords: {
+        newPassword: "",
+        newPassword2: ""
+      },
       fetchInProgress: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.submitEdit = this.submitEdit.bind(this);
     this.getDevice = this.getDevice.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.getDevice(this.props.user.key);
 
     this.subscriptions = [];
@@ -214,6 +219,13 @@ export class Panel extends Component {
     console.log(userDetails);
   }
 
+  handlePasswordChange(e) {
+    var passwords = {};
+    passwords = { ...this.state.passwords };
+    passwords[e.target.name] = e.target.value;
+    this.setState({ passwords });
+  }
+
   submitEdit(e) {
     e.preventDefault();
     this.setState({ fetchInProgress: true });
@@ -250,6 +262,24 @@ export class Panel extends Component {
           this.setState({ fetchInProgress: false });
         });
     }
+    var newPassword = this.state.passwords.newPassword;
+    var newPassword2 = this.state.passwords.newPassword2;
+    if (newPassword && newPassword2) {
+      if (newPassword === newPassword2) {
+        firebase
+          .auth()
+          .currentUser.updatePassword(newPassword)
+          .then(() => {
+            this.setState({ fetchInProgress: false });
+          })
+          .catch(err => {
+            console.log(err);
+            this.setState({ fetchInProgress: false });
+          });
+      } else {
+        alert("Password and verification password don't match");
+      }
+    }
   }
 
   render() {
@@ -266,6 +296,7 @@ export class Panel extends Component {
     }
     const company = this.state.company.name;
     const fetchInProgress = this.state.fetchInProgress;
+
     return (
       <div className="col-sm-9">
         {fetchInProgress ? (
@@ -437,6 +468,42 @@ export class Panel extends Component {
                           placeholder="Email"
                           onChange={this.handleChange}
                           defaultValue={email}
+                        />
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="form-group input-group-sm col-sm-6">
+                        <label
+                          htmlFor="newPasswordInput"
+                          className="text-white"
+                        >
+                          New Password
+                        </label>
+                        <input
+                          className="form-control"
+                          name="newPassword"
+                          type="password"
+                          id="newPasswordInput"
+                          placeholder="New Password"
+                          onChange={this.handlePasswordChange}
+                          defaultValue=""
+                        />
+                      </div>
+                      <div className="form-group input-group-sm col-sm-6">
+                        <label
+                          htmlFor="newPassword2Input"
+                          className="text-white"
+                        >
+                          Re-enter New Password
+                        </label>
+                        <input
+                          className="form-control"
+                          name="newPassword2"
+                          type="password"
+                          id="newPassword2Input"
+                          placeholder="Re-enter New Password"
+                          onChange={this.handlePasswordChange}
+                          defaultValue=""
                         />
                       </div>
                     </div>
