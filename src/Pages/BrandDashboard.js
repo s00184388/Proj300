@@ -46,11 +46,12 @@ class ProductForm extends Component {
     if (e.target.name == "picture") {
       this.setState({
         picture: e.target.files[0]
+        
       });
       console.log(e.target.files[0]);
     } else {
       this.setState(newState);
-      console.log(newState.picture);
+      console.log(newState);
     }
   };
 
@@ -58,7 +59,7 @@ class ProductForm extends Component {
     e.preventDefault();
 
     let product = {
-      brandID: this.props.brand.key,
+      brandID: this.state.brandID,
       category: this.state.category.toLowerCase(),
       description: this.state.description,
       name: this.state.name,
@@ -79,7 +80,7 @@ class ProductForm extends Component {
       companyID: "",
       description: "",
       name: "",
-      picture: "",
+      picture: null,
       picURL: "",
       price: 0,
       stock: 0,

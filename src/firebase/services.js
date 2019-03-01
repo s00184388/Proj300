@@ -304,7 +304,6 @@ export default class FirebaseServices {
                   email,
                   deviceID,
                   companyID,
-                  brandID,
                   points,
                   coins,
                   approved,
@@ -319,7 +318,6 @@ export default class FirebaseServices {
                   email,
                   deviceID,
                   companyID,
-                  brandID,
                   points,
                   coins,
                   approved,
@@ -341,9 +339,6 @@ export default class FirebaseServices {
 
   getConnectedUser = () => {
     var user = firebase.auth().currentUser;
-    console.log("connected user:");
-    console.log(user.providerData);
-    console.log("user verified:" + user.emailVerified);
     var userEmail = "";
     if (user) {
       userEmail = user.email;
@@ -365,7 +360,6 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
-                brandID,
                 points,
                 coins,
                 approved,
@@ -380,7 +374,6 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
-                brandID,
                 points,
                 coins,
                 approved,
@@ -412,7 +405,6 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
-                brandID,
                 points,
                 coins,
                 approved,
@@ -427,7 +419,6 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
-                brandID,
                 points,
                 coins,
                 approved,
@@ -455,7 +446,6 @@ export default class FirebaseServices {
             email,
             deviceID,
             companyID,
-            brandID,
             points,
             coins,
             approved,
@@ -470,7 +460,6 @@ export default class FirebaseServices {
             email,
             deviceID,
             companyID,
-            brandID,
             points,
             coins,
             approved,
@@ -808,25 +797,19 @@ export default class FirebaseServices {
   addProduct = product => {
     this.brandImagesCollection = this.brandImgdb.child(product.picture.name);
     if (product) {
-      this.brandImagesCollection
-        .put(product.picture)
-        .then(
-          (product.picURL = this.brandImgdb.child(
-            product.picture.name
-          ).fullPath)
-        );
-      this.productsCollection
-        .add(product)
-        .then(() => {
-          console.log("Product Added");
-        })
+      this.brandImagesCollection.put(product.picture);
+      product.picture = null;
+      this.brandImagesCollection.getDownloadURL()
+        .then((url =>
+          product.picURL = url),
+          this.productsCollection.add(product))
         .catch(err => {
-          alert("Error at adding products! Check your inputs");
+          alert('Error at adding products! Check your inputs')
         });
     } else {
       alert("Cannot add product");
     }
-  };
+  }
 
   createUser = user => {
     return new Promise((resolve, reject) => {
@@ -941,7 +924,10 @@ export default class FirebaseServices {
   };
 
   editProduct = (p, _key) => {
+    this.brandImagesCollection = this.brandImgdb.child(p.picture.name);
     if (p) {
+      this.brandImagesCollection.put(p.picture).then(p.picURL = this.brandImagesCollection.getDownloadURL());
+      p.picture = null;
       this.productsCollection.doc(_key).set(
         {
           category: p.category,

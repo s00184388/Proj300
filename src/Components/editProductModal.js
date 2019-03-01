@@ -19,13 +19,20 @@ class BrandProductEditingModal extends React.Component {
             stock: this.props.product.stock,
             sponsored: true,
             tresholdPercentage: this.props.product.tresholdPercentage * 100
-            ,_key: this.props.product.key
+            , _key: this.props.product.key
         }
     }
 
     handleChange = e => {
         let newState = {};
-        newState[e.target.name] = e.target.value;
+        if (e.target.name == "picture") {
+            this.setState({
+                picture: e.target.files[0]
+            })
+            console.log(e.target.files[0]);
+        }
+        else
+            newState[e.target.name] = e.target.value;
         this.setState(newState);
     };
 
@@ -59,7 +66,7 @@ class BrandProductEditingModal extends React.Component {
         const title = this.props.product.name;
         return (
             <form onSubmit={this.handleSubmit}>
-            <h3>{title}</h3>
+                <h3>{title}</h3>
                 <div className="form-group">
                     <label htmlFor="categoryList">
                         Product Category:
