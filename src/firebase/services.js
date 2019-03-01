@@ -1,6 +1,7 @@
 import fire from "./firebase";
 import { Observable } from "rxjs";
 import firebase from "firebase";
+import { when } from "q";
 
 export default class FirebaseServices {
   constructor() {
@@ -304,7 +305,6 @@ export default class FirebaseServices {
                   email,
                   deviceID,
                   companyID,
-                  brandID,
                   points,
                   coins,
                   approved,
@@ -319,7 +319,6 @@ export default class FirebaseServices {
                   email,
                   deviceID,
                   companyID,
-                  brandID,
                   points,
                   coins,
                   approved,
@@ -341,9 +340,6 @@ export default class FirebaseServices {
 
   getConnectedUser = () => {
     var user = firebase.auth().currentUser;
-    console.log("connected user:");
-    console.log(user.providerData);
-    console.log("user verified:" + user.emailVerified);
     var userEmail = "";
     if (user) {
       userEmail = user.email;
@@ -365,7 +361,6 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
-                brandID,
                 points,
                 coins,
                 approved,
@@ -380,7 +375,6 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
-                brandID,
                 points,
                 coins,
                 approved,
@@ -412,7 +406,6 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
-                brandID,
                 points,
                 coins,
                 approved,
@@ -427,7 +420,6 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
-                brandID,
                 points,
                 coins,
                 approved,
@@ -455,7 +447,6 @@ export default class FirebaseServices {
             email,
             deviceID,
             companyID,
-            brandID,
             points,
             coins,
             approved,
@@ -470,7 +461,6 @@ export default class FirebaseServices {
             email,
             deviceID,
             companyID,
-            brandID,
             points,
             coins,
             approved,
@@ -806,27 +796,54 @@ export default class FirebaseServices {
   };
 
   addProduct = product => {
-    this.brandImagesCollection = this.brandImgdb.child(product.picture.name);
     if (product) {
-      this.brandImagesCollection
-        .put(product.picture)
-        .then(
-          (product.picURL = this.brandImgdb.child(
-            product.picture.name
-          ).fullPath)
-        );
-      this.productsCollection
-        .add(product)
-        .then(() => {
-          console.log("Product Added");
-        })
+      var brandProductImageLocation = this.brandImgdb.child("brandImages/" + product.picture.name)
+      this.brandImagesCollection = brandProductImageLocation.put(product.picture);
+      this.brandImagesCollection.on(firebase.storage.TaskEvent.STATE_CHANGED, function(snapshot){
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("upload is " + progress + "% done");
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED:
+            console.log('Upload is paused');
+            break;
+          case firebase.storage.TaskState.RUNNING: 
+            console.log('Upload is running');
+            break;
+        }
+      }, function(error){
+        console.log("upload error")
+      },
+      function(){
+        var db = fire.firestore();
+        var productsCollection = db.collection("Products");
+        product.picURL = brandProductImageLocation.getDownloadURL().then((url =>
+          product.picURL = url),
+          console.log(product.picURL),
+          product.picture = null,
+          productsCollection.add(product));
+      })
+      
+      /*this.brandImagesCollection.put(product.picture).onSuccessListener(this.brandImagesCollection.getDownloadURL()
+      .then((url =>
+        product.picURL = url),
+        product.picture = null,
+        this.productsCollection.add(product))
+      .catch(err => {
+        alert('Error at adding products! Check your inputs')
+      }));*/
+      
+      /*this.brandImagesCollection.getDownloadURL()
+        .then((url =>
+          product.picURL = url),
+          this.productsCollection.add(product))
         .catch(err => {
-          alert("Error at adding products! Check your inputs");
-        });
+          alert('Error at adding products! Check your inputs')
+        });*/
+        
     } else {
       alert("Cannot add product");
     }
-  };
+  }
 
   createUser = user => {
     return new Promise((resolve, reject) => {
@@ -941,7 +958,10 @@ export default class FirebaseServices {
   };
 
   editProduct = (p, _key) => {
+    this.brandImagesCollection = this.brandImgdb.child(p.picture.name);
     if (p) {
+      this.brandImagesCollection.put(p.picture).then(p.picURL = this.brandImagesCollection.getDownloadURL());
+      p.picture = null;
       this.productsCollection.doc(_key).set(
         {
           category: p.category,
