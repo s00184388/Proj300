@@ -219,6 +219,7 @@ class App extends Component {
                     <PrivateRoute path="/wishlist" component={MyWishlist} />
                     <Route path={"/admin"} component={Admin} />
                     <Route path={"/brandProfile"} component={MyBrandProfile} />
+
                     <PrivateRoute
                       path={"/companyDashboard"}
                       component={MyCompanyDashboard}
