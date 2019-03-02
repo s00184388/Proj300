@@ -120,11 +120,33 @@ class Panel extends Component {
       user: this.props.user,
       company: this.props.company,
       emailConfirmed: false,
-      employees: []
+      employees: [],
+      userDetails: {
+        firstName: this.props.user.firstName,
+        lastName: this.props.user.lastName,
+        email: this.props.user.email
+      },
+      companyDetails: {
+        name: this.props.company.name,
+        address: this.props.company.address,
+        email: this.props.company.email
+      },
+      passwords: {
+        oldPassword: "",
+        newPassword: "",
+        newPassword2: ""
+      },
+      fetchInProgress: false
     };
     this.subscriptions = [];
     this.timeConverter = this.timeConverter.bind(this);
     this.resendConfirmation = this.resendConfirmation.bind(this);
+    this.handleUserChange = this.handleUserChange.bind(this);
+    this.submitEdit = this.submitEdit.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleCompanyChange = this.handleCompanyChange.bind(this);
+    this.updateCompany = this.updateCompany.bind(this);
+    this.updateUser = this.updateUser.bind(this);
   }
 
   componentDidMount() {
@@ -138,15 +160,226 @@ class Panel extends Component {
         .subscribe(employees => this.setState({ employees: employees }))
     );
   }
+
   componentWillUnmount() {
-    this.subscriptions.unsubscribe();
+    this.subscriptions.forEach(obs => obs.unsubscribe());
   }
+
+  handleUserChange(e) {
+    var userDetails = {};
+    userDetails = { ...this.state.userDetails };
+    userDetails[e.target.name] = e.target.value;
+    this.setState({ userDetails });
+  }
+
+  handlePasswordChange(e) {
+    var passwords = {};
+    passwords = { ...this.state.passwords };
+    passwords[e.target.name] = e.target.value;
+    this.setState({ passwords });
+  }
+
+  handleCompanyChange(e) {
+    var companyDetails = {};
+    companyDetails = { ...this.state.companyDetails };
+    companyDetails[e.target.name] = e.target.value;
+    this.setState({ companyDetails });
+  }
+
+  submitEdit(e) {
+    e.preventDefault();
+    this.setState({ fetchInProgress: true });
+    var newPassword = this.state.passwords.newPassword;
+    var newPassword2 = this.state.passwords.newPassword2;
+    var oldPassword = this.state.passwords.oldPassword;
+    var currentUser = firebase.auth().currentUser;
+    var cred = firebase.auth.EmailAuthProvider.credential(
+      currentUser.email,
+      oldPassword
+    );
+    if (
+      newPassword &&
+      newPassword2 &&
+      this.props.user.email !== this.state.userDetails.email
+    ) {
+      if (newPassword === newPassword2) {
+        currentUser
+          .reauthenticateAndRetrieveDataWithCredential(cred)
+          .then(() => {
+            currentUser
+              .updatePassword(newPassword)
+              .then(() => {
+                cred = firebase.auth.EmailAuthProvider.credential(
+                  currentUser.email,
+                  newPassword
+                );
+                currentUser
+                  .reauthenticateAndRetrieveDataWithCredential(cred)
+                  .then(() => {
+                    currentUser
+                      .updateEmail(this.state.userDetails.email)
+                      .then(() => {
+                        this.updateUser();
+                        this.updateCompany(cred);
+                      })
+                      .catch(err => {
+                        console.log(err);
+                        this.setState({ fetchInProgress: false });
+                      });
+                  })
+                  .catch(err => {
+                    console.log(err);
+                    this.setState({ fetchInProgress: false });
+                    if (err.code === "auth/wrong-password") {
+                      alert("Wrong password");
+                    }
+                  });
+              })
+              .catch(err => {
+                console.log(err);
+                this.setState({ fetchInProgress: false });
+                if (err.code === "auth/wrong-password") {
+                  alert("Wrong password");
+                }
+              });
+          });
+      }
+    } else if (newPassword && newPassword2) {
+      if (newPassword === newPassword2) {
+        currentUser
+          .reauthenticateAndRetrieveDataWithCredential(cred)
+          .then(() => {
+            currentUser
+              .updatePassword(newPassword)
+              .then(() => {
+                alert("password changed");
+                this.updateUser();
+                this.updateCompany(cred);
+              })
+              .catch(err => {
+                console.log(err);
+                this.setState({ fetchInProgress: false });
+              });
+          })
+          .catch(err => {
+            console.log(err);
+            this.setState({ fetchInProgress: false });
+            if (err.code === "auth/wrong-password") {
+              alert("Wrong password");
+            }
+          });
+      } else {
+        alert("Password and verification password don't match");
+        this.setState({ fetchInProgress: false });
+      }
+    } else if (this.props.user.email !== this.state.userDetails.email) {
+      console.log("email changed");
+      currentUser
+        .reauthenticateAndRetrieveDataWithCredential(cred)
+        .then(() => {
+          currentUser
+            .updateEmail(this.state.userDetails.email)
+            .then(() => {
+              this.resendConfirmation();
+              alert("Email changed. Please validate new email");
+              this.updateUser();
+              this.updateCompany(cred);
+            })
+            .catch(err => {
+              console.log(err);
+              this.setState({ fetchInProgress: false });
+            });
+        })
+        .catch(err => {
+          console.log(err);
+          this.setState({ fetchInProgress: false });
+          if (err.code === "auth/wrong-password") {
+            alert("Wrong password");
+          }
+        });
+    } else if (
+      this.state.user.firstName !== this.state.userDetails.firstName ||
+      this.state.user.lastName !== this.state.userDetails.lastName
+    ) {
+      this.updateUser();
+    } else if (
+      this.state.company.name !== this.state.companyDetails.name ||
+      this.state.company.address !== this.state.companyDetails.address
+    ) {
+      this.updateCompany(cred);
+    } else {
+      this.updateUser();
+      this.updateCompany(cred);
+    }
+  }
+
+  updateUser() {
+    fs.usersCollection
+      .doc(this.props.user.key)
+      .update(this.state.userDetails)
+      .then(() => {
+        firebase.auth().currentUser.reload();
+        this.setState({ fetchInProgress: false });
+      })
+      .catch(err => {
+        console.log(err);
+        this.setState({ fetchInProgress: false });
+      });
+  }
+
+  updateCompany(cred) {
+    var oldPassword = this.state.passwords.oldPassword;
+    var currentUser = firebase.auth().currentUser;
+    if (this.props.company.email !== this.state.companyDetails.email) {
+      cred = firebase.auth.EmailAuthProvider.credential(
+        currentUser.email,
+        oldPassword
+      );
+      currentUser
+        .reauthenticateAndRetrieveDataWithCredential(cred)
+        .then(() => {
+          fs.companiesCollection
+            .doc(this.props.company.key)
+            .update(this.state.companyDetails)
+            .then(() => {
+              let passwords = { ...this.state.passwords };
+              passwords.oldPassword = "";
+              this.setState({ passwords, fetchInProgress: false });
+              alert("Company Email updated!");
+            })
+            .catch(err => {
+              console.log(err);
+              this.setState({ fetchInProgress: false });
+            });
+        })
+        .catch(err => {
+          console.log(err);
+          this.setState({ fetchInProgress: false });
+          if (err.code === "auth/wrong-password") {
+            alert("Wrong password");
+          }
+        });
+    } else {
+      fs.companiesCollection
+        .doc(this.props.company.key)
+        .update(this.state.companyDetails)
+        .then(() => {
+          alert("Company Data updated!");
+          this.setState({ fetchInProgress: false });
+        })
+        .catch(err => {
+          console.log(err);
+          this.setState({ fetchInProgress: false });
+        });
+    }
+  }
+
   resendConfirmation() {
     firebase
       .auth()
       .currentUser.sendEmailVerification()
       .then(() => {
-        alert("Email Sent!");
+        alert("Verification Email Sent!");
       })
       .catch(err => console.log(err));
   }
@@ -177,17 +410,25 @@ class Panel extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.company !== nextProps.company) {
       this.setState({ company: nextProps.company });
+      this.setState({
+        companyDetails: {
+          name: nextProps.company.name,
+          address: nextProps.company.address,
+          email: nextProps.company.email
+        }
+      });
     }
   }
 
   render() {
     const user = this.state.user;
+    const userDetails = this.state.userDetails;
+    const companyDetails = this.state.companyDetails;
     const company = this.state.company;
     const companyEmail = company.email;
     const companyName = company.name;
     const address = company.address;
     const employees = this.state.employees;
-    console.log(employees);
     const created = this.timeConverter(user.created.seconds);
     const emailConfirmed = this.state.emailConfirmed ? "Yes" : "No";
     const employeesRow = employees.map((emp, index) => (
@@ -255,23 +496,23 @@ class Panel extends Component {
                     />
                   </div>
                   <div className="col-sm-8">
-                    <h6 className="p-3 text-white">Company Admin Detail </h6>
-                    <p className="ml-3">
+                    <h6 className="p-3 text-white">Company Admin Details </h6>
+                    <div className="ml-3 p">
                       <b>User Email: </b> {user.email}
-                    </p>
-                    <p className="ml-3">
+                    </div>
+                    <div className="ml-3 p">
                       <b>First Name: </b> {user.firstName}
-                    </p>
-                    <p className="ml-3">
+                    </div>
+                    <div className="ml-3 p">
                       <b>Last Name:</b> {user.lastName}
-                    </p>
-                    <p className="ml-3">
+                    </div>
+                    <div className="ml-3 p">
                       <b>Role </b>: Company Admin
-                    </p>
-                    <p className="ml-3">
+                    </div>
+                    <div className="ml-3 p">
                       <b>Joined </b>: {created}
-                    </p>
-                    <p className="ml-3">
+                    </div>
+                    <div className="ml-3 p">
                       <FontAwesomeIcon
                         style={{ marginLeft: "5px" }}
                         data-tip="React-tooltip"
@@ -299,18 +540,18 @@ class Panel extends Component {
                           Resend Mail
                         </button>
                       ) : null}
-                    </p>
+                    </div>
                     <hr />
                     <h6 className=" pt-2 text-white">Company Details</h6>
-                    <p className="ml-3">
+                    <div className="ml-3 p">
                       <b>Company Name: </b> {companyName}
-                    </p>
-                    <p className="ml-3">
+                    </div>
+                    <div className="ml-3 p">
                       <b>Adress: </b> {address}
-                    </p>
-                    <p className="ml-3">
+                    </div>
+                    <div className="ml-3 p">
                       <b>HR Department email: </b> {companyEmail}
-                    </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -349,7 +590,7 @@ class Panel extends Component {
                 aria-labelledby="nav-settings-tab"
               >
                 <div className="col-sm-10 mx-auto">
-                  <h6 className="text-white">Company User Details</h6>
+                  <h6 className="text-white">Company Admin Details</h6>
                   <hr />
                   <div className="row">
                     <div className="form-group input-group-sm col-sm-6">
@@ -365,8 +606,8 @@ class Panel extends Component {
                         type="text"
                         id="firstNameInput"
                         placeholder="First Name"
-                        onChange={this.handleChange}
-                        defaultValue={user.firstName}
+                        onChange={this.handleUserChange}
+                        value={userDetails.firstName || ""}
                       />
                     </div>
                     <div className="form-group input-group-sm col-sm-6">
@@ -382,13 +623,13 @@ class Panel extends Component {
                         type="text"
                         id="lastNameInput"
                         placeholder="Last Name"
-                        onChange={this.handleChange}
-                        defaultValue={user.lastName}
+                        onChange={this.handleUserChange}
+                        value={userDetails.lastName || ""}
                       />
                     </div>
                   </div>
 
-                  <h6 className="text-white"> Company Details</h6>
+                  <h5 className="text-white"> Company Details</h5>
                   <hr />
                   <div className="row">
                     <div className="form-group input-group-sm col-sm-6">
@@ -397,12 +638,12 @@ class Panel extends Component {
                       </label>
                       <input
                         className="form-control"
-                        name="companyName"
+                        name="name"
                         type="text"
                         id="companyName"
                         placeholder="Company Name"
-                        onChange=""
-                        value=""
+                        onChange={this.handleCompanyChange}
+                        value={companyDetails.name || ""}
                       />
                     </div>
                     <div className="form-group input-group-sm col-sm-6">
@@ -415,8 +656,8 @@ class Panel extends Component {
                         type="text"
                         id="address"
                         placeholder="Address"
-                        onChange=""
-                        value=""
+                        onChange={this.handleCompanyChange}
+                        value={companyDetails.address || ""}
                       />
                     </div>
                   </div>
@@ -467,21 +708,25 @@ class Panel extends Component {
                           type="email"
                           id="emailInput"
                           placeholder="Email"
-                          onChange={this.handleChange}
-                          defaultValue={user.email}
+                          onChange={this.handleUserChange}
+                          value={userDetails.email || ""}
                         />
                       </div>
                       <div className="form-group input-group-sm col-sm-6">
-                        <label htmlFor="password" className="text-white small">
+                        <label
+                          htmlFor="emailPasswordInput"
+                          className="text-white small"
+                        >
                           Password
                         </label>
                         <input
                           className="form-control"
-                          name="password"
+                          name="oldPassword"
                           type="password"
-                          id="password"
+                          id="emailPasswordInput"
                           placeholder="Password"
-                          onChange={this.handleChange}
+                          onChange={this.handlePasswordChange}
+                          value={this.state.passwords.oldPassword || ""}
                         />
                       </div>
                     </div>
@@ -489,45 +734,54 @@ class Panel extends Component {
                   <div className="collapse" id="changePassword">
                     <div className="row pt-3">
                       <div className="form-group input-group-sm col-sm-4">
-                        <label htmlFor="pwd1" className="text-white small">
-                          Old Password
-                        </label>
-                        <input
-                          className="form-control"
-                          name="oldPassword"
-                          type="password"
-                          id="pwd1"
-                          placeholder="Old Password"
-                          onChange=""
-                          value=""
-                        />
-                      </div>
-                      <div className="form-group input-group-sm col-sm-4">
-                        <label htmlFor="pwd2" className="text-white small">
+                        <label
+                          htmlFor="newPasswordInput"
+                          className="text-white small"
+                        >
                           New Password
                         </label>
                         <input
                           className="form-control"
                           name="newPassword"
                           type="password"
-                          id="pwd2"
+                          id="newPasswordInput"
                           placeholder="New Password"
-                          onChange=""
-                          value=""
+                          onChange={this.handlePasswordChange}
+                          value={this.state.passwords.newPassword || ""}
                         />
                       </div>
                       <div className="form-group input-group-sm col-sm-4">
-                        <label htmlFor="pwd3" className="text-white small">
-                          Retype new password
+                        <label
+                          htmlFor="newPassword2Input"
+                          className="text-white small"
+                        >
+                          Re-enter New Password
                         </label>
                         <input
                           className="form-control"
-                          name="retypePassword"
+                          name="newPassword2"
                           type="password"
-                          id="pwd3"
-                          placeholder="Retype Password"
-                          onChange=""
-                          value=""
+                          id="newPassword2Input"
+                          placeholder="Re-enter New Password"
+                          onChange={this.handlePasswordChange}
+                          value={this.state.passwords.newPassword2 || ""}
+                        />
+                      </div>
+                      <div className="form-group input-group-sm col-sm-4">
+                        <label
+                          htmlFor="oldPasswordInput"
+                          className="text-white small"
+                        >
+                          Old Password
+                        </label>
+                        <input
+                          className="form-control"
+                          name="oldPassword"
+                          type="password"
+                          id="oldPasswordInput"
+                          placeholder="Old Password"
+                          onChange={this.handlePasswordChange}
+                          value={this.state.passwords.oldPassword || ""}
                         />
                       </div>
                     </div>
@@ -536,33 +790,37 @@ class Panel extends Component {
                     <div className="row pt-3">
                       <div className="form-group input-group-sm col-sm-6">
                         <label
-                          htmlFor="companyEmail"
+                          htmlFor="companyEmailInput"
                           className="text-white small"
                         >
                           Company Email
                         </label>
                         <input
                           className="form-control"
-                          name="companyEmail"
+                          name="email"
                           type="text"
-                          id="companyEmail"
+                          id="companyEmailInput"
                           placeholder="Company Email"
-                          onChange=""
-                          value=""
+                          onChange={this.handleCompanyChange}
+                          value={companyDetails.email || ""}
                         />
                       </div>
 
                       <div className="form-group input-group-sm col-sm-6">
-                        <label htmlFor="password" className="text-white small">
+                        <label
+                          htmlFor="companyEmailPasswordInput"
+                          className="text-white small"
+                        >
                           Password
                         </label>
                         <input
                           className="form-control"
-                          name="password"
+                          name="oldPassword"
                           type="password"
-                          id="password"
+                          id="companyEmailPasswordInput"
                           placeholder="Password"
-                          onChange={this.handleChange}
+                          onChange={this.handlePasswordChange}
+                          value={this.state.passwords.oldPassword || ""}
                         />
                       </div>
                     </div>
