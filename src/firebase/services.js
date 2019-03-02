@@ -706,8 +706,9 @@ export default class FirebaseServices {
     return new Observable(observer => {
       if (companyID) {
         this.usersCollection
-          .orderBy("coins")
+          .where("role", "==", "employee")
           .where("companyID", "==", companyID)
+          .orderBy("coins")
           .onSnapshot(querySnapshot => {
             const employees = [];
             querySnapshot.forEach(doc => {
@@ -796,54 +797,46 @@ export default class FirebaseServices {
   };
 
   addProduct = product => {
+    var brandProductImageLocation = this.brandImgdb.child(product.picture.name);
     if (product) {
-      var brandProductImageLocation = this.brandImgdb.child("brandImages/" + product.picture.name)
-      this.brandImagesCollection = brandProductImageLocation.put(product.picture);
-      this.brandImagesCollection.on(firebase.storage.TaskEvent.STATE_CHANGED, function(snapshot){
-        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("upload is " + progress + "% done");
-        switch (snapshot.state) {
-          case firebase.storage.TaskState.PAUSED:
-            console.log('Upload is paused');
-            break;
-          case firebase.storage.TaskState.RUNNING: 
-            console.log('Upload is running');
-            break;
-        }
-      }, function(error){
-        console.log("upload error")
-      },
-      function(){
-        var db = fire.firestore();
-        var productsCollection = db.collection("Products");
-        product.picURL = brandProductImageLocation.getDownloadURL().then((url =>
-          product.picURL = url),
-          console.log(product.picURL),
-          product.picture = null,
-          productsCollection.add(product));
-      })
-      
-      /*this.brandImagesCollection.put(product.picture).onSuccessListener(this.brandImagesCollection.getDownloadURL()
+      brandProductImageLocation.put(product.picture).then(snapshot => {
+        var x = snapshot.ref.toString();
+        product.picURL = x;
+        console.log(
+          product.picURL + " Firing the upload method after image uploaded"
+        );
+        product.picture = null;
+        this.productsCollection.add(product);
+      });
+    } else {
+
+    /*  this.brandImagesCollection.on(firebase.storage.TaskEvent.STATE_CHANGED, function(snapshot){
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("upload is " + progress + "% done");
+          }, function(error){
+            console.log("upload error")
+          },
+          function(){*/
+
+    /*brandProductImageLocation.put(product.picture).onSuccessListener(brandProductImageLocation.getDownloadURL()
+    .then((url =>
+      product.picURL = url),
+      product.picture = null,
+      this.productsCollection.add(product))
+    .catch(err => {
+      alert('Error at adding products! Check your inputs')
+    }));*/
+
+    /*this.brandImagesCollection.getDownloadURL()
       .then((url =>
         product.picURL = url),
-        product.picture = null,
         this.productsCollection.add(product))
       .catch(err => {
         alert('Error at adding products! Check your inputs')
-      }));*/
-      
-      /*this.brandImagesCollection.getDownloadURL()
-        .then((url =>
-          product.picURL = url),
-          this.productsCollection.add(product))
-        .catch(err => {
-          alert('Error at adding products! Check your inputs')
-        });*/
-        
-    } else {
+      });*/
       alert("Cannot add product");
     }
-  }
+  };
 
   createUser = user => {
     return new Promise((resolve, reject) => {
@@ -960,7 +953,9 @@ export default class FirebaseServices {
   editProduct = (p, _key) => {
     this.brandImagesCollection = this.brandImgdb.child(p.picture.name);
     if (p) {
-      this.brandImagesCollection.put(p.picture).then(p.picURL = this.brandImagesCollection.getDownloadURL());
+      this.brandImagesCollection
+        .put(p.picture)
+        .then((p.picURL = this.brandImagesCollection.getDownloadURL()));
       p.picture = null;
       this.productsCollection.doc(_key).set(
         {

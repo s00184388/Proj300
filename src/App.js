@@ -123,12 +123,7 @@ class App extends Component {
     };
 
     const MyCompanyProfile = props => {
-      return (
-        <CompanyProfile
-          user={this.state.user}
-          companyID={this.state.user.companyID}
-        />
-      );
+      return <CompanyProfile user={this.state.user} />;
     };
 
     const MyBrandProfile = props => {
