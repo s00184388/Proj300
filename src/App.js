@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import firebase from "firebase";
 import ReactLoading from "react-loading";
+import { Alert, AlertContainer, AlertList } from "react-bs-notifier";
 
 //styling
 import "./App.css";
@@ -33,6 +34,7 @@ import Brand from "./Pages/Brand";
 import EmployeeUserProfile from "./Pages/EmployeeUserProfile";
 import CompanyProfile from "./Pages/CompanyProfile";
 import BrandProfile from "./Pages/BrandProfile";
+import { merge } from "rxjs";
 
 const fs = new FirebaseServices();
 
@@ -66,8 +68,13 @@ class App extends Component {
       userRole: "",
       userName: "",
       user: {},
-      fetchInProgress: true
+      fetchInProgress: true,
+      alertMessage: "",
+      alertType: "",
+      alertVisible: false
     };
+    this.showAlert = this.showAlert.bind(this);
+    this.AlertOnDismiss = this.AlertOnDismiss.bind(this);
   }
 
   componentDidMount() {
@@ -105,6 +112,20 @@ class App extends Component {
     });
   }
 
+  AlertOnDismiss() {
+    this.setState({
+      alertVisible: false
+    });
+  }
+
+  showAlert(type, message) {
+    this.setState({
+      alertType: type,
+      alertMessage: message,
+      alertVisible: true
+    });
+  }
+
   componentWillUnmount() {
     this.subscriptions.forEach(subs => subs.unsubscribe());
   }
@@ -113,6 +134,14 @@ class App extends Component {
     const name = this.state.user.firstName + " " + this.state.user.lastName;
     const userEmail = this.state.user.email;
     const fetchInProgress = this.state.fetchInProgress;
+
+    const alerts = [
+      {
+        id: 1,
+        type: this.state.alertType,
+        message: this.state.alertMessage
+      }
+    ];
 
     const MyRewards = props => {
       return <Rewards user={this.state.user} />;
@@ -123,7 +152,9 @@ class App extends Component {
     };
 
     const MyCompanyProfile = props => {
-      return <CompanyProfile user={this.state.user} />;
+      return (
+        <CompanyProfile user={this.state.user} showAlert={this.showAlert} />
+      );
     };
 
     const MyBrandProfile = props => {
@@ -155,6 +186,13 @@ class App extends Component {
             : "container"
         }
       >
+        {this.state.alertVisible ? (
+          <AlertList
+            alerts={alerts}
+            onDismiss={this.AlertOnDismiss}
+            timeout={3000}
+          />
+        ) : null}
         {fetchInProgress ? (
           <ReactLoading
             type={"spinningBubbles"}

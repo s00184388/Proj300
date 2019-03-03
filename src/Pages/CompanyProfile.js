@@ -3,10 +3,10 @@ import "./CssPages/UserProfile.css";
 import "./CssPages/CompanyProfile.css";
 import FirebaseServices from "../firebase/services";
 import firebase from "firebase";
-import ReactLoading from "react-loading";
 import ReactTooltip from "react-tooltip";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Alert, AlertContainer } from "react-bs-notifier";
 import {
   faInfoCircle,
   faTrash,
@@ -153,6 +153,15 @@ class Panel extends Component {
     var currentUser = firebase.auth().currentUser;
     if (currentUser) {
       this.setState({ emailConfirmed: currentUser.emailVerified });
+
+      /*if (currentUser.emailVerified) {
+        console.log("function");
+        this.setState({ showAlert: true }, () => {
+          window.setTimeout(() => {
+            this.setState({ showAlert: false });
+          }, 4000);
+        });
+      }*/
     }
     this.subscriptions.push(
       fs
@@ -188,6 +197,7 @@ class Panel extends Component {
 
   submitEdit(e) {
     e.preventDefault();
+    this.props.showAlert("success", "email not confirmed");
     this.setState({ fetchInProgress: true });
     var newPassword = this.state.passwords.newPassword;
     var newPassword2 = this.state.passwords.newPassword2;
@@ -853,6 +863,11 @@ export class CompanyProfile extends Component {
       user: props.user,
       company: {}
     };
+    this.showAlert = this.showAlert.bind(this);
+  }
+
+  showAlert(type, message) {
+    this.props.showAlert(type, message);
   }
 
   componentDidMount() {
@@ -875,7 +890,7 @@ export class CompanyProfile extends Component {
     return (
       <div className="py-3 col-sm-12">
         <div className="center">
-          <Panel user={user} company={company} />
+          <Panel user={user} company={company} showAlert={this.showAlert} />
         </div>
       </div>
     );
