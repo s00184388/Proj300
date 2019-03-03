@@ -219,6 +219,13 @@ class Panel extends Component {
             currentUser
               .updatePassword(newPassword)
               .then(() => {
+                let passwords = this.state.passwords;
+                passwords.oldPassword = "";
+                passwords.newPassword = "";
+                passwords.newPassword2 = "";
+                this.setState({ passwords });
+                alert("Email and Password changed! Please validate new email");
+                this.resendConfirmation();
                 cred = firebase.auth.EmailAuthProvider.credential(
                   currentUser.email,
                   newPassword
@@ -262,6 +269,11 @@ class Panel extends Component {
             currentUser
               .updatePassword(newPassword)
               .then(() => {
+                let passwords = this.state.passwords;
+                passwords.oldPassword = "";
+                passwords.newPassword = "";
+                passwords.newPassword2 = "";
+                this.setState({ passwords });
                 alert("password changed");
                 this.updateUser();
                 this.updateCompany(cred);
@@ -283,7 +295,6 @@ class Panel extends Component {
         this.setState({ fetchInProgress: false });
       }
     } else if (this.props.user.email !== this.state.userDetails.email) {
-      console.log("email changed");
       currentUser
         .reauthenticateAndRetrieveDataWithCredential(cred)
         .then(() => {
@@ -307,16 +318,6 @@ class Panel extends Component {
             alert("Wrong password");
           }
         });
-    } else if (
-      this.state.user.firstName !== this.state.userDetails.firstName ||
-      this.state.user.lastName !== this.state.userDetails.lastName
-    ) {
-      this.updateUser();
-    } else if (
-      this.state.company.name !== this.state.companyDetails.name ||
-      this.state.company.address !== this.state.companyDetails.address
-    ) {
-      this.updateCompany(cred);
     } else {
       this.updateUser();
       this.updateCompany(cred);
@@ -324,63 +325,79 @@ class Panel extends Component {
   }
 
   updateUser() {
-    fs.usersCollection
-      .doc(this.props.user.key)
-      .update(this.state.userDetails)
-      .then(() => {
-        firebase.auth().currentUser.reload();
-        this.setState({ fetchInProgress: false });
-      })
-      .catch(err => {
-        console.log(err);
-        this.setState({ fetchInProgress: false });
-      });
+    var userDetails = this.state.userDetails;
+    var user = this.props.user;
+    if (
+      userDetails.firstName !== user.firstName ||
+      userDetails.lastName !== user.lastName ||
+      userDetails.email !== user.email
+    ) {
+      fs.usersCollection
+        .doc(user.key)
+        .update(userDetails)
+        .then(() => {
+          firebase.auth().currentUser.reload();
+          this.setState({ fetchInProgress: false });
+        })
+        .catch(err => {
+          console.log(err);
+          this.setState({ fetchInProgress: false });
+        });
+    }
   }
 
   updateCompany(cred) {
-    var oldPassword = this.state.passwords.oldPassword;
-    var currentUser = firebase.auth().currentUser;
-    if (this.props.company.email !== this.state.companyDetails.email) {
-      cred = firebase.auth.EmailAuthProvider.credential(
-        currentUser.email,
-        oldPassword
-      );
-      currentUser
-        .reauthenticateAndRetrieveDataWithCredential(cred)
-        .then(() => {
-          fs.companiesCollection
-            .doc(this.props.company.key)
-            .update(this.state.companyDetails)
-            .then(() => {
-              let passwords = { ...this.state.passwords };
-              passwords.oldPassword = "";
-              this.setState({ passwords, fetchInProgress: false });
-              alert("Company Email updated!");
-            })
-            .catch(err => {
-              console.log(err);
-              this.setState({ fetchInProgress: false });
-            });
-        })
-        .catch(err => {
-          console.log(err);
-          this.setState({ fetchInProgress: false });
-          if (err.code === "auth/wrong-password") {
-            alert("Wrong password");
-          }
-        });
-    } else {
-      fs.companiesCollection
-        .doc(this.props.company.key)
-        .update(this.state.companyDetails)
-        .then(() => {
-          alert("Company Data updated!");
-          this.setState({ fetchInProgress: false });
-        })
-        .catch(err => {
-          console.log(err);
-          this.setState({ fetchInProgress: false });
-        });
+    var companyDetails = this.state.companyDetails;
+    var company = this.props.company;
+    if (
+      company.email !== companyDetails.email ||
+      company.address !== companyDetails.address ||
+      company.name !== companyDetails.name
+    ) {
+      var oldPassword = this.state.passwords.oldPassword;
+      var currentUser = firebase.auth().currentUser;
+      if (company.email !== companyDetails.email) {
+        cred = firebase.auth.EmailAuthProvider.credential(
+          currentUser.email,
+          oldPassword
+        );
+        currentUser
+          .reauthenticateAndRetrieveDataWithCredential(cred)
+          .then(() => {
+            fs.companiesCollection
+              .doc(company.key)
+              .update(companyDetails)
+              .then(() => {
+                let passwords = { ...this.state.passwords };
+                passwords.oldPassword = "";
+                this.setState({ passwords, fetchInProgress: false });
+                alert("Company Email updated!");
+              })
+              .catch(err => {
+                console.log(err);
+                this.setState({ fetchInProgress: false });
+              });
+          })
+          .catch(err => {
+            console.log(err);
+            this.setState({ fetchInProgress: false });
+            if (err.code === "auth/wrong-password") {
+              alert("Wrong password");
+            }
+          });
+      } else {
+        fs.companiesCollection
+          .doc(company.key)
+          .update(companyDetails)
+          .then(() => {
+            alert("Company Data updated!");
+            this.setState({ fetchInProgress: false });
+          })
+          .catch(err => {
+            console.log(err);
+            this.setState({ fetchInProgress: false });
+          });
+      }
     }
   }
 
