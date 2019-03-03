@@ -225,8 +225,6 @@ class Panel extends Component {
                 passwords.newPassword = "";
                 passwords.newPassword2 = "";
                 this.setState({ passwords });
-                alert("Email and Password changed! Please validate new email");
-                this.resendConfirmation();
                 cred = firebase.auth.EmailAuthProvider.credential(
                   currentUser.email,
                   newPassword
@@ -237,6 +235,8 @@ class Panel extends Component {
                     currentUser
                       .updateEmail(this.state.userDetails.email)
                       .then(() => {
+                        alert("Email and Password changed! Please validate new email");
+                        this.resendConfirmation();
                         this.updateUser();
                         this.updateCompany(cred);
                         this.props.history.push("/");
@@ -264,6 +264,7 @@ class Panel extends Component {
           });
       }
     } else if (newPassword && newPassword2) {
+      console.log("here");
       if (newPassword === newPassword2) {
         currentUser
           .reauthenticateAndRetrieveDataWithCredential(cred)
@@ -271,14 +272,18 @@ class Panel extends Component {
             currentUser
               .updatePassword(newPassword)
               .then(() => {
+                cred = firebase.auth.EmailAuthProvider.credential(
+                  currentUser.email,
+                  newPassword
+                );
+                alert("password changed");
+                this.updateUser();
+                this.updateCompany(cred);
                 let passwords = this.state.passwords;
                 passwords.oldPassword = "";
                 passwords.newPassword = "";
                 passwords.newPassword2 = "";
                 this.setState({ passwords });
-                alert("password changed");
-                this.updateUser();
-                this.updateCompany(cred);
               })
               .catch(err => {
                 console.log(err);
@@ -303,6 +308,10 @@ class Panel extends Component {
           currentUser
             .updateEmail(this.state.userDetails.email)
             .then(() => {
+              var cred = firebase.auth.EmailAuthProvider.credential(
+                currentUser.email,
+                oldPassword
+              );
               this.resendConfirmation();
               alert("Email changed. Please validate new email");
               this.updateUser();
@@ -360,10 +369,6 @@ class Panel extends Component {
       var oldPassword = this.state.passwords.oldPassword;
       var currentUser = firebase.auth().currentUser;
       if (company.email !== companyDetails.email) {
-        cred = firebase.auth.EmailAuthProvider.credential(
-          currentUser.email,
-          oldPassword
-        );
         currentUser
           .reauthenticateAndRetrieveDataWithCredential(cred)
           .then(() => {

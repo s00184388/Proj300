@@ -195,7 +195,7 @@ class App extends Component {
           <AlertList
             alerts={alerts}
             onDismiss={this.AlertOnDismiss}
-            timeout={3000}
+            timeout={2000}
           />
         ) : null}
         {fetchInProgress ? (
