@@ -36,7 +36,12 @@ export class EmployeeForm extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.nameFree = this.nameFree.bind(this);
+    this.showAlert = this.showAlert.bind(this);
     this.subscriptions = [];
+  }
+
+  showAlert(type, message) {
+    this.props.showAlert(type, message);
   }
 
   //validation function. Returns if the form is valid or not,
@@ -216,8 +221,7 @@ export class EmployeeForm extends Component {
                   currentUser
                     .sendEmailVerification()
                     .then(() => {
-                      alert(`email sent. 
-\You won't receive any points or cannot buy anything until you verifiy your email`);
+                      this.showAlert("success", "email not confirmed");
                     })
                     .catch(err => {
                       console.log(err);
@@ -249,8 +253,10 @@ export class EmployeeForm extends Component {
                   currentUser
                     .sendEmailVerification()
                     .then(() => {
-                      this.setState({ emailSent: true });
-                      this.preventDefault();
+                      this.showAlert(
+                        "success",
+                        "You won't receive any points or cannot buy anything until you verifiy your email"
+                      );
                     })
                     .catch(err => {
                       console.log(err);
@@ -364,6 +370,7 @@ export class EmployeeForm extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    this.showAlert("success", "email not confirmed");
     let fields = {};
     fields["firstName"] = this.state.fields.firstName;
     fields["lastName"] = this.state.fields.lastName;

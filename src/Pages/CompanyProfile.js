@@ -2,11 +2,12 @@ import React, { Component } from "react";
 import "./CssPages/UserProfile.css";
 import "./CssPages/CompanyProfile.css";
 import FirebaseServices from "../firebase/services";
+import { withRouter } from "react-router-dom";
 import firebase from "firebase";
 import ReactTooltip from "react-tooltip";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Alert, AlertContainer } from "react-bs-notifier";
+
 import {
   faInfoCircle,
   faTrash,
@@ -238,6 +239,7 @@ class Panel extends Component {
                       .then(() => {
                         this.updateUser();
                         this.updateCompany(cred);
+                        this.props.history.push("/");
                       })
                       .catch(err => {
                         console.log(err);
@@ -305,6 +307,7 @@ class Panel extends Component {
               alert("Email changed. Please validate new email");
               this.updateUser();
               this.updateCompany(cred);
+              this.props.history.push("/");
             })
             .catch(err => {
               console.log(err);
@@ -871,6 +874,7 @@ class Panel extends Component {
     );
   }
 }
+withRouter(Panel);
 
 export class CompanyProfile extends Component {
   constructor(props) {
@@ -914,4 +918,4 @@ export class CompanyProfile extends Component {
   }
 }
 
-export default CompanyProfile;
+export default withRouter(CompanyProfile);

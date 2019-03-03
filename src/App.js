@@ -124,6 +124,7 @@ class App extends Component {
       alertMessage: message,
       alertVisible: true
     });
+    console.log("dsdsadsad");
   }
 
   componentWillUnmount() {
@@ -145,6 +146,10 @@ class App extends Component {
 
     const MyRewards = props => {
       return <Rewards user={this.state.user} />;
+    };
+
+    const Register = props => {
+      return <EmployeeForm showAlert={this.showAlert} />;
     };
 
     const MyProfile = props => {
@@ -286,7 +291,7 @@ class App extends Component {
                 )}
                 <Route exact path="/" component={Home} />
                 <Route path="/login" component={Login} />
-                <Route path="/register" component={EmployeeForm} />
+                <Route path="/register" component={Register} />
               </div>
             </div>
           </Router>
