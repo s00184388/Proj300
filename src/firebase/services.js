@@ -838,7 +838,7 @@ export default class FirebaseServices {
       });*/
       alert("Cannot add product");
     }
-  };
+  
 
   createUser = user => {
     return new Promise((resolve, reject) => {
@@ -975,3 +975,4 @@ export default class FirebaseServices {
       //console.log("updating:  " + _key);
     }
   };
+}
