@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import firebase from "firebase";
 import ReactLoading from "react-loading";
+import { Alert, AlertContainer, AlertList } from "react-bs-notifier";
 
 //styling
 import "./App.css";
@@ -33,6 +34,7 @@ import Brand from "./Pages/Brand";
 import EmployeeUserProfile from "./Pages/EmployeeUserProfile";
 import CompanyProfile from "./Pages/CompanyProfile";
 import BrandProfile from "./Pages/BrandProfile";
+import { merge } from "rxjs";
 
 const fs = new FirebaseServices();
 
@@ -66,8 +68,13 @@ class App extends Component {
       userRole: "",
       userName: "",
       user: {},
-      fetchInProgress: true
+      fetchInProgress: true,
+      alertMessage: "",
+      alertType: "",
+      alertVisible: false
     };
+    this.showAlert = this.showAlert.bind(this);
+    this.AlertOnDismiss = this.AlertOnDismiss.bind(this);
   }
 
   componentDidMount() {
@@ -105,6 +112,21 @@ class App extends Component {
     });
   }
 
+  AlertOnDismiss() {
+    this.setState({
+      alertVisible: false
+    });
+  }
+
+  showAlert(type, message) {
+    this.setState({
+      alertType: type,
+      alertMessage: message,
+      alertVisible: true
+    });
+    console.log("dsdsadsad");
+  }
+
   componentWillUnmount() {
     this.subscriptions.forEach(subs => subs.unsubscribe());
   }
@@ -114,8 +136,20 @@ class App extends Component {
     const userEmail = this.state.user.email;
     const fetchInProgress = this.state.fetchInProgress;
 
+    const alerts = [
+      {
+        id: 1,
+        type: this.state.alertType,
+        message: this.state.alertMessage
+      }
+    ];
+
     const MyRewards = props => {
       return <Rewards user={this.state.user} />;
+    };
+
+    const Register = props => {
+      return <EmployeeForm showAlert={this.showAlert} />;
     };
 
     const MyProfile = props => {
@@ -124,10 +158,7 @@ class App extends Component {
 
     const MyCompanyProfile = props => {
       return (
-        <CompanyProfile
-          user={this.state.user}
-          companyID={this.state.user.companyID}
-        />
+        <CompanyProfile user={this.state.user} showAlert={this.showAlert} />
       );
     };
 
@@ -160,6 +191,13 @@ class App extends Component {
             : "container"
         }
       >
+        {this.state.alertVisible ? (
+          <AlertList
+            alerts={alerts}
+            onDismiss={this.AlertOnDismiss}
+            timeout={2000}
+          />
+        ) : null}
         {fetchInProgress ? (
           <ReactLoading
             type={"spinningBubbles"}
@@ -224,6 +262,7 @@ class App extends Component {
                     <PrivateRoute path="/wishlist" component={MyWishlist} />
                     <Route path={"/admin"} component={Admin} />
                     <Route path={"/brandProfile"} component={MyBrandProfile} />
+
                     <PrivateRoute
                       path={"/companyDashboard"}
                       component={MyCompanyDashboard}
@@ -252,7 +291,7 @@ class App extends Component {
                 )}
                 <Route exact path="/" component={Home} />
                 <Route path="/login" component={Login} />
-                <Route path="/register" component={EmployeeForm} />
+                <Route path="/register" component={Register} />
               </div>
             </div>
           </Router>

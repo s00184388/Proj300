@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import { Alert, AlertContainer } from "react-bs-notifier";
 import { firestore } from "firebase";
 import ReactLoading from "react-loading";
-
 const fs = new FirebaseServices();
 
 export class EmployeeForm extends Component {
@@ -18,6 +17,7 @@ export class EmployeeForm extends Component {
       fields: {},
       errors: {},
       created: false,
+      emailSent: false,
       //employee details
       selectedOption: "employee",
       coins: 0,
@@ -36,7 +36,12 @@ export class EmployeeForm extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.nameFree = this.nameFree.bind(this);
+    this.showAlert = this.showAlert.bind(this);
     this.subscriptions = [];
+  }
+
+  showAlert(type, message) {
+    this.props.showAlert(type, message);
   }
 
   //validation function. Returns if the form is valid or not,
@@ -198,7 +203,11 @@ export class EmployeeForm extends Component {
         this.state.fields.pwd1
       )
       .then(() => {
-        this.props.history.push("/");
+        if (this.state.role === "employee") {
+          this.props.history.push("/profile");
+        } else if (this.state.role === "companyAdmin") {
+          this.props.history.push("/companyProfile");
+        } else this.props.history.push("/brandProfile");
         console.log("role for creating: " + this.state.role);
 
         if (this.state.role === "employee") {
@@ -212,8 +221,7 @@ export class EmployeeForm extends Component {
                   currentUser
                     .sendEmailVerification()
                     .then(() => {
-                      alert(`email sent. 
-\You won't receive any points or cannot buy anything until you verifiy your email`);
+                      this.showAlert("success", "email not confirmed");
                     })
                     .catch(err => {
                       console.log(err);
@@ -245,8 +253,10 @@ export class EmployeeForm extends Component {
                   currentUser
                     .sendEmailVerification()
                     .then(() => {
-                      alert(`email sent. 
-\You won't be able to accept employees until you verifiy your email`);
+                      this.showAlert(
+                        "success",
+                        "You won't receive any points or cannot buy anything until you verifiy your email"
+                      );
                     })
                     .catch(err => {
                       console.log(err);
@@ -325,7 +335,7 @@ export class EmployeeForm extends Component {
       this.setState({
         showingAlert: false
       });
-    }, 2000);
+    }, 5000);
   };
 
   handleOptionChange = changeEvent => {
@@ -360,6 +370,7 @@ export class EmployeeForm extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    this.showAlert("success", "email not confirmed");
     let fields = {};
     fields["firstName"] = this.state.fields.firstName;
     fields["lastName"] = this.state.fields.lastName;
@@ -375,6 +386,7 @@ export class EmployeeForm extends Component {
     fields["brandAddress"] = this.state.fields.brandAddress;
     fields["brandEmail"] = this.state.fields.brandEmail;
     console.log(this.validate());
+
     if (this.validate()) {
       if (this.state.role === "employee") {
         fs.getCompanyByName(this.state.companyName)
@@ -395,7 +407,7 @@ export class EmployeeForm extends Component {
           })
           .catch(err => {
             this.setState({ companyError: err.message }, () => {
-              console.log(this.state.companyError, "error");
+              console.log(this.state.companyError);
             });
           });
       } else if (this.state.role === "companyAdmin") {
@@ -505,14 +517,6 @@ export class EmployeeForm extends Component {
           />
         ) : (
           <div className="container pt-5">
-            {this.state.companyError != "" &&
-            this.state.showingAlert === true ? (
-              <AlertContainer>
-                <Alert type="danger" headline="Something went wrong!">
-                  {this.state.companyError}
-                </Alert>
-              </AlertContainer>
-            ) : null}
             {this.state.authError != "" && this.state.showingAlert === true ? (
               <AlertContainer>
                 <Alert type="danger" headline="Something went wrong!">
@@ -610,6 +614,9 @@ export class EmployeeForm extends Component {
                               </option>
                               {options}
                             </select>
+                            <div className="small">
+                              {this.state.companyError}
+                            </div>
                           </div>
                         </div>
                       </div>

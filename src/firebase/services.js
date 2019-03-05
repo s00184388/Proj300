@@ -706,8 +706,9 @@ export default class FirebaseServices {
     return new Observable(observer => {
       if (companyID) {
         this.usersCollection
-          .orderBy("coins")
+          .where("role", "==", "employee")
           .where("companyID", "==", companyID)
+          .orderBy("coins")
           .onSnapshot(querySnapshot => {
             const employees = [];
             querySnapshot.forEach(doc => {
@@ -835,143 +836,142 @@ export default class FirebaseServices {
       .catch(err => {
         alert('Error at adding products! Check your inputs')
       });*/
-
-    else {
-  alert("Cannot add product");
-}
-  }
-
-createUser = user => {
-  return new Promise((resolve, reject) => {
-    if (user) {
-      this.usersCollection
-        .add(user)
-        .then(docRef => resolve(docRef.id))
-        .catch(err => {
-          alert("Auth:" + err);
-          //console.log(err);
-          reject(err);
-        });
-    } else {
-      reject(new Error("No user given"));
+      alert("Cannot add product");
     }
-  });
-};
+  };
 
-createCompany = company => {
-  return new Promise((resolve, reject) => {
-    if (company) {
-      this.companiesCollection
-        .add(company)
-        .then(docRef => resolve(docRef.id))
-        .catch(err => {
-          console.log(err);
-          reject(err);
-        });
-    } else {
-      reject(new Error("No company given"));
-    }
-  });
-};
+  createUser = user => {
+    return new Promise((resolve, reject) => {
+      if (user) {
+        this.usersCollection
+          .add(user)
+          .then(docRef => resolve(docRef.id))
+          .catch(err => {
+            alert("Auth:" + err);
+            //console.log(err);
+            reject(err);
+          });
+      } else {
+        reject(new Error("No user given"));
+      }
+    });
+  };
 
-createBrand = brand => {
-  return new Promise((resolve, reject) => {
-    if (brand) {
-      this.brandsCollection
-        .add(brand)
-        .then(docRef => resolve(docRef.id))
-        .catch(err => {
-          console.log(err);
-          reject(err);
-        });
-    } else {
-      reject(new Error("no brand given"));
-    }
-  });
-};
+  createCompany = company => {
+    return new Promise((resolve, reject) => {
+      if (company) {
+        this.companiesCollection
+          .add(company)
+          .then(docRef => resolve(docRef.id))
+          .catch(err => {
+            console.log(err);
+            reject(err);
+          });
+      } else {
+        reject(new Error("No company given"));
+      }
+    });
+  };
 
-getBrandByName = brandName => {
-  return new Promise((resolve, reject) => {
-    if (brandName) {
-      this.brandsCollection
-        .where("name", "==", brandName)
+  createBrand = brand => {
+    return new Promise((resolve, reject) => {
+      if (brand) {
+        this.brandsCollection
+          .add(brand)
+          .then(docRef => resolve(docRef.id))
+          .catch(err => {
+            console.log(err);
+            reject(err);
+          });
+      } else {
+        reject(new Error("no brand given"));
+      }
+    });
+  };
+
+  getBrandByName = brandName => {
+    return new Promise((resolve, reject) => {
+      if (brandName) {
+        this.brandsCollection
+          .where("name", "==", brandName)
+          .get()
+          .then(querySnapshot => {
+            if (querySnapshot.empty) {
+              reject(new Error("no company found"));
+            } else {
+              var company = {};
+              querySnapshot.forEach(doc => {
+                const {
+                  adminUserID,
+                  name,
+                  picture,
+                  address,
+                  phoneNumber,
+                  email,
+                  description
+                } = doc.data();
+                company = {
+                  key: doc.id,
+                  doc,
+                  adminUserID,
+                  name,
+                  picture,
+                  address,
+                  phoneNumber,
+                  email,
+                  description
+                };
+              });
+              resolve(company);
+            }
+          });
+      } else {
+        reject(new Error("no company name"));
+      }
+    });
+  };
+
+  deleteProduct = product => {
+    if (product) {
+      this.wishlistsCollection
+        .where("productID", "==", product.key)
         .get()
         .then(querySnapshot => {
-          if (querySnapshot.empty) {
-            reject(new Error("no company found"));
-          } else {
-            var company = {};
-            querySnapshot.forEach(doc => {
-              const {
-                adminUserID,
-                name,
-                picture,
-                address,
-                phoneNumber,
-                email,
-                description
-              } = doc.data();
-              company = {
-                key: doc.id,
-                doc,
-                adminUserID,
-                name,
-                picture,
-                address,
-                phoneNumber,
-                email,
-                description
-              };
-            });
-            resolve(company);
-          }
+          querySnapshot.forEach(doc => doc.ref.delete());
         });
     } else {
-      reject(new Error("no company name"));
+      console.log("Cannot delete product");
     }
-  });
-};
+  };
 
-deleteProduct = product => {
-  if (product) {
-    this.wishlistsCollection
-      .where("productID", "==", product.key)
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => doc.ref.delete());
-      });
-  } else {
-    console.log("Cannot delete product");
-  }
-};
+  deleteItemFromDashboard = _key => {
+    if (_key) {
+      this.productsCollection.doc(_key).delete();
+    } else {
+      console.log("Cannot delete product");
+    }
+  };
 
-deleteItemFromDashboard = _key => {
-  if (_key) {
-    this.productsCollection.doc(_key).delete();
-  } else {
-    console.log("Cannot delete product");
-  }
-};
+  editProduct = (p, _key) => {
+    this.brandImagesCollection = this.brandImgdb.child(p.picture.name);
+    if (p) {
+      this.brandImagesCollection
+        .put(p.picture)
+        .then((p.picURL = this.brandImagesCollection.getDownloadURL()));
+      p.picture = null;
+      this.productsCollection.doc(_key).set(
+        {
+          category: p.category,
+          description: p.description,
+          name: p.name,
+          picture: p.picture,
+          price: p.price,
+          stock: p.stock,
+          tresholdPercentage: p.tresholdPercentage
+        },
+        { merge: true }
+      );
 
-editProduct = (p, _key) => {
-  this.brandImagesCollection = this.brandImgdb.child(p.picture.name);
-  if (p) {
-    this.brandImagesCollection.put(p.picture).then(p.picURL = this.brandImagesCollection.getDownloadURL());
-    p.picture = null;
-    this.productsCollection.doc(_key).set(
-      {
-        category: p.category,
-        description: p.description,
-        name: p.name,
-        picture: p.picture,
-        price: p.price,
-        stock: p.stock,
-        tresholdPercentage: p.tresholdPercentage
-      },
-      { merge: true }
-    );
-
-    //console.log("updating:  " + _key);
-  }
-};
-}
+      //console.log("updating:  " + _key);
+    }
+  };
