@@ -203,13 +203,7 @@ export class EmployeeForm extends Component {
         this.state.fields.pwd1
       )
       .then(() => {
-        if (this.state.role === "employee") {
-          this.props.history.push("/profile");
-        } else if (this.state.role === "companyAdmin") {
-          this.props.history.push("/companyProfile");
-        } else this.props.history.push("/brandProfile");
         console.log("role for creating: " + this.state.role);
-
         if (this.state.role === "employee") {
           console.log("creating employee");
           fs.createUser(user)
@@ -221,7 +215,11 @@ export class EmployeeForm extends Component {
                   currentUser
                     .sendEmailVerification()
                     .then(() => {
-                      this.showAlert("success", "email not confirmed");
+                      this.props.history.push("/profile");
+                      this.showAlert(
+                        "success",
+                        "Please confirm your email address"
+                      );
                     })
                     .catch(err => {
                       console.log(err);
@@ -280,6 +278,9 @@ export class EmployeeForm extends Component {
                   fs.usersCollection
                     .doc(userID)
                     .update({ companyID: compID })
+                    .then(() => {
+                      this.props.history.push("/companyProfile");
+                    })
                     .catch(err => console.log(err));
                   this.setState({ fetchInProgress: false });
                 })
@@ -308,6 +309,7 @@ export class EmployeeForm extends Component {
                   .doc(userID)
                   .update({ brandID: brID })
                   .then(() => {
+                    this.props.history.push("/brandProfile");
                     this.setState({ fetchInProgress: false });
                   })
                   .catch(err => {
@@ -370,7 +372,6 @@ export class EmployeeForm extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.showAlert("success", "email not confirmed");
     let fields = {};
     fields["firstName"] = this.state.fields.firstName;
     fields["lastName"] = this.state.fields.lastName;

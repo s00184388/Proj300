@@ -305,6 +305,7 @@ export default class FirebaseServices {
                   email,
                   deviceID,
                   companyID,
+                  brandID,
                   points,
                   coins,
                   approved,
@@ -319,6 +320,7 @@ export default class FirebaseServices {
                   email,
                   deviceID,
                   companyID,
+                  brandID,
                   points,
                   coins,
                   approved,
@@ -361,6 +363,7 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
+                brandID,
                 points,
                 coins,
                 approved,
@@ -375,6 +378,7 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
+                brandID,
                 points,
                 coins,
                 approved,
@@ -406,6 +410,7 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
+                brandID,
                 points,
                 coins,
                 approved,
@@ -420,6 +425,7 @@ export default class FirebaseServices {
                 email,
                 deviceID,
                 companyID,
+                brandID,
                 points,
                 coins,
                 approved,
@@ -447,6 +453,7 @@ export default class FirebaseServices {
             email,
             deviceID,
             companyID,
+            brandID,
             points,
             coins,
             approved,
@@ -461,6 +468,7 @@ export default class FirebaseServices {
             email,
             deviceID,
             companyID,
+            brandID,
             points,
             coins,
             approved,
@@ -799,18 +807,20 @@ export default class FirebaseServices {
   addProduct = product => {
     var brandProductImageLocation = this.brandImgdb.child(product.picture.name);
     if (product) {
-      brandProductImageLocation.put(product.picture).then((snapshot) => {
-        snapshot.ref.getDownloadURL().then((url)=>{
-          //console.log(url);
-          product.picURL = url;
-        }).then(() => {
-          //console.log(product.picURL + " Firing the upload method after image uploaded");
+      brandProductImageLocation.put(product.picture).then(snapshot => {
+        snapshot.ref
+          .getDownloadURL()
+          .then(url => {
+            //console.log(url);
+            product.picURL = url;
+          })
+          .then(() => {
+            //console.log(product.picURL + " Firing the upload method after image uploaded");
             product.picture = null;
             this.productsCollection.add(product);
           });
-        }
-    )
-  }
+      });
+    }
 
     /*  this.brandImagesCollection.on(firebase.storage.TaskEvent.STATE_CHANGED, function(snapshot){
             var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -836,9 +846,8 @@ export default class FirebaseServices {
       .catch(err => {
         alert('Error at adding products! Check your inputs')
       });*/
-      alert("Cannot add product");
-    }
-  
+    alert("Cannot add product");
+  };
 
   createUser = user => {
     return new Promise((resolve, reject) => {

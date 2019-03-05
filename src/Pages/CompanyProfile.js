@@ -613,7 +613,7 @@ class Panel extends Component {
                         {emailConfirmed}
                         {emailConfirmed == "No" ? (
                           <button
-                            className="btn btn-info"
+                            className="btn btn-info btn-sm mx-1"
                             onClick={this.resendConfirmation}
                           >
                             Resend Mail
@@ -969,7 +969,6 @@ export class CompanyProfile extends Component {
 
   componentDidMount() {
     if (this.state.user.companyID) {
-      console.log();
       this.subscriptions.push(
         fs.getCompany(this.state.user.companyID).subscribe(company => {
           this.setState({ company: company });

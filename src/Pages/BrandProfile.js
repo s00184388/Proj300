@@ -1,13 +1,23 @@
 import React, { Component } from "react";
 import "./CssPages/UserProfile.css";
+import FirebaseServices from "../firebase/services";
+import firebase from "firebase";
+
+const fs = new FirebaseServices();
 
 class Panel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: this.props.user
+      user: this.props.user,
+      brand: this.props.brand,
+      emailConfirmed: false,
+      fetchInProgress: 0
     };
     this.timeConverter = this.timeConverter.bind(this);
+    this.resendConfirmation = this.resendConfirmation.bind(this);
+    this.incrementLoading = this.incrementLoading.bind(this);
+    this.decrementLoading = this.decrementLoading.bind(this);
   }
 
   timeConverter(UNIX_timestamp) {
@@ -33,8 +43,47 @@ class Panel extends Component {
     return time;
   }
 
+  incrementLoading() {
+    var ct = this.state.fetchInProgress;
+    ct++;
+    this.setState({ fetchInProgress: ct });
+  }
+  decrementLoading() {
+    var ct = this.state.fetchInProgress;
+    ct--;
+    this.setState({ fetchInProgress: ct });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.brand !== nextProps.brand) {
+      this.setState({ brand: nextProps.brand });
+    }
+  }
+
+  componentDidMount() {
+    this.incrementLoading();
+    var currentUser = firebase.auth().currentUser;
+    if (currentUser) {
+      this.setState({
+        emailConfirmed: currentUser.emailVerified
+      });
+    }
+  }
+
+  resendConfirmation() {
+    firebase
+      .auth()
+      .currentUser.sendEmailVerification()
+      .then(() => {
+        alert("Verification Email Sent!");
+      })
+      .catch(err => console.log(err));
+  }
+
   render() {
     const user = this.state.user;
+    const brand = this.state.brand;
+    const emailConfirmed = this.state.emailConfirmed ? "Yes" : "No";
     return (
       <section id="tabs" className="project-tab">
         <div className="row py-3">
@@ -99,17 +148,29 @@ class Panel extends Component {
                     <p className="ml-3">
                       <b>Role </b>: Brand Admin
                     </p>
+                    <p className="ml-3">
+                      <b>Email confirmed: </b>
+                      {emailConfirmed}
+                      {emailConfirmed == "No" ? (
+                        <button
+                          className="btn btn-info btn-sm mx-1"
+                          onClick={this.resendConfirmation}
+                        >
+                          Resend Mail
+                        </button>
+                      ) : null}
+                    </p>
                     <hr />
                     <h6 className=" pt-2 text-white">Brand Details</h6>
                     <p className="ml-3">
-                      <b>Brand Name: </b>
+                      <b>Brand Name: </b> {brand.name}
                     </p>
                     <p className="ml-3">
-                      <b>Adress: </b>
+                      <b>Adress: </b> {brand.address}
                     </p>
 
                     <p className="ml-3">
-                      <b>HR Department email: </b>
+                      <b>HR Department email: </b> {brand.email}
                     </p>
                   </div>
                 </div>
@@ -121,7 +182,7 @@ class Panel extends Component {
                 aria-labelledby="nav-settings-tab"
               >
                 <div className="col-sm-10 mx-auto">
-                  <h6 className="text-white">Brand User Details</h6>
+                  <h6 className="text-white">Brand Admin Details</h6>
                   <hr />
                   <div className="row">
                     <div className="form-group input-group-sm col-sm-6">
@@ -342,13 +403,16 @@ class Panel extends Component {
                 </div>
                 <hr />
               </div>
+              <div className="d-flex justify-content-center">
+                <button
+                  className="btn btn-sm btn-success"
+                  onClick={this.submitEdit}
+                >
+                  Save Changes
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="d-flex justify-content-center">
-          <button className="btn btn-sm btn-success" onClick={this.submitEdit}>
-            Save Changes
-          </button>
         </div>
       </section>
     );
@@ -360,19 +424,37 @@ export class BrandProfile extends Component {
     super(props);
     this.state = {
       user: props.user,
-      brandName: "",
-      address: "",
-      email: ""
+      brand: {}
     };
+    this.subscriptions = [];
+    this.showAlert = this.showAlert.bind(this);
+  }
+
+  showAlert(type, message) {
+    this.props.showAlert(type, message);
+  }
+
+  componentDidMount() {
+    if (this.state.user.brandID) {
+      this.subscriptions.push(
+        fs.getBrand(this.state.user.brandID).subscribe(brand => {
+          this.setState({ brand: brand });
+        })
+      );
+    }
+  }
+  componentWillUnmount() {
+    this.subscriptions.forEach(subs => subs.unsubscribe());
   }
 
   render() {
     const user = this.state.user;
     console.log(this.state.user);
+    const brand = this.state.brand;
     return (
       <div className="py-3 col-sm-12">
         <div className="center">
-          <Panel user={user} />
+          <Panel user={user} brand={brand} />
         </div>
       </div>
     );
