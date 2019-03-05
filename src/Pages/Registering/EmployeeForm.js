@@ -40,8 +40,8 @@ export class EmployeeForm extends Component {
     this.subscriptions = [];
   }
 
-  showAlert(type, message) {
-    this.props.showAlert(type, message);
+  showAlert(type, message, headline) {
+    this.props.showAlert(type, message, headline);
   }
 
   //validation function. Returns if the form is valid or not,
@@ -146,7 +146,6 @@ export class EmployeeForm extends Component {
     let fields = this.state.fields;
     fields[e.target.name] = e.target.value;
     this.setState(fields);
-    console.log(this.state.fields);
   };
 
   getCompanyAndSendConfirmationEmail(employee) {
@@ -203,13 +202,7 @@ export class EmployeeForm extends Component {
         this.state.fields.pwd1
       )
       .then(() => {
-        if (this.state.role === "employee") {
-          this.props.history.push("/profile");
-        } else if (this.state.role === "companyAdmin") {
-          this.props.history.push("/companyProfile");
-        } else this.props.history.push("/brandProfile");
         console.log("role for creating: " + this.state.role);
-
         if (this.state.role === "employee") {
           console.log("creating employee");
           fs.createUser(user)
@@ -221,7 +214,11 @@ export class EmployeeForm extends Component {
                   currentUser
                     .sendEmailVerification()
                     .then(() => {
-                      this.showAlert("success", "email not confirmed");
+                      this.showAlert(
+                        "success",
+                        "Your email verification has been sent. Please check your email as soon as possible!",
+                        "Email Sent"
+                      );
                     })
                     .catch(err => {
                       console.log(err);
@@ -255,7 +252,8 @@ export class EmployeeForm extends Component {
                     .then(() => {
                       this.showAlert(
                         "success",
-                        "You won't receive any points or cannot buy anything until you verifiy your email"
+                        "Your email verification has been sent. Please verify your email as soon as possible!",
+                        "Email Sent"
                       );
                     })
                     .catch(err => {
@@ -327,15 +325,14 @@ export class EmployeeForm extends Component {
       .catch(err => {
         this.setState({
           authError: err.message,
-          showingAlert: true,
           fetchInProgress: false
         });
+        this.showAlert(
+          "warning",
+          this.state.authError,
+          "Something went wrong!"
+        );
       });
-    setTimeout(() => {
-      this.setState({
-        showingAlert: false
-      });
-    }, 5000);
   };
 
   handleOptionChange = changeEvent => {
@@ -370,7 +367,6 @@ export class EmployeeForm extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.showAlert("success", "email not confirmed");
     let fields = {};
     fields["firstName"] = this.state.fields.firstName;
     fields["lastName"] = this.state.fields.lastName;
@@ -517,13 +513,6 @@ export class EmployeeForm extends Component {
           />
         ) : (
           <div className="container pt-5">
-            {this.state.authError != "" && this.state.showingAlert === true ? (
-              <AlertContainer>
-                <Alert type="danger" headline="Something went wrong!">
-                  {this.state.authError}
-                </Alert>
-              </AlertContainer>
-            ) : null}
             <div className="form-register py-3">
               <div className="text-white text-center pt-2">
                 <h4 className="text-white">Sign Up as</h4>

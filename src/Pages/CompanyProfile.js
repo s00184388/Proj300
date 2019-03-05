@@ -154,15 +154,6 @@ class Panel extends Component {
     var currentUser = firebase.auth().currentUser;
     if (currentUser) {
       this.setState({ emailConfirmed: currentUser.emailVerified });
-
-      /*if (currentUser.emailVerified) {
-        console.log("function");
-        this.setState({ showAlert: true }, () => {
-          window.setTimeout(() => {
-            this.setState({ showAlert: false });
-          }, 4000);
-        });
-      }*/
     }
     this.subscriptions.push(
       fs
@@ -198,7 +189,6 @@ class Panel extends Component {
 
   submitEdit(e) {
     e.preventDefault();
-    this.props.showAlert("success", "email not confirmed");
     this.setState({ fetchInProgress: true });
     var newPassword = this.state.passwords.newPassword;
     var newPassword2 = this.state.passwords.newPassword2;
@@ -235,7 +225,11 @@ class Panel extends Component {
                     currentUser
                       .updateEmail(this.state.userDetails.email)
                       .then(() => {
-                        alert("Email and Password changed! Please validate new email");
+                        this.props.showAlert(
+                          "success",
+                          "Email and Password changed! Please validate new email",
+                          "Email and Password changed"
+                        );
                         this.resendConfirmation();
                         this.updateUser();
                         this.updateCompany(cred);
@@ -250,7 +244,11 @@ class Panel extends Component {
                     console.log(err);
                     this.setState({ fetchInProgress: false });
                     if (err.code === "auth/wrong-password") {
-                      alert("Wrong password");
+                      this.props.showAlert(
+                        "warning",
+                        "Wrong Password",
+                        "Something went wrong!"
+                      );
                     }
                   });
               })
@@ -258,13 +256,16 @@ class Panel extends Component {
                 console.log(err);
                 this.setState({ fetchInProgress: false });
                 if (err.code === "auth/wrong-password") {
-                  alert("Wrong password");
+                  this.props.showAlert(
+                    "warning",
+                    "Wrong Password",
+                    "Something went wrong!"
+                  );
                 }
               });
           });
       }
     } else if (newPassword && newPassword2) {
-      console.log("here");
       if (newPassword === newPassword2) {
         currentUser
           .reauthenticateAndRetrieveDataWithCredential(cred)
@@ -276,7 +277,11 @@ class Panel extends Component {
                   currentUser.email,
                   newPassword
                 );
-                alert("password changed");
+                this.props.showAlert(
+                  "success",
+                  "Password has been changes",
+                  "Password changed"
+                );
                 this.updateUser();
                 this.updateCompany(cred);
                 let passwords = this.state.passwords;
@@ -294,11 +299,19 @@ class Panel extends Component {
             console.log(err);
             this.setState({ fetchInProgress: false });
             if (err.code === "auth/wrong-password") {
-              alert("Wrong password");
+              this.props.showAlert(
+                "warning",
+                "Wrong Password",
+                "Something went wrong!"
+              );
             }
           });
       } else {
-        alert("Password and verification password don't match");
+        this.props.showAlert(
+          "warning",
+          "Password and verification password don't match",
+          "Something went wrong!"
+        );
         this.setState({ fetchInProgress: false });
       }
     } else if (this.props.user.email !== this.state.userDetails.email) {
@@ -313,7 +326,12 @@ class Panel extends Component {
                 oldPassword
               );
               this.resendConfirmation();
-              alert("Email changed. Please validate new email");
+              this.props.showAlert(
+                "success",
+                "Email changed. Please validate new email",
+                "Email  has been changed"
+              );
+              //alert("Email changed. Please validate new email");
               this.updateUser();
               this.updateCompany(cred);
               this.props.history.push("/");
@@ -327,7 +345,11 @@ class Panel extends Component {
           console.log(err);
           this.setState({ fetchInProgress: false });
           if (err.code === "auth/wrong-password") {
-            alert("Wrong password");
+            this.props.showAlert(
+              "warning",
+              "Password and verification password don't match",
+              "Something went wrong!"
+            );
           }
         });
     } else {

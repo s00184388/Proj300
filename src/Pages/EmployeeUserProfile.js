@@ -73,9 +73,21 @@ class Sidepage extends Component {
       .auth()
       .currentUser.sendEmailVerification()
       .then(() => {
-        alert("Email Sent!");
+        this.showAlert(
+          "success",
+          "Your email verification has been sent. Please check your email and log in again!",
+          "Email Updated"
+        );
+        //logout here
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        this.showAlert(
+          "success",
+          err.message,
+          "Something went wrong! Check your inputs and try again!"
+        );
+      });
   }
 
   render() {
@@ -89,11 +101,11 @@ class Sidepage extends Component {
     const emailConfirmed = this.state.emailConfirmed ? "Yes" : "No";
     return (
       <div className="col-md-3">
-        <ul className="list-group-sm p">
+        <ul className="list-group-sm small">
           <li className="list-group-item text-center">
             <b>Profile</b>
           </li>
-          <li className="list-group-item p">
+          <li className="list-group-item">
             <span className="pull-left">
               <strong>Joined: </strong>
             </span>
@@ -126,7 +138,7 @@ class Sidepage extends Component {
           <li className="list-group-item p">
             <span className="pull-left ">
               <FontAwesomeIcon
-                style={{ marginLeft: "5px" }}
+                style={{ marginLeft: "1px" }}
                 data-tip="React-tooltip"
                 data-for="confirmationMailTooltip"
                 icon="info-circle"
@@ -146,12 +158,14 @@ class Sidepage extends Component {
             </span>
             {emailConfirmed}
             {emailConfirmed == "No" ? (
-              <button
-                className="btn btn-info"
-                onClick={this.resendConfirmation}
-              >
-                Resend Mail
-              </button>
+              <div className="d-flex justify-content-center pt-2">
+                <button
+                  className="btn btn-sm btn-warning text-white"
+                  onClick={this.resendConfirmation}
+                >
+                  Resend Mail
+                </button>
+              </div>
             ) : null}
           </li>
         </ul>
@@ -264,6 +278,11 @@ export class Panel extends Component {
                           .update(this.state.userDetails)
                           .then(() => {
                             this.setState({ fetchInProgress: false });
+                            this.props.showAlert(
+                              "success",
+                              "Email changed! Please validate new email and log in again",
+                              "Update"
+                            );
                           })
                           .catch(err => {
                             console.log(err);
@@ -279,7 +298,11 @@ export class Panel extends Component {
                     console.log(err);
                     this.setState({ fetchInProgress: false });
                     if (err.code === "auth/wrong-password") {
-                      alert("Wrong password");
+                      this.props.showAlert(
+                        "warning",
+                        "Wrong password! Check your inputs and try again!",
+                        "Something went wrong!"
+                      );
                     }
                   });
               })
@@ -287,7 +310,11 @@ export class Panel extends Component {
                 console.log(err);
                 this.setState({ fetchInProgress: false });
                 if (err.code === "auth/wrong-password") {
-                  alert("Wrong password");
+                  this.props.showAlert(
+                    "warning",
+                    "Wrong password! Check your inputs and try again!",
+                    "Something went wrong!"
+                  );
                 }
               });
           });
@@ -300,7 +327,11 @@ export class Panel extends Component {
             currentUser
               .updatePassword(newPassword)
               .then(() => {
-                alert("password changed");
+                this.props.showAlert(
+                  "success",
+                  "Password changed successfully!",
+                  "Update"
+                );
                 fs.usersCollection
                   .doc(this.props.user.key)
                   .update(this.state.userDetails)
@@ -322,15 +353,22 @@ export class Panel extends Component {
             console.log(err);
             this.setState({ fetchInProgress: false });
             if (err.code === "auth/wrong-password") {
-              alert("Wrong password");
+              this.props.showAlert(
+                "warning",
+                "Wrong password! Check your inputs and try again!",
+                "Something went wrong!"
+              );
             }
           });
       } else {
-        alert("Password and verification password don't match");
+        this.props.showAlert(
+          "warning",
+          "Password and verification password don't match",
+          "Something went wrong!"
+        );
         this.setState({ fetchInProgress: false });
       }
     } else if (this.props.user.email !== this.state.userDetails.email) {
-      console.log("email changed");
       currentUser
         .reauthenticateAndRetrieveDataWithCredential(cred)
         .then(() => {
@@ -342,22 +380,42 @@ export class Panel extends Component {
                 .update(this.state.userDetails)
                 .then(() => {
                   this.setState({ fetchInProgress: false });
+                  console.log("emmail changed");
+                  this.props.showAlert(
+                    "success",
+                    "Email changed! Please validate new email as soon as possible and log in again",
+                    "Update"
+                  );
                 })
                 .catch(err => {
                   console.log(err);
                   this.setState({ fetchInProgress: false });
+                  this.props.showAlert(
+                    "warning",
+                    err.message,
+                    "Something went wrong!"
+                  );
                 });
             })
             .catch(err => {
               console.log(err);
               this.setState({ fetchInProgress: false });
+              this.props.showAlert(
+                "warning",
+                err.message,
+                "Something went wrong!"
+              );
             });
         })
         .catch(err => {
           console.log(err);
           this.setState({ fetchInProgress: false });
           if (err.code === "auth/wrong-password") {
-            alert("Wrong password");
+            this.props.showAlert(
+              "warning",
+              "Wrong password",
+              "Something went wrong!"
+            );
           }
         });
     } else {
@@ -366,10 +424,12 @@ export class Panel extends Component {
         .update(this.state.userDetails)
         .then(() => {
           this.setState({ fetchInProgress: false });
+          this.props.showAlert("success", "Update successful!", "Update");
         })
         .catch(err => {
           console.log(err);
           this.setState({ fetchInProgress: false });
+          this.props.showAlert("warning", err.message, "Something went wrong!");
         });
     }
   }
@@ -464,6 +524,7 @@ export class Panel extends Component {
                       </div>
                       <div className="col-sm-8">
                         <h5 className="p-3 text-white">{name}</h5>
+                        <hr />
                         <p className="ml-3">
                           <b>Email: </b> {email}
                         </p>
@@ -547,28 +608,34 @@ export class Panel extends Component {
                         />
                       </div>
                     </div>
+
                     <div className="row py-2">
-                      <button
-                        className="btn btn-primary"
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#collapseEmail"
-                        aria-expanded="false"
-                        aria-controls="collapseEmail"
-                      >
-                        Change Email
-                      </button>
-                      <button
-                        className="btn btn-primary mx-2"
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#collapsePassword"
-                        aria-expanded="false"
-                        aria-controls="collapsePassword"
-                      >
-                        Change Password
-                      </button>
+                      <div className="col-sm-6">
+                        <button
+                          className="btn btn-warning btn-sm text-white col-sm-9"
+                          type="button"
+                          data-toggle="collapse"
+                          data-target="#collapseEmail"
+                          aria-expanded="false"
+                          aria-controls="collapseEmail"
+                        >
+                          Change Email
+                        </button>
+                      </div>
+                      <div className="col-sm-6">
+                        <button
+                          className="btn btn-sm btn-warning col-sm-9"
+                          type="button"
+                          data-toggle="collapse"
+                          data-target="#collapsePassword"
+                          aria-expanded="false"
+                          aria-controls="collapsePassword"
+                        >
+                          Change Password
+                        </button>
+                      </div>
                     </div>
+
                     <div
                       className="collapse"
                       id="collapseEmail"
@@ -664,7 +731,7 @@ export class Panel extends Component {
                         </div>
                       </div>
                     </div>
-                    <div className="d-flex justify-content-center">
+                    <div className="d-flex justify-content-center pt-3">
                       <button
                         className="btn btn-sm btn-success"
                         onClick={this.submitEdit}
@@ -690,6 +757,11 @@ export class EmployeeProfile extends Component {
     this.state = {
       user: props.user
     };
+    this.showAlert = this.showAlert.bind(this);
+  }
+
+  showAlert(type, message, headline) {
+    this.props.showAlert(type, message, headline);
   }
 
   render() {
@@ -699,7 +771,7 @@ export class EmployeeProfile extends Component {
       <div>
         <div className="row">
           <Sidepage user={user} />
-          <Panel user={user} />
+          <Panel user={user} showAlert={this.showAlert} />
         </div>
       </div>
     );
