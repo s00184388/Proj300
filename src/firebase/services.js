@@ -799,12 +799,15 @@ export default class FirebaseServices {
     var brandProductImageLocation = this.brandImgdb.child(product.picture.name);
     if (product) {
       brandProductImageLocation.put(product.picture).then((snapshot) => {
-        var x = snapshot.ref.toString();
-        product.picURL = x;
-          console.log(product.picURL + " Firing the upload method after image uploaded");
+        snapshot.ref.getDownloadURL().then((url)=>{
+          //console.log(url);
+          product.picURL = url;
+        }).then(() => {
+          //console.log(product.picURL + " Firing the upload method after image uploaded");
             product.picture = null;
             this.productsCollection.add(product);
-      }
+          });
+        }
     )
   }
 
