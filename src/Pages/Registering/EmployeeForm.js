@@ -278,6 +278,9 @@ export class EmployeeForm extends Component {
                   fs.usersCollection
                     .doc(userID)
                     .update({ companyID: compID })
+                    .then(() => {
+                      this.props.history.push("/companyProfile");
+                    })
                     .catch(err => console.log(err));
                   this.setState({ fetchInProgress: false });
                 })
@@ -306,6 +309,7 @@ export class EmployeeForm extends Component {
                   .doc(userID)
                   .update({ brandID: brID })
                   .then(() => {
+                    this.props.history.push("/brandProfile");
                     this.setState({ fetchInProgress: false });
                   })
                   .catch(err => {
