@@ -182,6 +182,7 @@ export class Panel extends Component {
     this.submitEdit = this.submitEdit.bind(this);
     this.getDevice = this.getDevice.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.deleteAccount = this.deleteAccount.bind(this);
     this.getDevice(this.props.user.key);
 
     this.subscriptions = [];
@@ -372,6 +373,21 @@ export class Panel extends Component {
           this.setState({ fetchInProgress: false });
         });
     }
+  }
+
+  deleteAccount() {
+    this.setState({ fetchInProgress: true });
+    fs.usersCollection
+      .doc(this.props.user.key)
+      .delete()
+      .then(() => {
+        console.log("account deleted");
+        this.setState({ fetchInProgress: false });
+      })
+      .catch(err => {
+        console.log(err);
+        this.setState({ fetchInProgress: false });
+      });
   }
 
   render() {
@@ -568,6 +584,13 @@ export class Panel extends Component {
                       >
                         Change Password
                       </button>
+                      <button
+                        data-toggle="collapse"
+                        data-target="#deleteAccount"
+                        className="btn-sm btn-danger text-white mx-2"
+                      >
+                        Delete Account
+                      </button>
                     </div>
                     <div
                       className="collapse"
@@ -663,6 +686,20 @@ export class Panel extends Component {
                           />
                         </div>
                       </div>
+                    </div>
+                    <div className="collapse" id="deleteAccount">
+                      <p className="text-white">
+                        <b>
+                          This action cannot be undone! If You delete your
+                          account, you will loose all your Kudos Coins!
+                        </b>
+                      </p>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={this.deleteAccount}
+                      >
+                        Delete Account
+                      </button>
                     </div>
                     <div className="d-flex justify-content-center">
                       <button
