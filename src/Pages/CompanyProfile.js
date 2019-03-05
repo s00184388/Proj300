@@ -166,7 +166,6 @@ class Panel extends Component {
   }
 
   componentDidMount() {
-    this.incrementLoading();
     var currentUser = firebase.auth().currentUser;
     if (currentUser) {
       this.setState({
@@ -208,7 +207,6 @@ class Panel extends Component {
 
   submitEdit(e) {
     e.preventDefault();
-    this.props.showAlert("success", "email not confirmed");
     var newPassword = this.state.passwords.newPassword;
     var newPassword2 = this.state.passwords.newPassword2;
     var oldPassword = this.state.passwords.oldPassword;
@@ -502,7 +500,6 @@ class Panel extends Component {
       <TableRow row={emp} index={++index} key={emp.key} />
     ));
     var fetchInProgress = this.state.fetchInProgress;
-    console.log(fetchInProgress);
     return (
       <section id="tabs" className="project-tab">
         {fetchInProgress > 0 ? (
@@ -958,7 +955,8 @@ export class CompanyProfile extends Component {
     this.subscriptions = [];
     this.state = {
       user: props.user,
-      company: {}
+      company: {},
+      fetchInProgress: false
     };
     this.showAlert = this.showAlert.bind(this);
   }
@@ -968,10 +966,11 @@ export class CompanyProfile extends Component {
   }
 
   componentDidMount() {
+    this.setState({ fetchInProgress: true });
     if (this.state.user.companyID) {
       this.subscriptions.push(
         fs.getCompany(this.state.user.companyID).subscribe(company => {
-          this.setState({ company: company });
+          this.setState({ company: company, fetchInProgress: false });
         })
       );
     }
@@ -983,10 +982,20 @@ export class CompanyProfile extends Component {
   render() {
     const user = this.state.user;
     const company = this.state.company;
+    const fetchInProgress = this.state.fetchInProgress;
     return (
-      <div className="py-3 col-sm-12">
+      <div className="container-fluid py-3">
         <div className="center">
-          <Panel user={user} company={company} showAlert={this.showAlert} />
+          {fetchInProgress ? (
+            <ReactLoading
+              type={"spinningBubbles"}
+              color={"#fff"}
+              height={640}
+              width={256}
+            />
+          ) : (
+            <Panel user={user} company={company} showAlert={this.showAlert} />
+          )}
         </div>
       </div>
     );
