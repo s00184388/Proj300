@@ -7,6 +7,7 @@ export default class FirebaseServices {
   constructor() {
     this.db = fire.firestore();
     this.brandImgdb = fire.storage().ref("BrandImages/");
+    this.companyImgdb = fire.storage().ref("CompanyImages/");
     this.db.settings({
       timestampsInSnapshots: true
     });
@@ -806,20 +807,38 @@ export default class FirebaseServices {
 
   addProduct = product => {
     var brandProductImageLocation = this.brandImgdb.child(product.picture.name);
+    var companyProductImageLocation = this.companyImgdb.child(product.picture.name);
     if (product) {
-      brandProductImageLocation.put(product.picture).then(snapshot => {
-        snapshot.ref
-          .getDownloadURL()
-          .then(url => {
-            //console.log(url);
-            product.picURL = url;
-          })
-          .then(() => {
-            //console.log(product.picURL + " Firing the upload method after image uploaded");
-            product.picture = null;
-            this.productsCollection.add(product);
-          });
-      });
+      if (product.sponsored) {
+        brandProductImageLocation.put(product.picture).then(snapshot => {
+          snapshot.ref
+            .getDownloadURL()
+            .then(url => {
+              //console.log(url);
+              product.picURL = url;
+            })
+            .then(() => {
+              //console.log(product.picURL + " Firing the upload method after image uploaded");
+              product.picture = null;
+              this.productsCollection.add(product);
+            });
+        });
+      }
+      else {
+        companyProductImageLocation.put(product.picture).then(snapshot => {
+          snapshot.ref
+            .getDownloadURL()
+            .then(url => {
+              //console.log(url);
+              product.picURL = url;
+            })
+            .then(() => {
+              //console.log(product.picURL + " Firing the upload method after image uploaded");
+              product.picture = null;
+              this.productsCollection.add(product);
+            });
+        });
+      }
     }
 
     /*  this.brandImagesCollection.on(firebase.storage.TaskEvent.STATE_CHANGED, function(snapshot){
@@ -962,26 +981,81 @@ export default class FirebaseServices {
   };
 
   editProduct = (p, _key) => {
-    this.brandImagesCollection = this.brandImgdb.child(p.picture.name);
     if (p) {
-      this.brandImagesCollection
-        .put(p.picture)
-        .then((p.picURL = this.brandImagesCollection.getDownloadURL()));
-      p.picture = null;
-      this.productsCollection.doc(_key).set(
-        {
-          category: p.category,
-          description: p.description,
-          name: p.name,
-          picture: p.picture,
-          price: p.price,
-          stock: p.stock,
-          tresholdPercentage: p.tresholdPercentage
-        },
-        { merge: true }
-      );
+      //method to check if the picture is being changed, else don't change the picture
+      if (p.picture) {
+        var brandProductImageLocation = this.brandImgdb.child(p.picture.name);
+        var companyProductImageLocation = this.companyImgdb.child(p.picture.name);
 
-      //console.log("updating:  " + _key);
+        if (p.sponsored) {
+          brandProductImageLocation.put(p.picture).then(snapshot => {
+            snapshot.ref
+              .getDownloadURL()
+              .then(url => {
+                //console.log(url);
+                p.picURL = url;
+              })
+              .then(() => {
+                //console.log(product.picURL + " Firing the upload method after image uploaded");
+                p.picture = null;
+                this.productsCollection.doc(_key).set(
+                  {
+                    category: p.category,
+                    description: p.description,
+                    name: p.name,
+                    picURL: p.picURL,
+                    price: p.price,
+                    stock: p.stock,
+                    tresholdPercentage: p.tresholdPercentage
+                  },
+                  { merge: true }
+                )
+                //this.productsCollection.add(product);
+              });
+          });
+        }
+        else {
+          companyProductImageLocation.put(p.picture).then(snapshot => {
+            snapshot.ref
+              .getDownloadURL()
+              .then(url => {
+                //console.log(url);
+                p.picURL = url;
+              })
+              .then(() => {
+                //console.log(product.picURL + " Firing the upload method after image uploaded");
+                p.picture = null;
+                this.productsCollection.doc(_key).set(
+                  {
+                    category: p.category,
+                    description: p.description,
+                    name: p.name,
+                    picURL: p.picURL,
+                    price: p.price,
+                    stock: p.stock,
+                    tresholdPercentage: p.tresholdPercentage
+                  },
+                  { merge: true }
+                )
+                //console.log("updating:  " + _key);
+              })
+          })
+        }
+      }
+      else{
+        this.productsCollection.doc(_key).set(
+          {
+            category: p.category,
+            description: p.description,
+            name: p.name,
+            //picURL: p.picURL,
+            price: p.price,
+            stock: p.stock,
+            tresholdPercentage: p.tresholdPercentage
+          },
+          { merge: true }
+        )
+      }
     }
-  };
+  }
 }
