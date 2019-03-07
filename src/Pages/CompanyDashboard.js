@@ -18,6 +18,7 @@ class ProductForm extends Component {
     this.state = {
       fields: {},
       errors: {},
+      picture: null,
       quantity: 0,
       price: 0,
       remaining: 0,
@@ -31,10 +32,17 @@ class ProductForm extends Component {
   }
 
   handleChange = e => {
+
     let fields = this.state.fields;
+    if([e.target.name]=="picture"){
+        this.setState({
+          picture: e.target.files[0]
+        });
+        console.log(e.target.files[0]);
+    }
     fields[e.target.name] = e.target.value;
     this.setState({fields});
-    //console.log(this.state.fields);
+    console.log(this.state.fields);
   };
 
   validate=()=>{
@@ -77,6 +85,10 @@ class ProductForm extends Component {
       errors["category"] = "*Please choose a category!";
     }
 
+    if(!fields["picture"]){
+      formIsValid = false;
+      errors["picture"]="*Please use a picture";
+    }
 
     this.setState({
       errors: errors
@@ -96,7 +108,6 @@ class ProductForm extends Component {
     fields["brandPic"] = this.state.fields.brandPic;
     fields["name"] = this.state.fields.name;
     fields["description"] = this.state.fields.description;
-    fields["picURL"] = this.state.fields.picURL;
     fields["quantity"]=this.state.fields.quantity;
     fields["price"]=this.state.fields.price;
     fields["category"]=this.state.fields.category;
@@ -108,7 +119,7 @@ class ProductForm extends Component {
       },
       name: fields["name"],
       description: fields["description"],
-      picURL:fields["picURL"],
+      picture:this.state.picture,
       quantity: fields["quantity"],
       price: fields["price"],
       remaining:this.state.remaining,
@@ -213,11 +224,10 @@ class ProductForm extends Component {
           <input
             id="formPicture"
             className="form-control col-sm-12"
-            name="picURL"
-            type="text"
-            placeholder="Enter Product Image URL (e.g. https://)"
+            name="picture"
+            type="file"
+            accept="image/jpeg, image/png"
             onChange={this.handleChange}
-            value={picURL || ""}
           />
           <div className="text-white"><small>{this.state.errors.picURL}</small></div>
           
