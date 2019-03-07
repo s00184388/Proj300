@@ -302,13 +302,15 @@ class BrandInfo extends Component {
     this.productsSubscr = [];
   }
   componentWillReceiveProps(nextProps) {
-    this.productsSubscr = fs
-      .getBrandedProducts("brandID", nextProps.brand.key)
-      .subscribe(prods => this.setState({ products: prods }));
+    this.productsSubscr.push(
+      fs
+        .getBrandedProducts("brandID", nextProps.brand.key)
+        .subscribe(prods => this.setState({ products: prods }))
+    );
   }
 
   componentWillUnmount() {
-    this.productsSubscr.unsubscribe();
+    this.productsSubscr.forEach(obs => obs.unsubscribe());
   }
 
   render() {
