@@ -168,9 +168,7 @@ class Panel extends Component {
   componentDidMount() {
     var currentUser = firebase.auth().currentUser;
     if (currentUser) {
-      this.setState({
-        emailConfirmed: currentUser.emailVerified
-      });
+      this.setState({ emailConfirmed: currentUser.emailVerified });
     }
     this.subscriptions.push(
       fs.getCompanyEmployees(this.state.user.companyID).subscribe(employees => {
@@ -243,8 +241,10 @@ class Panel extends Component {
                     currentUser
                       .updateEmail(this.state.userDetails.email)
                       .then(() => {
-                        alert(
-                          "Email and Password changed! Please validate new email"
+                        this.props.showAlert(
+                          "success",
+                          "Email and Password changed! Please validate new email",
+                          "Email and Password changed"
                         );
                         this.resendConfirmation();
                         this.updateUser();
@@ -261,7 +261,11 @@ class Panel extends Component {
                     console.log(err);
                     this.decrementLoading();
                     if (err.code === "auth/wrong-password") {
-                      alert("Wrong password");
+                      this.props.showAlert(
+                        "warning",
+                        "Wrong Password",
+                        "Something went wrong!"
+                      );
                     }
                   });
               })
@@ -269,7 +273,11 @@ class Panel extends Component {
                 console.log(err);
                 this.decrementLoading();
                 if (err.code === "auth/wrong-password") {
-                  alert("Wrong password");
+                  this.props.showAlert(
+                    "warning",
+                    "Wrong Password",
+                    "Something went wrong!"
+                  );
                 }
               });
           });
@@ -287,7 +295,11 @@ class Panel extends Component {
                   currentUser.email,
                   newPassword
                 );
-                alert("password changed");
+                this.props.showAlert(
+                  "success",
+                  "Password has been changes",
+                  "Password changed"
+                );
                 this.updateUser();
                 this.updateCompany(cred);
                 let passwords = this.state.passwords;
@@ -306,11 +318,20 @@ class Panel extends Component {
             console.log(err);
             this.decrementLoading();
             if (err.code === "auth/wrong-password") {
-              alert("Wrong password");
+              this.props.showAlert(
+                "warning",
+                "Wrong Password",
+                "Something went wrong!"
+              );
             }
           });
       } else {
-        alert("Password and verification password don't match");
+        this.props.showAlert(
+          "warning",
+          "Password and verification password don't match",
+          "Something went wrong!"
+        );
+        this.setState({ fetchInProgress: false });
         this.decrementLoading();
       }
     } else if (this.props.user.email !== this.state.userDetails.email) {
@@ -326,7 +347,12 @@ class Panel extends Component {
                 oldPassword
               );
               this.resendConfirmation();
-              alert("Email changed. Please validate new email");
+              this.props.showAlert(
+                "success",
+                "Email changed. Please validate new email",
+                "Email  has been changed"
+              );
+              //alert("Email changed. Please validate new email");
               this.updateUser();
               this.updateCompany(cred);
               this.decrementLoading();
@@ -341,7 +367,11 @@ class Panel extends Component {
           console.log(err);
           this.decrementLoading();
           if (err.code === "auth/wrong-password") {
-            alert("Wrong password");
+            this.props.showAlert(
+              "warning",
+              "Password and verification password don't match",
+              "Something went wrong!"
+            );
           }
         });
     } else {

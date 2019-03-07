@@ -112,10 +112,9 @@ class BrandProductEditingModal extends React.Component {
                         id="formPicture"
                         className="form-control"
                         name="picture"
-                        type="text"
-                        placeholder="Enter Product Image URL (e.g. https://)"
+                        type="file"
+                        accept="image/jpeg, image/png"
                         onChange={this.handleChange}
-                        value={this.state.picture}
                     />
                 </div>
                 <div className="form-group">

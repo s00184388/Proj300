@@ -47,7 +47,7 @@ export class Login extends Component {
               searchedUser: user,
               fetchInProgress: false
             });
-            this.props.history.push("/");
+            this.props.history.push("/companyProfile");
             console.log(this.state.searchedUser);
           })
           .catch(error => {

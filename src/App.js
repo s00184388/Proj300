@@ -71,7 +71,8 @@ class App extends Component {
       fetchInProgress: true,
       alertMessage: "",
       alertType: "",
-      alertVisible: false
+      alertVisible: false,
+      alertHeadline: ""
     };
     this.showAlert = this.showAlert.bind(this);
     this.AlertOnDismiss = this.AlertOnDismiss.bind(this);
@@ -118,13 +119,13 @@ class App extends Component {
     });
   }
 
-  showAlert(type, message) {
+  showAlert(type, message, headline) {
     this.setState({
       alertType: type,
       alertMessage: message,
-      alertVisible: true
+      alertVisible: true,
+      alertHeadline: headline
     });
-    console.log("dsdsadsad");
   }
 
   componentWillUnmount() {
@@ -140,7 +141,8 @@ class App extends Component {
       {
         id: 1,
         type: this.state.alertType,
-        message: this.state.alertMessage
+        message: this.state.alertMessage,
+        headline: this.state.alertHeadline
       }
     ];
 
@@ -153,7 +155,12 @@ class App extends Component {
     };
 
     const MyProfile = props => {
-      return <EmployeeUserProfile user={this.state.user} {...props} />;
+      return (
+        <EmployeeUserProfile
+          user={this.state.user}
+          showAlert={this.showAlert}
+        />
+      );
     };
 
     const MyCompanyProfile = props => {
@@ -192,11 +199,13 @@ class App extends Component {
         }
       >
         {this.state.alertVisible ? (
+          <div className="mr-4">
           <AlertList
             alerts={alerts}
             onDismiss={this.AlertOnDismiss}
-            timeout={2000}
+            timeout={4000}
           />
+          </div>
         ) : null}
         {fetchInProgress ? (
           <ReactLoading
