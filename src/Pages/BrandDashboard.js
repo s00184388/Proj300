@@ -3,14 +3,18 @@ import { Link } from "react-router-dom";
 import { DropdownList } from "react-widgets";
 import "./CssPages/BrandDashboard.css";
 import FirebaseServices from "../firebase/services";
-import { faArrowDown, faBullseye } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowDown,
+  faEdit,
+  faBullseye
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import Modal from "react-modal";
 import BrandProductEditingModal from "../Components/editProductModal";
 import FileUploader from "react-firebase-file-uploader";
 
-library.add(faArrowDown);
+library.add(faArrowDown, faEdit);
 
 //constant
 const fs = new FirebaseServices();
@@ -22,9 +26,8 @@ class ProductForm extends Component {
     super(props);
     this.state = {
       //brand fields will be converted into brand object on submit
-      brandID: "",
+      brandID: this.props.brand.key,
       category: "",
-      companyID: "",
       description: "",
       name: "",
       picture: null,
@@ -40,6 +43,13 @@ class ProductForm extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.brand !== this.props.brand) {
+      this.setState({ brandID: nextProps.brand.key });
+    }
+  }
+
   handleChange = e => {
     let newState = {};
     newState[e.target.name] = e.target.value;
@@ -76,7 +86,6 @@ class ProductForm extends Component {
     this.setState({
       brandID: "",
       category: "",
-      companyID: "",
       description: "",
       name: "",
       picture: null,
@@ -217,7 +226,6 @@ class TableRow extends Component {
     this.state.editProduct = {
       brandID: e.brandID,
       category: e.category,
-      companyID: e.companyID,
       description: e.description,
       name: e.name,
       picture: e.picture,
@@ -250,11 +258,12 @@ class TableRow extends Component {
         <td key={row.key}>{row.stock}</td>
         <td>
           <button
+            className="btn btn-warning btn-sm"
             onClick={() => {
               this.showModal(row);
             }}
           >
-            Edit
+            <FontAwesomeIcon icon="edit" />
           </button>
           <Modal
             isOpen={this.state.show}
@@ -272,7 +281,12 @@ class TableRow extends Component {
           </Modal>
         </td>
         <td>
-          <button onClick={() => this.deleteItem(row.key)}>Delete</button>
+          <button
+            className="btn btn-danger btn-sm"
+            onClick={() => this.deleteItem(row.key)}
+          >
+            <FontAwesomeIcon icon="trash" />
+          </button>
         </td>
       </tr>
     );
@@ -305,12 +319,12 @@ class BrandInfo extends Component {
     ));
     return (
       <div className="infoContainer">
-        <h2 className="text-center py-5">
+        <h2 className="text-center text-white py-5">
           {" "}
           <strong>{brandName}</strong> Dashboard{" "}
         </h2>
-        <h4>Products list</h4>
-        <table className="table table-striped table-sm">
+        <h4 className="text-white">Products list</h4>
+        <table className="table table-striped table-sm table-light table-hover">
           <thead>
             <tr>
               <th>#</th>
