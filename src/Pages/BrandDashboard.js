@@ -229,7 +229,7 @@ class TableRow extends Component {
       description: e.description,
       name: e.name,
       picture: e.picture,
-      price: 99,
+      price: e.price,
       stock: e.stock,
       sponsored: true,
       tresholdPercentage: e.tresholdPercentage

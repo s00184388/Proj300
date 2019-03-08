@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import "./CssPages/CompanyDashboard.css";
 import FirebaseServices from "../firebase/services";
-import { faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { Alert, AlertContainer } from "react-bs-notifier";
+import Modal from "react-modal";
+import BrandProductEditingModal from "../Components/editProductModal";
 
-library.add(faArrowDown);
+library.add(faArrowDown, faEdit);
 
 //constant
 const fs = new FirebaseServices();
@@ -19,12 +21,17 @@ class ProductForm extends Component {
       fields: {},
       errors: {},
       picture: null,
-      quantity: 0,
+      picURL: "",
+      sponsored: false,
+      stock: 0,
       price: 0,
-      remaining: 0,
-      category:"",
-      categoryOptions: ['Electronics', 'Shoes', 'Sports', 'Others'],
-      showingAlert:false
+      tresholdPercentage: 0,
+      companyID: "",
+      description: "",
+      name: "",
+      category: "",
+      categoryOptions: ["Electronics", "Shoes", "Sports", "Others"],
+      showingAlert: false
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -32,34 +39,23 @@ class ProductForm extends Component {
   }
 
   handleChange = e => {
-
     let fields = this.state.fields;
-    if([e.target.name]=="picture"){
-        this.setState({
-          picture: e.target.files[0]
-        });
-        console.log(e.target.files[0]);
+    if ([e.target.name] == "picture") {
+      this.setState({
+        picture: e.target.files[0]
+      });
+      console.log(e.target.files[0]);
     }
     fields[e.target.name] = e.target.value;
-    this.setState({fields});
+    this.setState({ fields });
     console.log(this.state.fields);
   };
 
-  validate=()=>{
-    let fields=this.state.fields;
+  validate = () => {
+    let fields = this.state.fields;
     let errors = {};
-    let formIsValid=true;
+    let formIsValid = true;
 
-    if (!fields["brandName"]) {
-      formIsValid = false;
-      errors["brandName"] = "*Please enter the brand's name";
-    }
-
-    if (!fields["brandPic"]) {
-      formIsValid = false;
-      errors["brandPic"] = "*Please enter the brand's picture URL";
-    }
-    
     if (!fields["name"]) {
       formIsValid = false;
       errors["name"] = "*Please enter the product's name";
@@ -74,7 +70,7 @@ class ProductForm extends Component {
       formIsValid = false;
       errors["quantity"] = "*Quantity cannot be empty";
     }
-    
+
     if (!fields["price"]) {
       formIsValid = false;
       errors["price"] = "*Price field cannot be empty";
@@ -85,156 +81,147 @@ class ProductForm extends Component {
       errors["category"] = "*Please choose a category!";
     }
 
-    if(!fields["picture"]){
+    if (!fields["picture"]) {
       formIsValid = false;
-      errors["picture"]="*Please use a picture";
+      errors["picture"] = "*Please use a picture";
     }
 
-    this.setState({
-      errors: errors
-    },()=>{
-      console.log(this.state.errors);
-    });
-    
-    return formIsValid;
-  }
+    this.setState(
+      {
+        errors: errors
+      },
+      () => {
+        console.log(this.state.errors);
+      }
+    );
 
-  handleSubmit = (e) => {
+    return formIsValid;
+  };
+
+  handleSubmit = e => {
     e.preventDefault();
 
-    let fields={};
+    let fields = {};
 
-    fields["brandName"] = this.state.fields.brandName;
-    fields["brandPic"] = this.state.fields.brandPic;
     fields["name"] = this.state.fields.name;
     fields["description"] = this.state.fields.description;
-    fields["quantity"]=this.state.fields.quantity;
-    fields["price"]=this.state.fields.price;
-    fields["category"]=this.state.fields.category;
-      
+    fields["quantity"] = this.state.fields.quantity;
+    fields["price"] = this.state.fields.price;
+    fields["category"] = this.state.fields.category;
+
     let product = {
-      brand: {
-        name: fields["brandName"],
-        picURL: fields["brandPic"],
-      },
       name: fields["name"],
       description: fields["description"],
-      picture:this.state.picture,
-      quantity: fields["quantity"],
+      picture: this.state.picture,
+      picURL: this.state.picURL,
+      stock: fields["quantity"],
       price: fields["price"],
-      remaining:this.state.remaining,
       category: this.state.fields.category,
       sponsored: false,
-      companyID: this.props.companyID
+      companyID: this.props.companyID,
+      tresholdPercentage: this.state.tresholdPercentage
     };
 
     console.log(this.validate());
-    if(this.validate()){
-      fs.addProduct(product)
+    if (this.validate()) {
+      fs.addProduct(product);
       this.setState({
-          fields:"",
-          errors:"",
-          showingAlert:true
+        fields: "",
+        errors: "",
+        showingAlert: true
+      });
+      setTimeout(() => {
+        this.setState({
+          showingAlert: false
         });
-        setTimeout(() => {
-          this.setState({
-            showingAlert: false
-          });
-        }, 5000);
-    console.log(product)  
+      }, 5000);
+      console.log(product);
     }
   };
 
   render() {
-    const categories = ['Electronics', 'Shoes', 'Sports', 'Others'];
-    const {brandName,brandPic,name,description,picURL} = this.state.fields;
-    const options = categories.map(opt=>
-      <option key={opt}>{opt}</option>)
+    const categories = ["Electronics", "Shoes", "Sports", "Others"];
+    const { name, description, picURL } = this.state.fields;
+    const options = categories.map(opt => <option key={opt}>{opt}</option>);
     return (
-      <div className='container'>
-
-          {this.state.showingAlert===true ? (  
-            <AlertContainer>
-               <Alert type="success" headline="Success!">
-                 <strong>You're product has been added!</strong> 
-               </Alert>
-          </AlertContainer>    
-          ) : null}
-       <h6 className="text-white">Add  a Product:  </h6>
-       <hr></hr>
+      <div className="container">
+        {this.state.showingAlert === true ? (
+          <AlertContainer>
+            <Alert type="success" headline="Success!">
+              <strong>You're product has been added!</strong>
+            </Alert>
+          </AlertContainer>
+        ) : null}
+        <h6 className="text-white">Add a Product: </h6>
+        <hr />
         <form onSubmit={this.handleSubmit}>
-        <div className='row'>
-            <div className="form-group input-group-sm col-sm">
-              <input
-                id="formBrandName"
+          <div className="row">
+            <div className="form-group input-group-sm col-sm-6">
+              <select
+                id="categoryList"
+                name="category"
                 className="form-control"
-                name="brandName"
-                type="text"
-                placeholder="Product's brand name"
+                defaultValue=""
                 onChange={this.handleChange}
-                value={brandName || ""}
-              />
-              <div className="text-white"><small>{this.state.errors.brandName}</small></div>
+              >
+                <option value="" disabled hidden>
+                  Product Category
+                </option>
+                {options}
+              </select>
+              <div className="text-white">
+                <small>{this.state.errors.category}</small>
+              </div>
             </div>
-            <div className="form-group input-group-sm col-sm">
-            <select id="categoryList" name="category" className="form-control" defaultValue="" onChange={this.handleChange}>
-              <option value="" disabled hidden>Product Category</option>
-              {options}
-            </select>
-            <div className="text-white"><small>{this.state.errors.category}</small></div>
-          </div>
-        </div>
-        <div className="form-group input-group-sm ">
+            <div className="form-group input-group-sm col-sm-6">
               <input
-                id="formBrandPic"
+                id="formName"
                 className="form-control col-sm-12"
-                name="brandPic"
+                name="name"
                 type="text"
-                placeholder="Enter Brand Image URL (e.g. https://)"
+                placeholder="Product Name"
                 onChange={this.handleChange}
-                value={brandPic || ""}  
+                value={name || ""}
               />
-              <div className="text-white"><small>{this.state.errors.brandPic}</small></div>
-        </div>    
-          <div className="form-group input-group-sm">
-            <input
-              id="formName"
-              className="form-control col-sm-12"
-              name="name"
-              type="text"
-              placeholder="Product Name"
-              onChange={this.handleChange}
-              value={name || ""}
-            />
-            <div className="text-white"><small>{this.state.errors.name}</small></div>
-          </div> 
-        <div className="form-group input-group-sm">
-          <input
-            id="formDescription"
-            className="form-control col-sm-12"
-            name="description"
-            type="text"
-            placeholder="Product Description"
-            onChange={this.handleChange}
-            value={description || ""}
-          />
-          <div className="text-white"><small>{this.state.errors.description}</small></div>
-        </div>
-        <div className="form-group input-group-sm">
-          <input
-            id="formPicture"
-            className="form-control col-sm-12"
-            name="picture"
-            type="file"
-            accept="image/jpeg, image/png"
-            onChange={this.handleChange}
-          />
-          <div className="text-white"><small>{this.state.errors.picURL}</small></div>
-          
-        </div>
-        <div className='row'>
-            <div className="form-group input-group-sm col-sm">
-              <label htmlFor='formPrice' className='text-white'>
+              <div className="text-white">
+                <small>{this.state.errors.name}</small>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="form-group input-group-sm col-sm-12">
+              <input
+                id="formDescription"
+                className="form-control col-sm-12"
+                name="description"
+                type="text"
+                placeholder="Product Description"
+                onChange={this.handleChange}
+                value={description || ""}
+              />
+              <div className="text-white">
+                <small>{this.state.errors.description}</small>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="form-group input-group-sm col-sm-12">
+              <input
+                id="formPicture"
+                className="form-control col-sm-12"
+                name="picture"
+                type="file"
+                accept="image/jpeg, image/png"
+                onChange={this.handleChange}
+              />
+              <div className="text-white">
+                <small>{this.state.errors.picURL}</small>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="form-group input-group-sm col-sm-6">
+              <label htmlFor="formPrice" className="text-white">
                 <small>Product Price</small>
               </label>
               <input
@@ -246,10 +233,12 @@ class ProductForm extends Component {
                 onChange={this.handleChange}
                 value={this.state.fields.price || ""}
               />
-              <div className="text-white"><small>{this.state.errors.price}</small></div>
+              <div className="text-white">
+                <small>{this.state.errors.price}</small>
+              </div>
             </div>
             <div className="form-group input-group-sm col-sm-6">
-              <label htmlFor='formQuantity' className='text-white'>
+              <label htmlFor="formQuantity" className="text-white">
                 <small>Product Quantity</small>
               </label>
               <input
@@ -261,70 +250,160 @@ class ProductForm extends Component {
                 onChange={this.handleChange}
                 value={this.state.fields.quantity || ""}
               />
-              <div className="text-white"><small>{this.state.errors.quantity}</small></div>
+              <div className="text-white">
+                <small>{this.state.errors.quantity}</small>
+              </div>
             </div>
           </div>
-          <div className='d-flex justify-content-center pt-3'>
-              <button className="btn btn-warning btn-sm text-white" id="formSubmit" type="submit" onClick={this.handleSubmit}>
-                Submit Product
-              </button>
+          <div className="d-flex justify-content-center pt-3">
+            <button
+              className="btn btn-warning btn-sm text-white"
+              id="formSubmit"
+              type="submit"
+              onClick={this.handleSubmit}
+            >
+              Submit Product
+            </button>
           </div>
-      </form> 
-    </div>     
+        </form>
+      </div>
     );
   }
 }
 
-class TableRow extends Component{
-  render(){
+class TableRow extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      show: false
+    };
+    this.setEditProduct = this.setEditProduct.bind(this);
+    this.deleteItem = this.deleteItem.bind(this);
+  }
+
+  showModal = e => {
+    console.log("key = " + e.key);
+    this.setState({ show: true });
+  };
+
+  hideModal = () => {
+    this.setState({ show: false });
+  };
+
+  setEditProduct(e) {
+    //const ep = this.state.editProduct
+
+    this.state.editProduct = {
+      companyID: e.companyID,
+      category: e.category,
+      description: e.description,
+      name: e.name,
+      picture: e.picture,
+      price: e.price,
+      stock: e.stock,
+      sponsored: false,
+      tresholdPercentage: e.tresholdPercentage
+    };
+    this.state.isEditing = this.state.isEditing;
+    //this.setState(state => ({isEditing : true}));
+    console.log(e.key);
+    fs.updateProduct(this.state.editProduct, e.key);
+  }
+
+  deleteItem(key) {
+    fs.deleteItemFromDashboard(key);
+    console.log("deleting item : " + key);
+  }
+
+  render() {
     const row = this.props.row;
     const index = this.props.index;
-    return(
+    return (
       <tr>
         <td key={index}>{index}</td>
         <td key={row.name}>{row.name}</td>
-        <td key={row.coins}>{row.coins}</td>
+        <td key={row.price}>{row.price}</td>
+        <td key={row.key}>{row.stock}</td>
+        <td>
+          <button
+            className="btn btn-warning btn-sm"
+            onClick={() => {
+              this.showModal(row);
+            }}
+          >
+            <FontAwesomeIcon icon="edit" />
+          </button>
+          <Modal
+            isOpen={this.state.show}
+            onRequestClose={this.hideModal}
+            shouldCloseOnOverlayClick={true}
+          >
+            <div>
+              <BrandProductEditingModal
+                product={row}
+                _key={row.key}
+                _show={this.hideModal}
+              />
+            </div>
+            <a href="#" className="closeButton" onClick={this.hideModal} />
+          </Modal>
+        </td>
+        <td>
+          <button
+            className="btn btn-danger btn-sm"
+            onClick={() => this.deleteItem(row.key)}
+          >
+            <FontAwesomeIcon icon="trash" />
+          </button>
+        </td>
       </tr>
     );
   }
 }
 
 class CompanyInfo extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state={
-      employees: []
+    this.state = {
+      products: []
+    };
+    this.subscriptions = [];
+  }
+
+  componentWillUnmount() {
+    this.subscriptions.forEach(obs => obs.unsubscribe());
+  }
+  componentWillReceiveProps(nextProps) {
+    if (this.props.company !== nextProps.company) {
+      this.subscriptions.push(
+        fs
+          .getProducts("companyID", nextProps.company.key)
+          .subscribe(employees => this.setState({ products: employees }))
+      );
     }
   }
 
- /* componentDidMount(){
-    this.employeesSubscr = fs.getEmployees(this.props.company.name)
-    .subscribe(employees=>this.setState({employees: employees}));
-  }
-  componentWillUnmount(){
-    this.employeesSubscr.unsubscribe();
-  }*/
-  
   render() {
-    const employees = this.state.employees;
-    const employeesList = employees.map((emp, index) => 
-      <TableRow row={emp} index={++index} key={emp.key}/>
-    );
-    return(
+    const products = this.state.products;
+    const productsList = products.map((prod, index) => (
+      <TableRow row={prod} index={++index} key={prod.key} />
+    ));
+    return (
       <div className="container">
-        <h6 className="text-white">Employee List</h6>
-       <hr></hr> 
-        <table className="table table-striped table-sm">
+        <h6 className="text-white">Products List</h6>
+        <hr />
+        <table className="table table-striped table-sm table-light table-hover">
           <thead>
             <tr>
               <th>#</th>
               <th>Name</th>
-              <th>Coins <FontAwesomeIcon icon="arrow-down"/></th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Edit</th>
+              <th>Delete</th>
             </tr>
           </thead>
-          <tbody>
-            {employeesList}
-          </tbody>
+          <tbody>{productsList}</tbody>
         </table>
       </div>
     );
@@ -335,42 +414,42 @@ export class CompanyDashboard extends Component {
   constructor(props) {
     super(props);
     this.subscriptions = [];
-    this.state={
-      company:{},
-      companyName:'',
-      companyID:''
+    this.state = {
+      company: {}
+    };
+  }
+
+  componentDidMount() {
+    if (this.props.companyID) {
+      this.subscriptions.push(
+        fs.getCompany(this.props.companyID).subscribe(company => {
+          this.setState({
+            company
+          });
+        })
+      );
     }
   }
-    
-  componentDidMount(){
-      if(this.props.companyID){
-        this.subscriptions.push(
-          fs.getCompanies(this.props.companyID).subscribe(company=>{
-            this.setState({
-              company,
-              companyName:company[0].name,
-              companyID:company[0].key
-            },()=>{
-              console.log(this.state.companyID);
-              console.log(this.state.companyName)
-            })
-          })
-        )}
-      }
   componentWillUnmount() {
-        this.subscriptions.forEach(subs => subs.unsubscribe());
-      }
-  
+    this.subscriptions.forEach(subs => subs.unsubscribe());
+  }
+
   render() {
     return (
       <div className="container">
-        <h4 className="text-center text-white py-3"> <strong>{this.state.companyName}</strong> Dashboard </h4>
+        <h4 className="text-center text-white py-3">
+          {" "}
+          <strong>{this.state.company.name}</strong> Dashboard{" "}
+        </h4>
         <div className="row">
           <div className="col-lg-6">
-            <ProductForm companyName={this.state.companyName} companyID={this.props.companyID}/>
+            <ProductForm
+              companyName={this.state.company.name}
+              companyID={this.props.companyID}
+            />
           </div>
           <div className="col-lg-6">
-            <CompanyInfo companyName={this.state.companyName}/>
+            <CompanyInfo company={this.state.company} />
           </div>
         </div>
       </div>
