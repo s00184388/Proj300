@@ -1,9 +1,11 @@
 //modules
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import firebase from "firebase";
 import ReactLoading from "react-loading";
-import { Alert, AlertContainer, AlertList } from "react-bs-notifier";
+import { AlertList } from "react-bs-notifier";
+import { Redirect, Route, withRouter } from "react-router-dom";
+import { Router } from "react-router";
+import createHistory from "history/createBrowserHistory";
 
 //styling
 import "./App.css";
@@ -34,25 +36,24 @@ import Brand from "./Pages/Brand";
 import EmployeeUserProfile from "./Pages/EmployeeUserProfile";
 import CompanyProfile from "./Pages/CompanyProfile";
 import BrandProfile from "./Pages/BrandProfile";
-import { merge } from "rxjs";
 
 const fs = new FirebaseServices();
+const history = createHistory();
 
 library.add(faHome, faBars, faGift, faTrash);
 
-const PrivateRoute = ({
-  component: Component,
-  role,
-  authenticated,
-  ...rest
-}) => (
+const PrivateRoute = ({ component: Component, role, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      authenticated === true ? (
+      role === "employee" ? (
+        <Component {...props} />
+      ) : role === "companyAdmin" ? (
+        <Component {...props} />
+      ) : role === "brandAdmin" ? (
         <Component {...props} />
       ) : (
-        <Redirect to="/Login" />
+        <Redirect to="/login" />
       )
     }
   />
@@ -76,6 +77,7 @@ class App extends Component {
     };
     this.showAlert = this.showAlert.bind(this);
     this.AlertOnDismiss = this.AlertOnDismiss.bind(this);
+    this.userRole = this.userRole.bind(this);
   }
 
   componentDidMount() {
@@ -113,10 +115,20 @@ class App extends Component {
     });
   }
 
+  componentWillUnmount() {
+    this.subscriptions.forEach(subs => subs.unsubscribe());
+  }
+
   AlertOnDismiss() {
     this.setState({
       alertVisible: false
     });
+  }
+
+  userRole(role) {
+    if (this.state.userRole === role) {
+      return role;
+    } else return "";
   }
 
   showAlert(type, message, headline) {
@@ -128,11 +140,8 @@ class App extends Component {
     });
   }
 
-  componentWillUnmount() {
-    this.subscriptions.forEach(subs => subs.unsubscribe());
-  }
-
   render() {
+    console.log(this.state.userRole);
     const name = this.state.user.firstName + " " + this.state.user.lastName;
     const userEmail = this.state.user.email;
     const fetchInProgress = this.state.fetchInProgress;
@@ -151,7 +160,13 @@ class App extends Component {
     };
 
     const Register = props => {
-      return <EmployeeForm showAlert={this.showAlert} />;
+      return (
+        <EmployeeForm showAlert={this.showAlert} history={this.props.history} />
+      );
+    };
+
+    const Landing = props => {
+      return <Home role={this.state.userRole} />;
     };
 
     const MyProfile = props => {
@@ -190,6 +205,7 @@ class App extends Component {
     const MyWishlist = props => {
       return <Wishlist user={this.state.user} />;
     };
+
     return (
       <div
         className={
@@ -200,11 +216,11 @@ class App extends Component {
       >
         {this.state.alertVisible ? (
           <div className="mr-4">
-          <AlertList
-            alerts={alerts}
-            onDismiss={this.AlertOnDismiss}
-            timeout={4000}
-          />
+            <AlertList
+              alerts={alerts}
+              onDismiss={this.AlertOnDismiss}
+              timeout={4000}
+            />
           </div>
         ) : null}
         {fetchInProgress ? (
@@ -215,93 +231,86 @@ class App extends Component {
             width={256}
           />
         ) : (
-          <Router>
-            <div>
-              <div style={{ height: "100%" }}>
-                <Navbar
-                  userName={this.state.user.firstName}
-                  authenticated={this.state.authenticated}
-                  userRole={this.state.user.role}
-                  name={name}
-                  userEmail={userEmail}
-                  coins={this.state.coins}
-                />
-                {this.state.userRole === "employee" && (
-                  <div>
-                    <Route exact path="/rewards" component={MyRewards} />
-                    <Route path="/wishlist" component={MyWishlist} />
-                    <Route exact path="/brands" component={Brands} />
-                    <Route path="/brands/:brandName" component={MyBrand} />
-                    <Route path="/profile" component={MyProfile} />
-                    <Route path={"/admin"} component={Admin} />
-                    <PrivateRoute
-                      path={"/companyDashboard"}
-                      component={CompanyDashboard}
-                    />
-                    <PrivateRoute
-                      path={"/brandDashboard"}
-                      component={BrandDashboard}
-                    />
-                  </div>
-                )}
+          <Router history={history}>
+            <div style={{ height: "100%" }}>
+              <Navbar
+                userName={this.state.user.firstName}
+                authenticated={this.state.authenticated}
+                userRole={this.state.user.role}
+                name={name}
+                userEmail={userEmail}
+                coins={this.state.coins}
+                {...this.props}
+                history={history}
+              />
+              {/*Employee  Role */}
 
-                {this.state.userRole === "companyAdmin" && (
-                  <div>
-                    <PrivateRoute path="/rewards" component={MyRewards} />
-                    <PrivateRoute path="/wishlist" component={MyWishlist} />
-                    <Route path={"/admin"} component={Admin} />
-                    <Route
-                      path={"/companyProfile"}
-                      component={MyCompanyProfile}
-                    />
-                    <Route
-                      path={"/companyDashboard"}
-                      component={MyCompanyDashboard}
-                    />
-                    <PrivateRoute
-                      path={"/brandDashboard"}
-                      component={BrandDashboard}
-                    />
-                  </div>
-                )}
-                {this.state.userRole === "brandAdmin" && (
-                  <div>
-                    {console.log(this.state.userRole + "esti brandAdmin!")}
-                    <PrivateRoute path="/rewards" component={MyRewards} />
-                    <PrivateRoute path="/wishlist" component={MyWishlist} />
-                    <Route path={"/admin"} component={Admin} />
-                    <Route path={"/brandProfile"} component={MyBrandProfile} />
+              <PrivateRoute
+                exact
+                path="/rewards"
+                role={this.userRole("employee")}
+                component={MyRewards}
+              />
+              <PrivateRoute
+                exact
+                path="/wishlist"
+                role={this.userRole("employee")}
+                component={MyWishlist}
+              />
+              <PrivateRoute
+                exact
+                path={"/brands"}
+                role={this.userRole("employee")}
+                component={MyBrand}
+              />
+              <PrivateRoute
+                path="/profile"
+                role={this.userRole("employee")}
+                component={MyProfile}
+              />
+              <PrivateRoute
+                exact
+                path="/brands/:brandName"
+                role={this.userRole("employee")}
+                component={MyBrand}
+              />
 
-                    <PrivateRoute
-                      path={"/companyDashboard"}
-                      component={MyCompanyDashboard}
-                    />
-                    <Route
-                      path={"/brandDashboard"}
-                      component={MyBrandDashboard}
-                    />
-                  </div>
-                )}
+              {/*Company*/}
+              <PrivateRoute
+                exact
+                path={"/companyDashboard"}
+                role={this.userRole("companyAdmin")}
+                component={MyCompanyDashboard}
+              />
+              <PrivateRoute
+                exact
+                path={"/companyProfile"}
+                role={this.userRole("companyAdmin")}
+                component={MyCompanyProfile}
+              />
 
-                {this.state.userRole === null && (
-                  <div>
-                    <PrivateRoute path="/rewards" component={MyRewards} />
-                    <PrivateRoute path="/wishlist" component={MyWishlist} />
-                    <Route path={"/admin"} component={Admin} />
-                    <PrivateRoute
-                      path={"/companyDashboard"}
-                      component={CompanyDashboard}
-                    />
-                    <PrivateRoute
-                      path={"/brandDashboard"}
-                      component={BrandDashboard}
-                    />
-                  </div>
-                )}
-                <Route exact path="/" component={Home} />
-                <Route path="/login" component={Login} />
-                <Route path="/register" component={Register} />
-              </div>
+              <PrivateRoute
+                exact
+                path={"/admin"}
+                role={this.userRole("admin")}
+                component={Admin}
+              />
+
+              <PrivateRoute
+                exact
+                path={"/brandProfile"}
+                role={this.userRole("brandAdmin")}
+                component={MyBrandProfile}
+              />
+              <PrivateRoute
+                exact
+                path={"/brandDashboard"}
+                role={this.userRole("brandAdmin")}
+                component={MyBrandDashboard}
+              />
+              <Route exact path="/" component={Landing} />
+              <Route path="/login" component={Login} history={history} />
+              <Route path="/register" component={Register} />
             </div>
           </Router>
         )}

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter, Redirect } from "react-router-dom";
 import "./CssPages/Login.css";
 import fire from "firebase";
 import FirebaseServices from "../firebase/services";
@@ -17,11 +17,11 @@ export class Login extends Component {
       error: "",
       AuthPass: "",
       authenticated: "false",
-      searchedUser: props.searchedUser,
       fetchInProgress: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.history = this.history.bind(this);
   }
 
   handleChange = e => {
@@ -30,7 +30,19 @@ export class Login extends Component {
     this.setState(newState);
   };
 
-  handleSubmit = e => {
+  history() {
+    console.log(this.state.user.role);
+
+    if (this.state.user.role === "employee") {
+      return "/profile";
+    } else if (this.state.user.role === "companyAdmin") {
+      return "/companyProfile";
+    } else if (this.state.user.role === "brandAdmin") {
+      return "/brandProfile";
+    }
+  }
+
+  handleSubmit = async e => {
     this.setState({ fetchInProgress: true });
     console.log(this.state.email);
     console.log(this.state.password);
@@ -44,11 +56,11 @@ export class Login extends Component {
           .signInWithEmailAndPassword(this.state.email, this.state.password)
           .then(() => {
             this.setState({
-              searchedUser: user,
+              user,
               fetchInProgress: false
             });
-            this.props.history.push("/companyProfile");
-            console.log(this.state.searchedUser);
+            this.props.history.push("/");
+            setTimeout(2000);
           })
           .catch(error => {
             this.setState({
@@ -151,5 +163,4 @@ export class Login extends Component {
     );
   }
 }
-
 export default Login;
