@@ -224,8 +224,8 @@ class Product extends React.Component {
     const userKey = user.key;
     const productName = product.name;
     const productDescription = product.description;
-    const productPicture = product.picture;
-    const brandPicture = brand.picture;
+    const productPicture = product.picURL;
+    const brandPicture = brand.picURL;
     const brandName = brand.name;
     const price = product.price;
     const productKey = product.key;
@@ -233,7 +233,7 @@ class Product extends React.Component {
     const inWishlist = this.state.isInWishlist;
     const company = this.state.company;
     const companyName = company.name;
-    const companyPicture = company.picture;
+    const companyPicture = company.picURL;
     return (
       <div className="pb-5">
         <div

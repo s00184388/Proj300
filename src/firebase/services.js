@@ -34,7 +34,7 @@ export default class FirebaseServices {
                 companyID,
                 description,
                 name,
-                picture,
+                picURL,
                 price,
                 stock,
                 sponsored,
@@ -48,7 +48,7 @@ export default class FirebaseServices {
                 companyID,
                 description,
                 name,
-                picture,
+                picURL,
                 price,
                 stock,
                 sponsored,
@@ -74,7 +74,7 @@ export default class FirebaseServices {
             companyID,
             description,
             name,
-            picture,
+            picURL,
             price,
             stock,
             sponsored,
@@ -88,7 +88,7 @@ export default class FirebaseServices {
             companyID,
             description,
             name,
-            picture,
+            picURL,
             price,
             stock,
             sponsored,
@@ -114,7 +114,7 @@ export default class FirebaseServices {
               companyID,
               description,
               name,
-              picture,
+              picURL,
               price,
               stock,
               sponsored,
@@ -128,7 +128,7 @@ export default class FirebaseServices {
               companyID,
               description,
               name,
-              picture,
+              picURL,
               price,
               stock,
               sponsored,
@@ -156,7 +156,7 @@ export default class FirebaseServices {
                 companyID,
                 description,
                 name,
-                picture,
+                picURL,
                 price,
                 stock,
                 sponsored,
@@ -170,7 +170,7 @@ export default class FirebaseServices {
                 companyID,
                 description,
                 name,
-                picture,
+                picURL,
                 price,
                 stock,
                 sponsored,
@@ -253,7 +253,7 @@ export default class FirebaseServices {
                     companyID,
                     description,
                     name,
-                    picture,
+                    picURL,
                     price,
                     stock,
                     sponsored,
@@ -267,7 +267,7 @@ export default class FirebaseServices {
                     companyID,
                     description,
                     name,
-                    picture,
+                    picURL,
                     price,
                     stock,
                     sponsored,
@@ -592,7 +592,7 @@ export default class FirebaseServices {
               const {
                 adminUserID,
                 name,
-                picture,
+                picURL,
                 address,
                 phoneNumber,
                 email,
@@ -603,7 +603,7 @@ export default class FirebaseServices {
                 doc,
                 adminUserID,
                 name,
-                picture,
+                picURL,
                 address,
                 phoneNumber,
                 email,
@@ -626,7 +626,7 @@ export default class FirebaseServices {
           const {
             adminUserID,
             name,
-            picture,
+            picURL,
             address,
             phoneNumber,
             email,
@@ -637,7 +637,7 @@ export default class FirebaseServices {
             doc,
             adminUserID,
             name,
-            picture,
+            picURL,
             address,
             phoneNumber,
             email,
@@ -660,7 +660,7 @@ export default class FirebaseServices {
               const {
                 adminUserID,
                 name,
-                picture,
+                picURL,
                 address,
                 phoneNumber,
                 email
@@ -670,7 +670,7 @@ export default class FirebaseServices {
                 doc,
                 adminUserID,
                 name,
-                picture,
+                picURL,
                 address,
                 phoneNumber,
                 email
@@ -690,7 +690,7 @@ export default class FirebaseServices {
           const {
             adminUserID,
             name,
-            picture,
+            picURL,
             address,
             phoneNumber,
             email
@@ -700,7 +700,7 @@ export default class FirebaseServices {
             doc,
             adminUserID,
             name,
-            picture,
+            picURL,
             address,
             phoneNumber,
             email
@@ -767,7 +767,7 @@ export default class FirebaseServices {
                 const {
                   adminUserID,
                   name,
-                  picture,
+                  picURL,
                   address,
                   phoneNumber,
                   email
@@ -777,7 +777,7 @@ export default class FirebaseServices {
                   doc,
                   adminUserID,
                   name,
-                  picture,
+                  picURL,
                   address,
                   phoneNumber,
                   email
@@ -807,7 +807,9 @@ export default class FirebaseServices {
 
   addProduct = product => {
     var brandProductImageLocation = this.brandImgdb.child(product.picture.name);
-    var companyProductImageLocation = this.companyImgdb.child(product.picture.name);
+    var companyProductImageLocation = this.companyImgdb.child(
+      product.picture.name
+    );
     if (product) {
       if (product.sponsored) {
         brandProductImageLocation.put(product.picture).then(snapshot => {
@@ -823,8 +825,7 @@ export default class FirebaseServices {
               this.productsCollection.add(product);
             });
         });
-      }
-      else {
+      } else {
         companyProductImageLocation.put(product.picture).then(snapshot => {
           snapshot.ref
             .getDownloadURL()
@@ -932,7 +933,7 @@ export default class FirebaseServices {
                 const {
                   adminUserID,
                   name,
-                  picture,
+                  picURL,
                   address,
                   phoneNumber,
                   email,
@@ -943,7 +944,7 @@ export default class FirebaseServices {
                   doc,
                   adminUserID,
                   name,
-                  picture,
+                  picURL,
                   address,
                   phoneNumber,
                   email,
@@ -974,7 +975,10 @@ export default class FirebaseServices {
 
   deleteItemFromDashboard = _key => {
     if (_key) {
-      this.productsCollection.doc(_key).delete();
+      this.productsCollection
+        .doc(_key)
+        .delete()
+        .catch(err => console.log(err));
     } else {
       console.log("Cannot delete product");
     }
@@ -985,7 +989,9 @@ export default class FirebaseServices {
       //method to check if the picture is being changed, else don't change the picture
       if (p.picture) {
         var brandProductImageLocation = this.brandImgdb.child(p.picture.name);
-        var companyProductImageLocation = this.companyImgdb.child(p.picture.name);
+        var companyProductImageLocation = this.companyImgdb.child(
+          p.picture.name
+        );
 
         if (p.sponsored) {
           brandProductImageLocation.put(p.picture).then(snapshot => {
@@ -998,7 +1004,7 @@ export default class FirebaseServices {
               .then(() => {
                 //console.log(product.picURL + " Firing the upload method after image uploaded");
                 p.picture = null;
-                this.productsCollection.doc(_key).set(
+                return this.productsCollection.doc(_key).set(
                   {
                     category: p.category,
                     description: p.description,
@@ -1009,12 +1015,11 @@ export default class FirebaseServices {
                     tresholdPercentage: p.tresholdPercentage
                   },
                   { merge: true }
-                )
+                );
                 //this.productsCollection.add(product);
               });
           });
-        }
-        else {
+        } else {
           companyProductImageLocation.put(p.picture).then(snapshot => {
             snapshot.ref
               .getDownloadURL()
@@ -1025,7 +1030,7 @@ export default class FirebaseServices {
               .then(() => {
                 //console.log(product.picURL + " Firing the upload method after image uploaded");
                 p.picture = null;
-                this.productsCollection.doc(_key).set(
+                return this.productsCollection.doc(_key).set(
                   {
                     category: p.category,
                     description: p.description,
@@ -1036,14 +1041,13 @@ export default class FirebaseServices {
                     tresholdPercentage: p.tresholdPercentage
                   },
                   { merge: true }
-                )
+                );
                 //console.log("updating:  " + _key);
-              })
-          })
+              });
+          });
         }
-      }
-      else{
-        this.productsCollection.doc(_key).set(
+      } else {
+        return this.productsCollection.doc(_key).set(
           {
             category: p.category,
             description: p.description,
@@ -1054,8 +1058,8 @@ export default class FirebaseServices {
             tresholdPercentage: p.tresholdPercentage
           },
           { merge: true }
-        )
+        );
       }
     }
-  }
+  };
 }

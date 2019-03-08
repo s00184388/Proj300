@@ -211,7 +211,7 @@ class App extends Component {
         className={
           fetchInProgress
             ? "container d-flex justify-content-center"
-            : "container"
+            : "container-fluid"
         }
       >
         {this.state.alertVisible ? (
