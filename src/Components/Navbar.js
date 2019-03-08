@@ -1,9 +1,8 @@
 import React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, withRouter } from "react-router-dom";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import firebase from "firebase";
-import { withRouter } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
 
 //style
@@ -12,32 +11,17 @@ import "./Navbar.css";
 export class Navbar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      authenticated: false
-    };
     this.handleLogout = this.handleLogout.bind(this);
   }
 
   handleLogout = () => {
-    firebase.auth().signOut();
-    sessionStorage.clear();
-    this.setState({
-      authenticated: false
-    });
-    return <Redirect to="/login" />;
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        this.props.history.push("/login");
+      });
   };
-
-  componentDidMount() {
-    firebase.auth().onAuthStateChanged(authenticated => {
-      authenticated
-        ? this.setState(() => ({
-            authenticated: true
-          }))
-        : this.setState(() => ({
-            authenticated: false
-          }));
-    });
-  }
 
   render() {
     const Round = props => {
@@ -82,6 +66,7 @@ export class Navbar extends React.Component {
                     </p>
                   </div>
                 </div>
+
                 {this.props.userRole === "employee" && (
                   <p className="small ml-2 p-0">
                     <strong>Coins: </strong>
@@ -141,7 +126,7 @@ export class Navbar extends React.Component {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mr-auto ">
             <div className="row ml-4 p-2">
-              {this.state.authenticated == false ? (
+              {this.props.authenticated == false ? (
                 <li>
                   <Link to={"/"} className="nav-link text-white h6 ml-2">
                     {" "}
@@ -254,4 +239,4 @@ export class Navbar extends React.Component {
   }
 }
 
-export default withRouter(Navbar);
+export default Navbar;
