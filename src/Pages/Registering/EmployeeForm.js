@@ -5,7 +5,6 @@ import firebase from "../../firebase/firebase";
 import InputField from "../Registering/InputFields";
 import Radio from "../Registering/Checkboxes";
 import { Link } from "react-router-dom";
-import { Alert, AlertContainer } from "react-bs-notifier";
 import { firestore } from "firebase";
 import ReactLoading from "react-loading";
 const fs = new FirebaseServices();
@@ -214,6 +213,9 @@ export class EmployeeForm extends Component {
                   currentUser
                     .sendEmailVerification()
                     .then(() => {
+                      user.key = userKey;
+                      this.getCompanyAndSendConfirmationEmail(user);
+                      this.setState({ fetchInProgress: false });
                       this.showAlert(
                         "success",
                         "Your email verification has been sent. Please check your email as soon as possible!",
@@ -229,10 +231,6 @@ export class EmployeeForm extends Component {
                   console.log(err);
                   this.setState({ fetchInProgress: false });
                 });
-
-              user.key = userKey;
-              this.getCompanyAndSendConfirmationEmail(user);
-              this.setState({ fetchInProgress: false });
             })
             .catch(err => {
               console.log(err);
