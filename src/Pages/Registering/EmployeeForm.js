@@ -7,6 +7,8 @@ import Radio from "../Registering/Checkboxes";
 import { Link } from "react-router-dom";
 import { firestore } from "firebase";
 import ReactLoading from "react-loading";
+import ReCAPTCHA from "react-google-recaptcha";
+
 const fs = new FirebaseServices();
 
 export class EmployeeForm extends Component {
@@ -17,6 +19,7 @@ export class EmployeeForm extends Component {
       errors: {},
       created: false,
       emailSent: false,
+      captcha: "",
       //employee details
       selectedOption: "employee",
       coins: 0,
@@ -36,11 +39,16 @@ export class EmployeeForm extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.nameFree = this.nameFree.bind(this);
     this.showAlert = this.showAlert.bind(this);
+    this.captchaCallback = this.captchaCallback.bind(this);
     this.subscriptions = [];
   }
 
   showAlert(type, message, headline) {
     this.props.showAlert(type, message, headline);
+  }
+
+  captchaCallback(value) {
+    this.setState({ captcha: value });
   }
 
   //validation function. Returns if the form is valid or not,
@@ -50,6 +58,12 @@ export class EmployeeForm extends Component {
     let fields = this.state.fields;
     let errors = {};
     let formIsValid = true;
+    let captcha = this.state.captcha;
+
+    if (!captcha) {
+      formIsValid = false;
+      errors["captcha"] = "*Please solve the CAPTCHA first.";
+    }
 
     if (!fields["firstName"]) {
       formIsValid = false;
@@ -630,6 +644,13 @@ export class EmployeeForm extends Component {
                         />
                       </div>
                       <div className="row mx-auto pt-2">
+                        <ReCAPTCHA
+                          sitekey="6Lexc5YUAAAAAMBCUmoQAu7bflxKLSxUr1D50Owg"
+                          onChange={this.captchaCallback}
+                        />
+                        <div className="small">{this.state.errors.captcha}</div>
+                      </div>
+                      <div className="row mx-auto pt-2">
                         <div className="col-lg-4">
                           <button
                             className="btn btn-warning btn-sm col-lg-12  text-white btn-sm"
@@ -729,6 +750,13 @@ export class EmployeeForm extends Component {
                         />
                       </div>
                       <hr />
+                      <div className="row mx-auto pt-2">
+                        <ReCAPTCHA
+                          sitekey="6Lexc5YUAAAAAMBCUmoQAu7bflxKLSxUr1D50Owg"
+                          onChange={this.captchaCallback}
+                        />
+                        <div className="small">{this.state.errors.captcha}</div>
+                      </div>
                       <div className="row mx-auto pt-2">
                         <div className="col-lg-4">
                           <button
@@ -830,6 +858,13 @@ export class EmployeeForm extends Component {
                         />
                       </div>
                       <hr />
+                      <div className="row mx-auto pt-2">
+                        <ReCAPTCHA
+                          sitekey="6Lexc5YUAAAAAMBCUmoQAu7bflxKLSxUr1D50Owg"
+                          onChange={this.captchaCallback}
+                        />
+                        <div className="small">{this.state.errors.captcha}</div>
+                      </div>
                       <div className="row mx-auto pt-2">
                         <div className="col-lg-4">
                           <button

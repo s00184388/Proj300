@@ -25,6 +25,7 @@
     "react-burger-menu": "^2.5.4",
     "react-dom": "^16.6.3",
     "react-firebase-file-uploader": "^2.4.2",
+    "react-google-recaptcha": "^1.0.5",
     "react-loading": "^2.0.3",
     "react-modal": "^3.6.1",
     "react-router-dom": "^4.3.1",
