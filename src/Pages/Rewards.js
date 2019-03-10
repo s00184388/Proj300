@@ -397,6 +397,7 @@ class Filters extends React.Component {
     this.handleCategoryChange = this.handleCategoryChange.bind(this);
     this.handleAffordableChange = this.handleAffordableChange.bind(this);
     this.handleWishlistChange = this.handleWishlistChange.bind(this);
+    this.handleSponsoredChange = this.handleSponsoredChange.bind(this);
     this.doOrderBy = this.doOrderBy.bind(this);
     this.doOrder = this.doOrder.bind(this);
   }
@@ -418,6 +419,9 @@ class Filters extends React.Component {
   }
   handleWishlistChange(e) {
     this.props.onWishlistChange(e);
+  }
+  handleSponsoredChange(e) {
+    this.props.onSponsoredChange(e);
   }
 
   render() {
@@ -471,7 +475,7 @@ class Filters extends React.Component {
           <input
             id="sponsoredChk"
             type="checkbox"
-            onClick={this.handleWishlistChange}
+            onClick={this.handleSponsoredChange}
           />
           <label htmlFor="sponsoredChk">
             <span />
@@ -496,6 +500,7 @@ class ProductContainer extends React.Component {
     this.subscriptions = [];
     this.isInWishlist = this.isInWishlist.bind(this);
     this.filterbyWishlist = this.filterbyWishlist.bind(this);
+    this.filterbySponsored = this.filterbySponsored.bind(this);
     this.userKey = "";
   }
   componentWillReceiveProps(nextProps) {
@@ -561,6 +566,9 @@ class ProductContainer extends React.Component {
   filterbyWishlist(prod) {
     return !this.isInWishlist(prod);
   }
+  filterbySponsored(prod) {
+    return prod.sponsored;
+  }
   sortbyPrice(a, b) {
     return a.price > b.price ? 1 : a.price < b.price ? -1 : 0;
   }
@@ -583,6 +591,9 @@ class ProductContainer extends React.Component {
     }
     if (this.props.wishlistChecked) {
       products = products.filter(this.filterbyWishlist);
+    }
+    if (this.props.sponsoredChecked) {
+      products = products.filter(this.filterbySponsored);
     }
     products = products.filter(
       this.filterbyCategory(this.props.categoryFilter)
@@ -634,6 +645,7 @@ export class Rewards extends React.Component {
       categoryFilter: "",
       affordableChecked: false,
       wishlistChecked: false,
+      sponsoredChecked: false,
       orderBy: "price",
       order: "asc",
       wishlist: [],
@@ -642,6 +654,7 @@ export class Rewards extends React.Component {
     this.handleCategoryChange = this.handleCategoryChange.bind(this);
     this.handleAffordableChange = this.handleAffordableChange.bind(this);
     this.handleWishlistChange = this.handleWishlistChange.bind(this);
+    this.handleSponsoredChange = this.handleSponsoredChange.bind(this);
     this.doOrderBy = this.doOrderBy.bind(this);
     this.doOrder = this.doOrder.bind(this);
   }
@@ -681,6 +694,9 @@ export class Rewards extends React.Component {
   handleWishlistChange(e) {
     this.setState({ wishlistChecked: e.target.checked });
   }
+  handleSponsoredChange(e) {
+    this.setState({ sponsoredChecked: e.target.checked });
+  }
   addFirebaseData() {
     jsonProds.forEach(prod => firebaseServices.addProduct(prod));
   }
@@ -689,6 +705,7 @@ export class Rewards extends React.Component {
     const categoryFilter = this.state.categoryFilter;
     const affordableChecked = this.state.affordableChecked;
     const wishlistChecked = this.state.wishlistChecked;
+    const sponsoredChecked = this.state.sponsoredChecked;
 
     const orderBy = this.state.orderBy;
     const order = this.state.order;
@@ -718,6 +735,8 @@ export class Rewards extends React.Component {
                 onCategoryChange={this.handleCategoryChange}
                 affordableChecked={affordableChecked}
                 onAffordableChange={this.handleAffordableChange}
+                sponsoredChecked={sponsoredChecked}
+                onSponsoredChange={this.handleSponsoredChange}
                 wishlistChecked={wishlistChecked}
                 onWishlistChange={this.handleWishlistChange}
                 doOrderBy={this.doOrderBy}
@@ -735,6 +754,7 @@ export class Rewards extends React.Component {
               categoryFilter={categoryFilter}
               affordableChecked={affordableChecked}
               wishlistChecked={wishlistChecked}
+              sponsoredChecked={sponsoredChecked}
               orderBy={orderBy}
               order={order}
               style={{ position: "fixed" }}
