@@ -71,6 +71,7 @@ class Panel extends Component {
     ct++;
     this.setState({ fetchInProgress: ct });
   }
+
   decrementLoading() {
     var ct = this.state.fetchInProgress;
     ct--;
@@ -105,6 +106,15 @@ class Panel extends Component {
     userDetails[e.target.name] = e.target.value;
     this.setState({ userDetails });
   }
+
+  handleLogout = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        this.props.history.push("/login");
+      });
+  };
 
   handlePasswordChange(e) {
     var passwords = {};
@@ -158,13 +168,14 @@ class Panel extends Component {
                     currentUser
                       .updateEmail(this.state.userDetails.email)
                       .then(() => {
-                        alert(
-                          "Email and Password changed! Please validate new email"
+                        this.props.showAlert(
+                          "success",
+                          "Email changed! Pleadsadsse validate new email as soon as possible and log in again ",
+                          "Email and Password changed"
                         );
                         this.resendConfirmation();
                         this.updateUser();
                         this.updateBrand(cred);
-                        this.props.history.push("/");
                         this.decrementLoading();
                       })
                       .catch(err => {
@@ -176,7 +187,11 @@ class Panel extends Component {
                     console.log(err);
                     this.decrementLoading();
                     if (err.code === "auth/wrong-password") {
-                      alert("Wrong password");
+                      this.props.showAlert(
+                        "warning",
+                        "Wrong Password! Please check your inputs and try again!",
+                        "Something went wrong!"
+                      );
                     }
                   });
               })
@@ -184,7 +199,11 @@ class Panel extends Component {
                 console.log(err);
                 this.decrementLoading();
                 if (err.code === "auth/wrong-password") {
-                  alert("Wrong password");
+                  this.props.showAlert(
+                    "warning",
+                    "Wrong Password! Please check your inputs and try again!",
+                    "Something went wrong!"
+                  );
                 }
               });
           });
@@ -202,7 +221,11 @@ class Panel extends Component {
                   currentUser.email,
                   newPassword
                 );
-                alert("password changed");
+                this.props.showAlert(
+                  "success",
+                  "Password changed successfully!",
+                  "Password changed"
+                );
                 this.updateUser();
                 this.updateBrand(cred);
                 let passwords = this.state.passwords;
@@ -221,11 +244,19 @@ class Panel extends Component {
             console.log(err);
             this.decrementLoading();
             if (err.code === "auth/wrong-password") {
-              alert("Wrong password");
+              this.props.showAlert(
+                "warning",
+                "Wrong Password! Check your inputs and try again!",
+                "Something went wrong!"
+              );
             }
           });
       } else {
-        alert("Password and verification password don't match");
+        this.props.showAlert(
+          "warning",
+          "New password and confirmation new password are not matching!  Check your inputs and try again!",
+          "Something went wrong!"
+        );
         this.decrementLoading();
       }
     } else if (this.props.user.email !== this.state.userDetails.email) {
@@ -241,11 +272,16 @@ class Panel extends Component {
                 oldPassword
               );
               this.resendConfirmation();
-              alert("Email changed. Please validate new email");
+
               this.updateUser();
               this.updateBrand(cred);
+              this.props.showAlert(
+                "success",
+                "Email changed!Please validate new email as soon as possible and log in again ",
+                "Email and Password changed"
+              );
               this.decrementLoading();
-              this.props.history.push("/");
+              this.handleLogout();
             })
             .catch(err => {
               console.log(err);
@@ -256,7 +292,11 @@ class Panel extends Component {
           console.log(err);
           this.decrementLoading();
           if (err.code === "auth/wrong-password") {
-            alert("Wrong password");
+            this.props.showAlert(
+              "warning",
+              "Wrong Password! Check your inputs and try again!",
+              "Something went wrong!"
+            );
           }
         });
     } else {
@@ -309,7 +349,11 @@ class Panel extends Component {
                 let passwords = { ...this.state.passwords };
                 passwords.oldPassword = "";
                 this.decrementLoading();
-                alert("Brand Email updated!");
+                this.props.showAlert(
+                  "success",
+                  "Brand email updated!",
+                  "Update"
+                );
               })
               .catch(err => {
                 console.log(err);
@@ -320,7 +364,11 @@ class Panel extends Component {
             console.log(err);
             this.decrementLoading();
             if (err.code === "auth/wrong-password") {
-              alert("Wrong password");
+              this.props.showAlert(
+                "warning",
+                "Wrong Password! Check your inputs and try again!",
+                "Something went wrong!"
+              );
             }
           });
       } else {
@@ -328,7 +376,11 @@ class Panel extends Component {
           .doc(brand.key)
           .update(brandDetails)
           .then(() => {
-            alert("Brand Data updated!");
+            this.props.showAlert(
+              "success",
+              "Brand data has been updated!",
+              "Update"
+            );
             this.decrementLoading();
           })
           .catch(err => {
@@ -345,8 +397,8 @@ class Panel extends Component {
       .doc(this.props.user.key)
       .delete()
       .then(() => {
-        console.log("account deleted");
         this.decrementLoading();
+        this.handleLogout();
       })
       .catch(err => {
         console.log(err);
@@ -358,9 +410,7 @@ class Panel extends Component {
     firebase
       .auth()
       .currentUser.sendEmailVerification()
-      .then(() => {
-        alert("Verification Email Sent!");
-      })
+      .then(() => {})
       .catch(err => console.log(err));
   }
 
@@ -371,7 +421,6 @@ class Panel extends Component {
     const brandDetails = this.state.brandDetails;
     const emailConfirmed = this.state.emailConfirmed ? "Yes" : "No";
     const fetchInProgress = this.state.fetchInProgress;
-    console.log(fetchInProgress);
     return (
       <section id="tabs" className="project-tab">
         {fetchInProgress > 0 ? (
@@ -766,11 +815,12 @@ export class BrandProfile extends Component {
       fetchInProgress: false
     };
     this.subscriptions = [];
+
     this.showAlert = this.showAlert.bind(this);
   }
 
-  showAlert(type, message) {
-    this.props.showAlert(type, message);
+  showAlert(type, message, headline) {
+    this.props.showAlert(type, message, headline);
   }
 
   componentDidMount() {
@@ -803,7 +853,12 @@ export class BrandProfile extends Component {
               width={256}
             />
           ) : (
-            <Panel user={user} brand={brand} />
+            <Panel
+              user={user}
+              brand={brand}
+              showAlert={this.showAlert}
+              history={this.props.history}
+            />
           )}
         </div>
       </div>

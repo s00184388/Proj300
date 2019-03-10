@@ -213,6 +213,14 @@ export class Panel extends Component {
         this.setState({ fetchInProgress: false });
       });
   }
+  handleLogout = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        this.props.history.push("/login");
+      });
+  };
 
   componentDidMount() {
     this.setState({ fetchInProgress: true });
@@ -364,7 +372,7 @@ export class Panel extends Component {
       } else {
         this.props.showAlert(
           "warning",
-          "Password and verification password don't match",
+          "Check your inputs and try again!",
           "Something went wrong!"
         );
         this.setState({ fetchInProgress: false });
@@ -381,10 +389,10 @@ export class Panel extends Component {
                 .update(this.state.userDetails)
                 .then(() => {
                   this.setState({ fetchInProgress: false });
-                  console.log("emmail changed");
+                  this.handleLogout();
                   this.props.showAlert(
                     "success",
-                    "Email changed! Please validate new email as soon as possible and log in again",
+                    "Email changed! Please validate new email as soon as possible and log in again ",
                     "Update"
                   );
                 })
@@ -414,7 +422,7 @@ export class Panel extends Component {
           if (err.code === "auth/wrong-password") {
             this.props.showAlert(
               "warning",
-              "Wrong password",
+              "Wrong password! Check your inputs and try again!",
               "Something went wrong!"
             );
           }
@@ -425,7 +433,7 @@ export class Panel extends Component {
         .update(this.state.userDetails)
         .then(() => {
           this.setState({ fetchInProgress: false });
-          this.props.showAlert("success", "Update successful!", "Update");
+          this.props.showAlert("success", "Your change has been saved!");
         })
         .catch(err => {
           console.log(err);
@@ -441,8 +449,8 @@ export class Panel extends Component {
       .doc(this.props.user.key)
       .delete()
       .then(() => {
-        console.log("account deleted");
         this.setState({ fetchInProgress: false });
+        this.handleLogout();
       })
       .catch(err => {
         console.log(err);
@@ -804,7 +812,11 @@ export class EmployeeProfile extends Component {
       <div>
         <div className="row">
           <Sidepage user={user} />
-          <Panel user={user} showAlert={this.showAlert} />
+          <Panel
+            user={user}
+            showAlert={this.showAlert}
+            history={this.props.history}
+          />
         </div>
       </div>
     );

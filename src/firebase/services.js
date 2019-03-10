@@ -816,7 +816,6 @@ export default class FirebaseServices {
           snapshot.ref
             .getDownloadURL()
             .then(url => {
-              //console.log(url);
               product.picURL = url;
             })
             .then(() => {
@@ -866,7 +865,6 @@ export default class FirebaseServices {
       .catch(err => {
         alert('Error at adding products! Check your inputs')
       });*/
-    alert("Cannot add product");
   };
 
   createUser = user => {

@@ -1,18 +1,12 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { DropdownList } from "react-widgets";
+
 import "./CssPages/BrandDashboard.css";
 import FirebaseServices from "../firebase/services";
-import {
-  faArrowDown,
-  faEdit,
-  faBullseye
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import Modal from "react-modal";
 import BrandProductEditingModal from "../Components/editProductModal";
-import FileUploader from "react-firebase-file-uploader";
 
 library.add(faArrowDown, faEdit);
 
@@ -25,6 +19,7 @@ class ProductForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      errors: {},
       //brand fields will be converted into brand object on submit
       brandID: this.props.brand.key,
       category: "",
@@ -36,7 +31,6 @@ class ProductForm extends Component {
       stock: 0,
       sponsored: true,
       tresholdPercentage: 0,
-
       categoryOptions: ["Electronics", "Shoes", "Sports", "Others"]
     };
 
@@ -53,19 +47,62 @@ class ProductForm extends Component {
   handleChange = e => {
     let newState = {};
     newState[e.target.name] = e.target.value;
-    if (e.target.name == "picture") {
+    if (e.target.name === "picture") {
       this.setState({
         picture: e.target.files[0]
       });
       console.log(e.target.files[0]);
     } else {
       this.setState(newState);
-      console.log(newState);
     }
   };
 
-  handleSubmit = (e, message) => {
+  validate = () => {
+    let errors = {};
+    let formIsValid = true;
+
+    if (!this.state.name) {
+      formIsValid = false;
+      errors["name"] = "*Please enter the product's name";
+    }
+
+    if (!this.state.description) {
+      formIsValid = false;
+      errors["description"] = "*Please enter the product's description";
+    }
+
+    if (!this.state.stock) {
+      formIsValid = false;
+      errors["stock"] = "*Quantity cannot be empty";
+    }
+
+    if (!this.state.price) {
+      formIsValid = false;
+      errors["price"] = "*Price field cannot be empty";
+    }
+
+    if (!this.state.category) {
+      formIsValid = false;
+      errors["category"] = "*Please choose a category!";
+    }
+
+    if (!this.state.picture) {
+      formIsValid = false;
+      errors["picture"] = "*Please choose a picture!";
+    }
+
+    this.setState({
+      errors: errors
+    });
+    console.log(this.state.errors);
+
+    return formIsValid;
+  };
+
+  handleSubmit = e => {
     e.preventDefault();
+
+    console.log(this.state);
 
     let product = {
       brandID: this.state.brandID,
@@ -80,123 +117,163 @@ class ProductForm extends Component {
       tresholdPercentage: this.state.tresholdPercentage / 100
     };
 
-    fs.addProduct(product);
-    //console.log(product);
+    //console.log(this.validate());
+    console.log(product);
+    if (this.validate()) {
+      fs.addProduct(product);
+      this.props.showAlert(
+        "success",
+        "Product has been added to the brand",
+        "Update"
+      );
 
-    this.setState({
-      brandID: "",
-      category: "",
-      description: "",
-      name: "",
-      picture: null,
-      picURL: "",
-      price: 0,
-      stock: 0,
-      sponsored: true,
-      tresholdPercentage: 0
-    });
+      this.setState({
+        newState: "",
+        errors: "",
+        brandID: "",
+        category: "",
+        picture: null,
+        picURL: "",
+        sponsored: true,
+        tresholdPercentage: 0
+      });
+    }
+
+    //console.log(product);
   };
 
   render() {
     const categories = ["Electronics", "Shoes", "Sports", "Others"];
     const options = categories.map(opt => <option key={opt}>{opt}</option>);
     return (
-      <form onSubmit={this.handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="categoryList">Product Category:</label>
-          <select
-            id="categoryList"
-            name="category"
-            className="form-control"
-            defaultValue=""
-            onChange={this.handleChange}
-          >
-            <option value="" disabled hidden>
-              Select a category
-            </option>
-            {options}
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="formName">Product Name:</label>
-          <input
-            id="formName"
-            className="form-control"
-            name="name"
-            type="text"
-            placeholder="Enter Product Name"
-            onChange={this.handleChange}
-            value={this.state.name}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="formDescription">Product Description:</label>
-          <input
-            id="formDescription"
-            className="form-control"
-            name="description"
-            type="text"
-            placeholder="Enter Product Description"
-            onChange={this.handleChange}
-            value={this.state.description}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="formPicture">Product Image:</label>
-          <input
-            id="formPicture"
-            className="form-control"
-            name="picture"
-            type="file"
-            accept="image/png,image/jpeg"
-            onChange={this.handleChange}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="formPrice">Product Price:</label>
-          <input
-            id="formPrice"
-            className="form-control"
-            name="price"
-            type="number"
-            placeholder="Enter Product Price"
-            onChange={this.handleChange}
-            value={this.state.price}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="formStock">Product Stock:</label>
-          <input
-            id="formStock"
-            className="form-control"
-            name="stock"
-            type="number"
-            placeholder="Enter Product Stock"
-            onChange={this.handleChange}
-            value={this.state.stock}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="formTreshold">Treshold Percentage:</label>
-          <input
-            id="formTreshold"
-            className="form-control"
-            name="tresholdPercentage"
-            type="number"
-            placeholder="Enter Treshold Percentage in %"
-            onChange={this.handleChange}
-            value={this.state.tresholdPercentage}
-          />
-        </div>
-        <button
-          className="btn btn-primary"
-          id="formSubmit"
-          type="submit"
-          onClick={this.handleSubmit}
-        >
-          Submit Product
-        </button>
-      </form>
+      <div className="pt-5">
+        <h5 className="text-white"> Add Product</h5>
+        <hr />
+        <form onSubmit={this.handleSubmit}>
+          <div className="row">
+            <div className="form-group input-group-sm col-sm-6">
+              <label htmlFor="formName" className="text-white">
+                Product Name:
+              </label>
+              <input
+                id="formName"
+                className="form-control"
+                name="name"
+                type="text"
+                placeholder="Enter Product Name"
+                onChange={this.handleChange}
+                value={this.state.name || ""}
+              />
+              <div className="text-white">
+                <small>{this.state.errors.name}</small>
+              </div>
+            </div>
+            <div className="form-group input-group-sm col-sm-6">
+              <label htmlFor="categoryList" className="text-white">
+                Product Category:
+              </label>
+              <select
+                id="categoryList"
+                name="category"
+                className="form-control input-form-sm"
+                defaultValue=""
+                onChange={this.handleChange}
+              >
+                <option value="" disabled hidden>
+                  Select a category
+                </option>
+                {options}
+              </select>
+              <div className="text-white">
+                <small>{this.state.errors.category}</small>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="formDescription" className="text-white">
+              Product Description:
+            </label>
+            <textarea
+              rows="2"
+              id="formDescription"
+              className="form-control"
+              name="description"
+              type="text"
+              placeholder="Enter Product Description"
+              onChange={this.handleChange}
+              value={this.state.description || ""}
+            />
+            <div className="text-white">
+              <small>{this.state.errors.description}</small>
+            </div>
+          </div>
+
+          <div className="form-group input-group-sm">
+            <label htmlFor="formPicture" className="text-white">
+              Product Image:
+            </label>
+            <input
+              id="formPicture"
+              className="form-control"
+              name="picture"
+              type="file"
+              accept="image/png,image/jpeg"
+              onChange={this.handleChange}
+            />
+            <div className="text-white">
+              <small>{this.state.errors.picture}</small>
+            </div>
+          </div>
+          <div className="row">
+            <div className="form-group input-group-sm col-sm-6">
+              <label htmlFor="formPrice" className="text-white">
+                Product Price:
+              </label>
+              <input
+                id="formPrice"
+                className="form-control"
+                name="price"
+                type="number"
+                placeholder="Enter Product Price"
+                onChange={this.handleChange}
+                value={this.state.price || ""}
+              />
+              <div className="text-white">
+                <small>{this.state.errors.price}</small>
+              </div>
+            </div>
+
+            <div className="form-group input-group-sm col-sm-6">
+              <label htmlFor="formStock" className="text-white">
+                Product Stock:
+              </label>
+              <input
+                id="formStock"
+                className="form-control"
+                name="stock"
+                type="number"
+                placeholder="Enter Product Stock"
+                onChange={this.handleChange}
+                value={this.state.stock || ""}
+              />
+              <div className="text-white">
+                <small>{this.state.errors.stock}</small>
+              </div>
+            </div>
+          </div>
+          <div className="d-flex justify-content-center">
+            <button
+              className="btn btn-warning btn-sm text-white"
+              id="formSubmit"
+              type="submit"
+              onClick={this.handleSubmit}
+            >
+              Submit Product
+            </button>
+          </div>
+        </form>
+      </div>
     );
   }
 }
@@ -221,8 +298,6 @@ class TableRow extends Component {
   };
 
   setEditProduct(e) {
-    //const ep = this.state.editProduct
-
     this.state.editProduct = {
       brandID: e.brandID,
       category: e.category,
@@ -314,18 +389,14 @@ class BrandInfo extends Component {
   }
 
   render() {
-    const brandName = this.props.brand.name;
     const products = this.state.products;
     const productsList = products.map((prod, index) => (
       <TableRow row={prod} index={++index} key={prod.key} />
     ));
     return (
-      <div className="infoContainer">
-        <h2 className="text-center text-white py-5">
-          {" "}
-          <strong>{brandName}</strong> Dashboard{" "}
-        </h2>
-        <h4 className="text-white">Products list</h4>
+      <div className="container pt-5">
+        <h5 className="text-white">Product List</h5>
+        <hr />
         <table className="table table-striped table-sm table-light table-hover">
           <thead>
             <tr>
@@ -361,6 +432,11 @@ export class BrandDashboard extends Component {
       isEditing: false,
       brandID: this.props.brandID
     };
+    this.showAlert = this.showAlert.bind(this);
+  }
+
+  showAlert(type, message, headline) {
+    this.props.showAlert(type, message, headline);
   }
 
   componentDidMount() {
@@ -378,11 +454,14 @@ export class BrandDashboard extends Component {
   render() {
     return (
       <div className="container">
+        <h4 className="text-white text-center">
+          <strong>{this.state.brand.name}</strong> Dashboard{" "}
+        </h4>
         <div className="row">
-          <div className="col-md">
-            <ProductForm brand={this.state.brand} />
+          <div className="col-sm-6">
+            <ProductForm brand={this.state.brand} showAlert={this.showAlert} />
           </div>
-          <div className="col-md">
+          <div className="col-sm-6">
             <BrandInfo brand={this.state.brand} />
           </div>
         </div>

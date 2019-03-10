@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import firebase from "firebase";
 import ReactLoading from "react-loading";
 import { AlertList } from "react-bs-notifier";
-import { Redirect, Route, withRouter } from "react-router-dom";
+import { Redirect, Route } from "react-router-dom";
 import { Router } from "react-router";
 import createHistory from "history/createBrowserHistory";
 
@@ -160,9 +160,7 @@ class App extends Component {
     };
 
     const Register = props => {
-      return (
-        <EmployeeForm showAlert={this.showAlert} history={this.props.history} />
-      );
+      return <EmployeeForm showAlert={this.showAlert} history={history} />;
     };
 
     const Landing = props => {
@@ -174,18 +172,29 @@ class App extends Component {
         <EmployeeUserProfile
           user={this.state.user}
           showAlert={this.showAlert}
+          history={history}
         />
       );
     };
 
     const MyCompanyProfile = props => {
       return (
-        <CompanyProfile user={this.state.user} showAlert={this.showAlert} />
+        <CompanyProfile
+          user={this.state.user}
+          showAlert={this.showAlert}
+          history={history}
+        />
       );
     };
 
     const MyBrandProfile = props => {
-      return <BrandProfile user={this.state.user} {...props} />;
+      return (
+        <BrandProfile
+          user={this.state.user}
+          showAlert={this.showAlert}
+          history={history}
+        />
+      );
     };
 
     const MyBrand = props => {
@@ -199,7 +208,12 @@ class App extends Component {
     };
 
     const MyBrandDashboard = props => {
-      return <BrandDashboard brandID={this.state.user.brandID} {...props} />;
+      return (
+        <BrandDashboard
+          brandID={this.state.user.brandID}
+          showAlert={this.showAlert}
+        />
+      );
     };
 
     const MyWishlist = props => {

@@ -141,7 +141,7 @@ class ProductForm extends Component {
 
   render() {
     const categories = ["Electronics", "Shoes", "Sports", "Others"];
-    const { name, description, picURL } = this.state.fields;
+    const { name, description } = this.state.fields;
     const options = categories.map(opt => <option key={opt}>{opt}</option>);
     return (
       <div className="container">

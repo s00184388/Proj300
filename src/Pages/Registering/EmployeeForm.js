@@ -286,13 +286,10 @@ export class EmployeeForm extends Component {
               };
               fs.createCompany(comp)
                 .then(compID => {
-                  console.log("update company admin");
                   fs.usersCollection
                     .doc(userID)
                     .update({ companyID: compID })
-                    .then(() => {
-                      this.props.history.push("/companyProfile");
-                    })
+                    .then(() => {})
                     .catch(err => console.log(err));
                   this.setState({ fetchInProgress: false });
                 })
@@ -321,7 +318,6 @@ export class EmployeeForm extends Component {
                   .doc(userID)
                   .update({ brandID: brID })
                   .then(() => {
-                    this.props.history.push("/brandProfile");
                     this.setState({ fetchInProgress: false });
                   })
                   .catch(err => {
@@ -416,6 +412,7 @@ export class EmployeeForm extends Component {
               approved: false
             };
             this.createAuthUser(user, null, null);
+            this.props.history.push("/");
           })
           .catch(err => {
             this.setState({ companyError: err.message }, () => {
@@ -438,6 +435,7 @@ export class EmployeeForm extends Component {
         };
         if (this.nameFree(fields["companyName"], "company")) {
           this.createAuthUser(user, company, null);
+          this.props.history.push("/");
         } else {
           this.setState({
             companyError: "There is already a company with the same name!"
@@ -446,8 +444,6 @@ export class EmployeeForm extends Component {
 
         console.log(this.state.role);
       } else if (this.state.role === "brandAdmin") {
-        console.log("brand ad");
-        console.log("Step1. Brands");
         let user = {
           firstName: fields["firstName"],
           lastName: fields["lastName"],
@@ -465,6 +461,7 @@ export class EmployeeForm extends Component {
         if (this.nameFree(fields["brandName"], "brand")) {
           console.log("Step1.User data for brand inserted in db");
           this.createAuthUser(user, null, brand);
+          this.props.history.push("/");
         } else {
           this.setState({
             companyError: "There is already a brand with the same name!"
