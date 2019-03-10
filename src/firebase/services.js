@@ -8,6 +8,7 @@ export default class FirebaseServices {
     this.db = fire.firestore();
     this.brandImgdb = fire.storage().ref("BrandImages/");
     this.companyImgdb = fire.storage().ref("CompanyImages/");
+    //this.defaultImgb = fire.storage().ref("DefaultImages/");
     this.db.settings({
       timestampsInSnapshots: true
     });
@@ -807,65 +808,95 @@ export default class FirebaseServices {
 
   addProduct = product => {
     var brandProductImageLocation = this.brandImgdb.child(product.picture.name);
-    var companyProductImageLocation = this.companyImgdb.child(
-      product.picture.name
-    );
+    var companyProductImageLocation = this.companyImgdb.child(product.picture.name);
     if (product) {
       if (product.sponsored) {
-        brandProductImageLocation.put(product.picture).then(snapshot => {
-          snapshot.ref
-            .getDownloadURL()
-            .then(url => {
-              product.picURL = url;
-            })
-            .then(() => {
-              //console.log(product.picURL + " Firing the upload method after image uploaded");
-              product.picture = null;
+        if (product.picture != null) {
+          brandProductImageLocation.put(product.picture).then(snapshot => {
+            snapshot.ref
+              .getDownloadURL()
+              .then(url => {
+                product.picURL = url;
+              })
+              .then(() => {
+                //console.log(product.picURL + " Firing the upload method after image uploaded");
+                product.picture = null;
+                this.productsCollection.add(product);
+              });
+          });
+        }
+        else {
+          switch (product.category) {
+            case "Electronics":
+              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosElectronicIcon.png?alt=media&token=9322facb-467e-4379-b9a6-a5d447c8677d";
               this.productsCollection.add(product);
-            });
-        });
-      } else {
-        companyProductImageLocation.put(product.picture).then(snapshot => {
-          snapshot.ref
-            .getDownloadURL()
-            .then(url => {
-              //console.log(url);
-              product.picURL = url;
-            })
-            .then(() => {
-              //console.log(product.picURL + " Firing the upload method after image uploaded");
-              product.picture = null;
+              break;
+            case "Sports":
+              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosSportsIcon.png?alt=media&token=25ab91bb-e9a7-4dd7-b15a-fb9c29afd37d";
               this.productsCollection.add(product);
-            });
-        });
+              break;
+            case "Shoes":
+              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosShoeIcon.png?alt=media&token=0bd478f3-4af7-4add-b01c-0f47a3e7ef37";
+              this.productsCollection.add(product);
+              break;
+            case "Others":
+              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosOtherIcon.png?alt=media&token=43e9b891-9288-4143-a5a5-8de211ccce48";
+              this.productsCollection.add(product);
+              break;
+
+            default:
+              alert("Error adding product");
+              break;
+          }
+        }
+      }
+      else {
+        if (product.picture != null) {
+          companyProductImageLocation.put(product.picture).then(snapshot => {
+            snapshot.ref
+              .getDownloadURL()
+              .then(url => {
+                //console.log(url);
+                product.picURL = url;
+              })
+              .then(() => {
+                //console.log(product.picURL + " Firing the upload method after image uploaded");
+                product.picture = null;
+                this.productsCollection.add(product);
+              });
+          });
+        }
+        else {
+          switch (product.category) {
+            case "Electronics":
+              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosElectronicIcon.png?alt=media&token=9322facb-467e-4379-b9a6-a5d447c8677d";
+              this.productsCollection.add(product);
+              break;
+            case "Sports":
+              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosSportsIcon.png?alt=media&token=25ab91bb-e9a7-4dd7-b15a-fb9c29afd37d";
+              this.productsCollection.add(product);
+              break;
+            case "Shoes":
+              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosShoeIcon.png?alt=media&token=0bd478f3-4af7-4add-b01c-0f47a3e7ef37";
+              this.productsCollection.add(product);
+              break;
+            case "Others":
+              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosOtherIcon.png?alt=media&token=43e9b891-9288-4143-a5a5-8de211ccce48";
+              this.productsCollection.add(product);
+              break;
+
+            default:
+              alert("Error adding product");
+              break;
+          }
+        }
       }
     }
-
-    /*  this.brandImagesCollection.on(firebase.storage.TaskEvent.STATE_CHANGED, function(snapshot){
-            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log("upload is " + progress + "% done");
-          }, function(error){
-            console.log("upload error")
-          },
-          function(){*/
-
-    /*brandProductImageLocation.put(product.picture).onSuccessListener(brandProductImageLocation.getDownloadURL()
-    .then((url =>
-      product.picURL = url),
-      product.picture = null,
-      this.productsCollection.add(product))
-    .catch(err => {
-      alert('Error at adding products! Check your inputs')
-    }));*/
-
-    /*this.brandImagesCollection.getDownloadURL()
-      .then((url =>
-        product.picURL = url),
-        this.productsCollection.add(product))
-      .catch(err => {
-        alert('Error at adding products! Check your inputs')
-      });*/
   };
+
+  setDefaultImage = pic => {
+
+  }
 
   createUser = user => {
     return new Promise((resolve, reject) => {
@@ -992,32 +1023,50 @@ export default class FirebaseServices {
         );
 
         if (p.sponsored) {
-          brandProductImageLocation.put(p.picture).then(snapshot => {
-            snapshot.ref
-              .getDownloadURL()
-              .then(url => {
-                //console.log(url);
-                p.picURL = url;
-              })
-              .then(() => {
-                //console.log(product.picURL + " Firing the upload method after image uploaded");
-                p.picture = null;
-                return this.productsCollection.doc(_key).set(
-                  {
-                    category: p.category,
-                    description: p.description,
-                    name: p.name,
-                    picURL: p.picURL,
-                    price: p.price,
-                    stock: p.stock,
-                    tresholdPercentage: p.tresholdPercentage
-                  },
-                  { merge: true }
-                );
-                //this.productsCollection.add(product);
-              });
-          });
-        } else {
+          if (p.picture != null) {
+            brandProductImageLocation.put(p.picture).then(snapshot => {
+              snapshot.ref
+                .getDownloadURL()
+                .then(url => {
+                  //console.log(url);
+                  p.picURL = url;
+                })
+                .then(() => {
+                  //console.log(product.picURL + " Firing the upload method after image uploaded");
+                  p.picture = null;
+                  return this.productsCollection.doc(_key).set(
+                    {
+                      category: p.category,
+                      description: p.description,
+                      name: p.name,
+                      picURL: p.picURL,
+                      price: p.price,
+                      stock: p.stock,
+                      tresholdPercentage: p.tresholdPercentage
+                    },
+                    { merge: true }
+                  );
+                  //this.productsCollection.add(product);
+                });
+            });
+          }
+          else {
+            return this.productsCollection.doc(_key).set(
+              {
+                category: p.category,
+                description: p.description,
+                name: p.name,
+                picURL: p.picURL,
+                price: p.price,
+                stock: p.stock,
+                tresholdPercentage: p.tresholdPercentage
+              },
+              { merge: true }
+            );
+          }
+        }
+      } else {
+        if (p.picture != null) {
           companyProductImageLocation.put(p.picture).then(snapshot => {
             snapshot.ref
               .getDownloadURL()
@@ -1043,21 +1092,23 @@ export default class FirebaseServices {
                 //console.log("updating:  " + _key);
               });
           });
+
         }
-      } else {
-        return this.productsCollection.doc(_key).set(
-          {
-            category: p.category,
-            description: p.description,
-            name: p.name,
-            //picURL: p.picURL,
-            price: p.price,
-            stock: p.stock,
-            tresholdPercentage: p.tresholdPercentage
-          },
-          { merge: true }
-        );
+        else {
+          return this.productsCollection.doc(_key).set(
+            {
+              category: p.category,
+              description: p.description,
+              name: p.name,
+              picURL: p.picURL,
+              price: p.price,
+              stock: p.stock,
+              tresholdPercentage: p.tresholdPercentage
+            },
+            { merge: true }
+          );
+        }
       }
-    }
-  };
+    };
+  }
 }
