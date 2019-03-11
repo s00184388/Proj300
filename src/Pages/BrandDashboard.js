@@ -20,7 +20,6 @@ class ProductForm extends Component {
     super(props);
     this.state = {
       errors: {},
-      //brand fields will be converted into brand object on submit
       brandID: this.props.brand.key,
       category: "",
       description: "",
@@ -86,10 +85,7 @@ class ProductForm extends Component {
       errors["category"] = "*Please choose a category!";
     }
 
-    if (!this.state.picture) {
-      formIsValid = false;
-      errors["picture"] = "*Please choose a picture!";
-    }
+    
 
     this.setState({
       errors: errors
@@ -284,7 +280,6 @@ class TableRow extends Component {
     this.state = {
       show: false
     };
-    this.setEditProduct = this.setEditProduct.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
   }
 
@@ -296,24 +291,6 @@ class TableRow extends Component {
   hideModal = () => {
     this.setState({ show: false });
   };
-
-  setEditProduct(e) {
-    this.state.editProduct = {
-      brandID: e.brandID,
-      category: e.category,
-      description: e.description,
-      name: e.name,
-      picture: e.picture,
-      price: e.price,
-      stock: e.stock,
-      sponsored: true,
-      tresholdPercentage: e.tresholdPercentage
-    };
-    this.state.isEditing = this.state.isEditing;
-    //this.setState(state => ({isEditing : true}));
-    console.log(e.key);
-    fs.updateProduct(this.state.editProduct, e.key);
-  }
 
   deleteItem(key) {
     fs.deleteItemFromDashboard(key);
