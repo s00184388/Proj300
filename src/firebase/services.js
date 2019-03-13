@@ -595,7 +595,6 @@ export default class FirebaseServices {
                 name,
                 picURL,
                 address,
-                phoneNumber,
                 email,
                 description
               } = doc.data();
@@ -606,7 +605,6 @@ export default class FirebaseServices {
                 name,
                 picURL,
                 address,
-                phoneNumber,
                 email,
                 description
               };
@@ -629,7 +627,6 @@ export default class FirebaseServices {
             name,
             picURL,
             address,
-            phoneNumber,
             email,
             description
           } = doc.data();
@@ -640,7 +637,6 @@ export default class FirebaseServices {
             name,
             picURL,
             address,
-            phoneNumber,
             email,
             description
           });
@@ -658,14 +654,7 @@ export default class FirebaseServices {
           .onSnapshot(querySnapshot => {
             var company = {};
             querySnapshot.forEach(doc => {
-              const {
-                adminUserID,
-                name,
-                picURL,
-                address,
-                phoneNumber,
-                email
-              } = doc.data();
+              const { adminUserID, name, picURL, address, email } = doc.data();
               company = {
                 key: doc.id,
                 doc,
@@ -673,7 +662,6 @@ export default class FirebaseServices {
                 name,
                 picURL,
                 address,
-                phoneNumber,
                 email
               };
             });
@@ -688,14 +676,7 @@ export default class FirebaseServices {
       this.companiesCollection.onSnapshot(querySnapshot => {
         const companies = [];
         querySnapshot.forEach(doc => {
-          const {
-            adminUserID,
-            name,
-            picURL,
-            address,
-            phoneNumber,
-            email
-          } = doc.data();
+          const { adminUserID, name, picURL, address, email } = doc.data();
           companies.push({
             key: doc.id,
             doc,
@@ -703,7 +684,6 @@ export default class FirebaseServices {
             name,
             picURL,
             address,
-            phoneNumber,
             email
           });
         });
@@ -770,7 +750,6 @@ export default class FirebaseServices {
                   name,
                   picURL,
                   address,
-                  phoneNumber,
                   email
                 } = doc.data();
                 company = {
@@ -780,7 +759,6 @@ export default class FirebaseServices {
                   name,
                   picURL,
                   address,
-                  phoneNumber,
                   email
                 };
               });
@@ -808,7 +786,9 @@ export default class FirebaseServices {
 
   addProduct = product => {
     var brandProductImageLocation = this.brandImgdb.child(product.picture.name);
-    var companyProductImageLocation = this.companyImgdb.child(product.picture.name);
+    var companyProductImageLocation = this.companyImgdb.child(
+      product.picture.name
+    );
     if (product) {
       if (product.sponsored) {
         if (product.picture != null) {
@@ -824,23 +804,26 @@ export default class FirebaseServices {
                 this.productsCollection.add(product);
               });
           });
-        }
-        else {
+        } else {
           switch (product.category) {
             case "Electronics":
-              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosElectronicIcon.png?alt=media&token=9322facb-467e-4379-b9a6-a5d447c8677d";
+              product.picURL =
+                "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosElectronicIcon.png?alt=media&token=9322facb-467e-4379-b9a6-a5d447c8677d";
               this.productsCollection.add(product);
               break;
             case "Sports":
-              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosSportsIcon.png?alt=media&token=25ab91bb-e9a7-4dd7-b15a-fb9c29afd37d";
+              product.picURL =
+                "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosSportsIcon.png?alt=media&token=25ab91bb-e9a7-4dd7-b15a-fb9c29afd37d";
               this.productsCollection.add(product);
               break;
             case "Shoes":
-              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosShoeIcon.png?alt=media&token=0bd478f3-4af7-4add-b01c-0f47a3e7ef37";
+              product.picURL =
+                "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosShoeIcon.png?alt=media&token=0bd478f3-4af7-4add-b01c-0f47a3e7ef37";
               this.productsCollection.add(product);
               break;
             case "Others":
-              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosOtherIcon.png?alt=media&token=43e9b891-9288-4143-a5a5-8de211ccce48";
+              product.picURL =
+                "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosOtherIcon.png?alt=media&token=43e9b891-9288-4143-a5a5-8de211ccce48";
               this.productsCollection.add(product);
               break;
 
@@ -849,8 +832,7 @@ export default class FirebaseServices {
               break;
           }
         }
-      }
-      else {
+      } else {
         if (product.picture != null) {
           companyProductImageLocation.put(product.picture).then(snapshot => {
             snapshot.ref
@@ -865,23 +847,26 @@ export default class FirebaseServices {
                 this.productsCollection.add(product);
               });
           });
-        }
-        else {
+        } else {
           switch (product.category) {
             case "Electronics":
-              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosElectronicIcon.png?alt=media&token=9322facb-467e-4379-b9a6-a5d447c8677d";
+              product.picURL =
+                "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosElectronicIcon.png?alt=media&token=9322facb-467e-4379-b9a6-a5d447c8677d";
               this.productsCollection.add(product);
               break;
             case "Sports":
-              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosSportsIcon.png?alt=media&token=25ab91bb-e9a7-4dd7-b15a-fb9c29afd37d";
+              product.picURL =
+                "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosSportsIcon.png?alt=media&token=25ab91bb-e9a7-4dd7-b15a-fb9c29afd37d";
               this.productsCollection.add(product);
               break;
             case "Shoes":
-              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosShoeIcon.png?alt=media&token=0bd478f3-4af7-4add-b01c-0f47a3e7ef37";
+              product.picURL =
+                "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosShoeIcon.png?alt=media&token=0bd478f3-4af7-4add-b01c-0f47a3e7ef37";
               this.productsCollection.add(product);
               break;
             case "Others":
-              product.picURL = "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosOtherIcon.png?alt=media&token=43e9b891-9288-4143-a5a5-8de211ccce48";
+              product.picURL =
+                "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosOtherIcon.png?alt=media&token=43e9b891-9288-4143-a5a5-8de211ccce48";
               this.productsCollection.add(product);
               break;
 
@@ -894,9 +879,7 @@ export default class FirebaseServices {
     }
   };
 
-  setDefaultImage = pic => {
-
-  }
+  setDefaultImage = pic => {};
 
   createUser = user => {
     return new Promise((resolve, reject) => {
@@ -964,7 +947,6 @@ export default class FirebaseServices {
                   name,
                   picURL,
                   address,
-                  phoneNumber,
                   email,
                   description
                 } = doc.data();
@@ -975,7 +957,6 @@ export default class FirebaseServices {
                   name,
                   picURL,
                   address,
-                  phoneNumber,
                   email,
                   description
                 };
@@ -1049,8 +1030,7 @@ export default class FirebaseServices {
                   //this.productsCollection.add(product);
                 });
             });
-          }
-          else {
+          } else {
             return this.productsCollection.doc(_key).set(
               {
                 category: p.category,
@@ -1092,9 +1072,7 @@ export default class FirebaseServices {
                 //console.log("updating:  " + _key);
               });
           });
-
-        }
-        else {
+        } else {
           return this.productsCollection.doc(_key).set(
             {
               category: p.category,
@@ -1109,6 +1087,6 @@ export default class FirebaseServices {
           );
         }
       }
-    };
-  }
+    }
+  };
 }

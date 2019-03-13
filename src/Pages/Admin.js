@@ -493,7 +493,6 @@ class TableRowBrands extends Component {
         description: row.description,
         email: row.email,
         name: row.name,
-        phoneNumber: row.phoneNumber,
         picture: row.picture
       }
     };
@@ -542,7 +541,6 @@ class TableRowBrands extends Component {
         <td key={`${row.key}name`}>{row.name}</td>
         <td key={`${row.key}email`}>{row.email}</td>
         <td key={`${row.key}address`}>{row.address}</td>
-        <td key={`${row.key}phoneNumber`}>{row.phoneNumber}</td>
         <td key={`${row.key}edit`}>
           <button className="btn btn-primary" onClick={this.openModal}>
             View
@@ -622,18 +620,6 @@ class TableRowBrands extends Component {
                     onChange={this.handleChange}
                   />
                 </div>
-                <div className="form-group">
-                  <label htmlFor="phoneNumberInput">PhoneNumber</label>
-                  <input
-                    type="text"
-                    name="phoneNumber"
-                    className="form-control"
-                    id="phoneNumberInput"
-                    placeholder="Edit PhoneNumber"
-                    defaultValue={row.phoneNumber}
-                    onChange={this.handleChange}
-                  />
-                </div>
               </div>
               <div className="row">
                 <div className="form-group">
@@ -684,7 +670,6 @@ class BrandsTable extends Component {
             <th scope="col">Name</th>
             <th scope="col">Email</th>
             <th scope="col">Address</th>
-            <th scope="col">Phone Number</th>
             <th scope="col">Edit</th>
           </tr>
         </thead>
@@ -711,7 +696,6 @@ class CompaniesTable extends Component {
             <th scope="col">Name</th>
             <th scope="col">Email</th>
             <th scope="col">Address</th>
-            <th scope="col">Phone Number</th>
             <th scope="col">Edit</th>
           </tr>
         </thead>
@@ -732,7 +716,6 @@ class TableRowCompanies extends Component {
         adminUserID: row.adminUserID,
         email: row.email,
         name: row.name,
-        phoneNumber: row.phoneNumber,
         picture: row.picture
       }
     };
@@ -781,7 +764,6 @@ class TableRowCompanies extends Component {
         <td key={`${row.key}name`}>{row.name}</td>
         <td key={`${row.key}email`}>{row.email}</td>
         <td key={`${row.key}address`}>{row.address}</td>
-        <td key={`${row.key}phoneNumber`}>{row.phoneNumber}</td>
         <td key={`${row.key}edit`}>
           <button className="btn btn-primary" onClick={this.openModal}>
             View
@@ -849,18 +831,6 @@ class TableRowCompanies extends Component {
                 </div>
               </div>
               <div className="row">
-                <div className="form-group">
-                  <label htmlFor="phoneNumberInput">PhoneNumber</label>
-                  <input
-                    type="text"
-                    name="phoneNumber"
-                    className="form-control"
-                    id="phoneNumberInput"
-                    placeholder="Edit PhoneNumber"
-                    defaultValue={row.phoneNumber}
-                    onChange={this.handleChange}
-                  />
-                </div>
                 <div className="form-group">
                   <label htmlFor="pictureInput">Picture</label>
                   <input

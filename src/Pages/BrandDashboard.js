@@ -425,7 +425,6 @@ export class BrandDashboard extends Component {
         name: "",
         picture: "",
         address: "",
-        phoneNumber: "",
         email: "",
         description: ""
       },
