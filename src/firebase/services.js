@@ -785,13 +785,12 @@ export default class FirebaseServices {
   };
 
   addProduct = product => {
-    var brandProductImageLocation = this.brandImgdb.child(product.picture.name);
-    var companyProductImageLocation = this.companyImgdb.child(
-      product.picture.name
-    );
     if (product) {
       if (product.sponsored) {
         if (product.picture != null) {
+          var brandProductImageLocation = this.brandImgdb.child(
+            product.picture.name
+          );
           brandProductImageLocation.put(product.picture).then(snapshot => {
             snapshot.ref
               .getDownloadURL()
@@ -806,34 +805,41 @@ export default class FirebaseServices {
           });
         } else {
           switch (product.category) {
-            case "Electronics":
+            case "electronics":
               product.picURL =
                 "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosElectronicIcon.png?alt=media&token=9322facb-467e-4379-b9a6-a5d447c8677d";
               this.productsCollection.add(product);
               break;
-            case "Sports":
+            case "sports":
               product.picURL =
                 "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosSportsIcon.png?alt=media&token=25ab91bb-e9a7-4dd7-b15a-fb9c29afd37d";
               this.productsCollection.add(product);
               break;
-            case "Shoes":
+            case "shoes":
               product.picURL =
                 "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosShoeIcon.png?alt=media&token=0bd478f3-4af7-4add-b01c-0f47a3e7ef37";
               this.productsCollection.add(product);
               break;
-            case "Others":
+            case "others":
               product.picURL =
                 "https://firebasestorage.googleapis.com/v0/b/kudoshealth-2961f.appspot.com/o/DefaultImages%2FKudosOtherIcon.png?alt=media&token=43e9b891-9288-4143-a5a5-8de211ccce48";
               this.productsCollection.add(product);
               break;
 
             default:
-              alert("Error adding product");
+              alert(
+                "Error adding product" +
+                  " This is the category " +
+                  product.category
+              );
               break;
           }
         }
       } else {
         if (product.picture != null) {
+          var companyProductImageLocation = this.companyImgdb.child(
+            product.picture.name
+          );
           companyProductImageLocation.put(product.picture).then(snapshot => {
             snapshot.ref
               .getDownloadURL()
@@ -1036,7 +1042,7 @@ export default class FirebaseServices {
                 category: p.category,
                 description: p.description,
                 name: p.name,
-                picURL: p.picURL,
+                //picURL: p.picURL,
                 price: p.price,
                 stock: p.stock,
                 tresholdPercentage: p.tresholdPercentage
@@ -1078,7 +1084,7 @@ export default class FirebaseServices {
               category: p.category,
               description: p.description,
               name: p.name,
-              picURL: p.picURL,
+              //picURL: p.picURL,
               price: p.price,
               stock: p.stock,
               tresholdPercentage: p.tresholdPercentage

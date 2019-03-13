@@ -70,7 +70,7 @@ class BrandProductEditingModal extends React.Component {
             id="categoryList"
             name="category"
             className="form-control"
-            defaultValue=""
+            defaultValue={this.state.category.charAt(0).toUpperCase() + this.state.category.slice(1)}
             onChange={this.handleChange}
           >
             <option value="" disabled hidden>
