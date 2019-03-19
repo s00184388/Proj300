@@ -15,6 +15,7 @@ const fs = new FirebaseServices();
 Modal.setAppElement("#root");
 //components
 
+//component for rendering the "Add new product" form
 class ProductForm extends Component {
   constructor(props) {
     super(props);
@@ -37,12 +38,14 @@ class ProductForm extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  //when the component receives new props (first time rendering props received will be undefined/null)
   componentWillReceiveProps(nextProps) {
     if (nextProps.brand !== this.props.brand) {
       this.setState({ brandID: nextProps.brand.key });
     }
   }
 
+  //method gets called when the input fields are changed
   handleChange = e => {
     let newState = {};
     newState[e.target.name] = e.target.value;
@@ -56,6 +59,7 @@ class ProductForm extends Component {
     }
   };
 
+  //input validation
   validate = () => {
     let errors = {};
     let formIsValid = true;
@@ -85,8 +89,6 @@ class ProductForm extends Component {
       errors["category"] = "*Please choose a category!";
     }
 
-    
-
     this.setState({
       errors: errors
     });
@@ -95,6 +97,7 @@ class ProductForm extends Component {
     return formIsValid;
   };
 
+  //method called on clicking the submit button
   handleSubmit = e => {
     e.preventDefault();
 
@@ -114,9 +117,12 @@ class ProductForm extends Component {
     };
 
     //console.log(this.validate());
-    console.log(product);
+    //console.log(product);
     if (this.validate()) {
+      //adding the product to the database
       fs.addProduct(product);
+
+      //calling the "show alert" method from the base component
       this.props.showAlert(
         "success",
         "Product has been added to the brand",
@@ -284,7 +290,7 @@ class TableRow extends Component {
   }
 
   showModal = e => {
-    console.log("key = " + e.key);
+    //console.log("key = " + e.key);
     this.setState({ show: true });
   };
 
@@ -411,6 +417,7 @@ export class BrandDashboard extends Component {
     this.showAlert = this.showAlert.bind(this);
   }
 
+  //calling the "Show alert" method defined in the App component
   showAlert(type, message, headline) {
     this.props.showAlert(type, message, headline);
   }
