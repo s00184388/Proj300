@@ -6,6 +6,7 @@ import ReactLoading from "react-loading";
 
 const fs = new FirebaseServices();
 
+//component for showing main data about the account
 class Panel extends Component {
   constructor(props) {
     super(props);
@@ -30,6 +31,7 @@ class Panel extends Component {
       },
       fetchInProgress: 0
     };
+    //binding methods so they can use the "this."
     this.timeConverter = this.timeConverter.bind(this);
     this.resendConfirmation = this.resendConfirmation.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);

@@ -20,6 +20,7 @@ library.add(faPlus, faMinus, faTrash, faInfoCircle);
 
 const fs = new FirebaseServices();
 
+//component for rendering employees table
 class TableRow extends Component {
   constructor(props) {
     super(props);
@@ -27,7 +28,8 @@ class TableRow extends Component {
     this.decrementCoins = this.decrementCoins.bind(this);
     this.deleteEmployee = this.deleteEmployee.bind(this);
   }
-
+  //method for incrementing an employee's coins
+  //the company admin can add coins to employees by pressing on a button
   incrementCoins() {
     var coins = this.props.row.coins;
     coins++;
@@ -35,13 +37,11 @@ class TableRow extends Component {
     fs.usersCollection
       .doc(userID)
       .update({ coins: coins })
-      .then(() => {
-        console.log("coins incremented");
-      })
       .catch(err => {
         console.log(err);
       });
   }
+  //same for decrementing coins
   decrementCoins() {
     var coins = this.props.row.coins;
     coins--;
@@ -49,22 +49,18 @@ class TableRow extends Component {
     fs.usersCollection
       .doc(userID)
       .update({ coins: coins })
-      .then(() => {
-        console.log("coins decremented");
-      })
       .catch(err => {
         console.log(err);
       });
   }
 
+  //deleting an employee from the employees table and from the database
+  //this deletes his account and everything
   deleteEmployee() {
     var userID = this.props.row.key;
     fs.usersCollection
       .doc(userID)
       .delete()
-      .then(() => {
-        console.log("employee deleted");
-      })
       .catch(err => {
         console.log(err);
       });
@@ -115,6 +111,8 @@ class TableRow extends Component {
   }
 }
 
+//component for account details, employees table and editing account details
+//similar to the one from the brand profile
 class Panel extends Component {
   constructor(props) {
     super(props);

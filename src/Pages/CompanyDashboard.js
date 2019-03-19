@@ -13,7 +13,7 @@ library.add(faArrowDown, faEdit);
 //constant
 const fs = new FirebaseServices();
 
-//components
+//component for rendering the "Add new product" form
 class ProductForm extends Component {
   constructor() {
     super();
@@ -38,19 +38,19 @@ class ProductForm extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  //method gets called when the input fields are changed
   handleChange = e => {
     let fields = this.state.fields;
     if ([e.target.name] == "picture") {
       this.setState({
         picture: e.target.files[0]
       });
-      console.log(e.target.files[0]);
     }
     fields[e.target.name] = e.target.value;
     this.setState({ fields });
-    console.log(this.state.fields);
   };
 
+  //input fields validation method
   validate = () => {
     let fields = this.state.fields;
     let errors = {};
@@ -85,19 +85,11 @@ class ProductForm extends Component {
       formIsValid = false;
       errors["picture"] = "*Please use a picture";
     }
-
-    this.setState(
-      {
-        errors: errors
-      },
-      () => {
-        console.log(this.state.errors);
-      }
-    );
-
+    this.setState({ errors: errors });
     return formIsValid;
   };
 
+  //method called on clicking the submit button
   handleSubmit = e => {
     e.preventDefault();
 
@@ -122,7 +114,6 @@ class ProductForm extends Component {
       tresholdPercentage: this.state.tresholdPercentage
     };
 
-    console.log(this.validate());
     if (this.validate()) {
       fs.addProduct(product);
       this.setState({
@@ -135,7 +126,6 @@ class ProductForm extends Component {
           showingAlert: false
         });
       }, 5000);
-      console.log(product);
     }
   };
 
@@ -294,7 +284,6 @@ class TableRow extends Component {
   }
 
   showModal = e => {
-    console.log("key = " + e.key);
     this.setState({ show: true });
   };
 
@@ -318,13 +307,11 @@ class TableRow extends Component {
     };
     this.state.isEditing = this.state.isEditing;
     //this.setState(state => ({isEditing : true}));
-    console.log(e.key);
     fs.updateProduct(this.state.editProduct, e.key);
   }
 
   deleteItem(key) {
     fs.deleteItemFromDashboard(key);
-    console.log("deleting item : " + key);
   }
 
   render() {
