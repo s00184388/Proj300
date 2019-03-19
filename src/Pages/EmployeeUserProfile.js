@@ -93,6 +93,7 @@ class Sidepage extends Component {
   render() {
     const user = this.props.user;
     const coins = user.coins;
+    const points = user.points;
     var role = user.role;
     role = role.charAt(0).toUpperCase() + role.slice(1);
     const created = this.timeConverter(user.created.seconds);
@@ -110,6 +111,12 @@ class Sidepage extends Component {
               <strong>Joined: </strong>
             </span>
             {created}
+          </li>
+          <li className="list-group-item p">
+            <span className="pull-left">
+              <strong>Points: </strong>
+            </span>
+            {points}
           </li>
           <li className="list-group-item p">
             <span className="pull-left">
