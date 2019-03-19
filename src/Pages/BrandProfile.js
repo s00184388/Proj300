@@ -43,6 +43,8 @@ class Panel extends Component {
     this.decrementLoading = this.decrementLoading.bind(this);
   }
 
+  //converting timestamp into time
+  //because we save the created datetime as a timestamp
   timeConverter(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp * 1000);
     var months = [
@@ -63,15 +65,18 @@ class Panel extends Component {
     var month = months[a.getMonth()];
     var day = a.getDate();
     var time = `${day} ${month} ${year}`;
-    return time;
+    return time; //as a string
   }
 
+  //increment the number of loading processes
   incrementLoading() {
     var ct = this.state.fetchInProgress;
     ct++;
     this.setState({ fetchInProgress: ct });
   }
 
+  //decrements the number of processes
+  //the loading animation stops if this number is 0
   decrementLoading() {
     var ct = this.state.fetchInProgress;
     ct--;
@@ -100,6 +105,7 @@ class Panel extends Component {
     }
   }
 
+  //when user changed data, the object is modified
   handleUserChange(e) {
     var userDetails = {};
     userDetails = { ...this.state.userDetails };
@@ -107,15 +113,18 @@ class Panel extends Component {
     this.setState({ userDetails });
   }
 
+  //on logout the firebase logout method is being called
   handleLogout = () => {
     firebase
       .auth()
       .signOut()
       .then(() => {
+        //redirects to the login page
         this.props.history.push("/login");
       });
   };
 
+  //when the passwords are changed, the object is being saved
   handlePasswordChange(e) {
     var passwords = {};
     passwords = { ...this.state.passwords };
@@ -123,6 +132,7 @@ class Panel extends Component {
     this.setState({ passwords });
   }
 
+  //when brand info changed, they are saved in an object
   handleBrandChange(e) {
     var brandDetails = {};
     brandDetails = { ...this.state.brandDetails };
@@ -130,12 +140,16 @@ class Panel extends Component {
     this.setState({ brandDetails });
   }
 
+  //method called on submitting the info changed
   submitEdit(e) {
     e.preventDefault();
     var newPassword = this.state.passwords.newPassword;
     var newPassword2 = this.state.passwords.newPassword2;
     var oldPassword = this.state.passwords.oldPassword;
     var currentUser = firebase.auth().currentUser;
+    //saving credentials given by the firebase using email and password
+    //password was provided in a special field, email is already saved
+    //some special actions like changing the email or password requires these credentials
     var cred = firebase.auth.EmailAuthProvider.credential(
       currentUser.email,
       oldPassword
@@ -147,32 +161,44 @@ class Panel extends Component {
     ) {
       this.incrementLoading();
       if (newPassword === newPassword2) {
+        //if the user wants to change password, it has to be recently logged in.
+        //to be sure of that, on every password change, it will reauthenticate using the credentials
+        //this doesn't mean user is getting logged out and relogged in
+        //user will see no difference
         currentUser
           .reauthenticateAndRetrieveDataWithCredential(cred)
           .then(() => {
+            //updating password in db
             currentUser
               .updatePassword(newPassword)
               .then(() => {
+                //emptying fields
                 let passwords = this.state.passwords;
                 passwords.oldPassword = "";
                 passwords.newPassword = "";
                 passwords.newPassword2 = "";
                 this.setState({ passwords });
+                //getting new credentials for changing the email
                 cred = firebase.auth.EmailAuthProvider.credential(
                   currentUser.email,
                   newPassword
                 );
+                //same as before, only differnce is that
+                //user will get logged out only when email changed
+                //and has to login again
                 currentUser
                   .reauthenticateAndRetrieveDataWithCredential(cred)
                   .then(() => {
                     currentUser
                       .updateEmail(this.state.userDetails.email)
                       .then(() => {
+                        //on correclty changing email, notification is shown
                         this.props.showAlert(
                           "success",
                           "Email changed! Pleadsadsse validate new email as soon as possible and log in again ",
                           "Email and Password changed"
                         );
+                        //updating all other fields
                         this.resendConfirmation();
                         this.updateUser();
                         this.updateBrand(cred);
@@ -308,6 +334,7 @@ class Panel extends Component {
   updateUser() {
     var userDetails = this.state.userDetails;
     var user = this.props.user;
+    //checking if user data needs to be updated
     if (
       userDetails.firstName !== user.firstName ||
       userDetails.lastName !== user.lastName ||
@@ -331,6 +358,7 @@ class Panel extends Component {
   updateBrand(cred) {
     var brandDetails = this.state.brandDetails;
     var brand = this.props.brand;
+    //checking if brand data needs to be updated
     if (
       brand.email !== brandDetails.email ||
       brand.address !== brandDetails.address ||
@@ -406,6 +434,8 @@ class Panel extends Component {
       });
   }
 
+  //method for resending confirmation email
+  //for having a verified email
   resendConfirmation() {
     firebase
       .auth()
