@@ -1,6 +1,5 @@
 import firebase from "firebase";
 
-
 const config = {
   apiKey: "AIzaSyBUYWmaD070queqzty2IDqiqJIdQ12jcK4",
   authDomain: "kudoshealth-2961f.firebaseapp.com",
@@ -10,14 +9,6 @@ const config = {
   messagingSenderId: "62840631243"
 };
 
-const fire=firebase.initializeApp(config);
+const fire = firebase.initializeApp(config);
 
 export default fire;
-
-// *** Auth API ***//
-
-/*CreateUserWithEmailAndPassword = (email, password) =>
-  this.auth.CreateUserWithEmailAndPassword(email, password);
-
-SignInWithEmailAndPassword = (email, password) =>
-  this.auth.SignInWithEmailAndPassword(email, password);*/

@@ -12,6 +12,7 @@ export default class FirebaseServices {
     this.db.settings({
       timestampsInSnapshots: true
     });
+    //firestore collection
     this.productsCollection = this.db.collection("Products");
     this.usersCollection = this.db.collection("Users");
     this.wishlistsCollection = this.db.collection("Wishlists");
@@ -20,14 +21,20 @@ export default class FirebaseServices {
     this.companiesCollection = this.db.collection("Companies");
   }
 
+  //method for getting non-sponsored products with one condition
   getProducts = (field, query) => {
+    //observable pattern for updating the products in real-time
+    //as they are updated in the database
     return new Observable(observer => {
+      //testing to see if data is valid
       if (field && query) {
         this.productsCollection
           .where("sponsored", "==", false)
           .where(field.toString(), "==", query)
+          //getting the snapshot from firestore
           .onSnapshot(querySnapshot => {
             const products = [];
+            //cycling through the snapshot and reading the documents
             querySnapshot.forEach(doc => {
               const {
                 brandID,
@@ -41,6 +48,7 @@ export default class FirebaseServices {
                 sponsored,
                 tresholdPercentage
               } = doc.data();
+              //putting document properties in an array
               products.push({
                 key: doc.id,
                 doc,
@@ -56,14 +64,18 @@ export default class FirebaseServices {
                 tresholdPercentage
               });
             });
+            //returning the array of products
             observer.next(products);
           });
       } else {
+        //if wrong data provided, return an empty array
         observer.next([]);
       }
     });
   };
 
+  //a method for getting all products, no parameters required
+  //note: this is the new JavaScript way of writing methods
   getAllProducts = () => {
     return new Observable(observer => {
       this.productsCollection.onSnapshot(querySnapshot => {
@@ -101,6 +113,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting all sponsored products and ordering them by price (descending)
   getSponsoredProducts = () => {
     return new Observable(observer => {
       this.productsCollection
@@ -141,6 +154,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting sponsored products with a condition and ordering them in descending order
   getBrandedProducts = (field, query) => {
     return new Observable(observer => {
       if (field && query) {
@@ -186,6 +200,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting a user's wishlist
   getWishlist = userID => {
     return new Observable(observer => {
       if (userID) {
@@ -211,6 +226,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting all wishlists
   getAllWishlists = () => {
     return new Observable(observer => {
       this.wishlistsCollection.onSnapshot(querySnapshot => {
@@ -230,22 +246,27 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting a user's wishlist products
   getWishListItems = userID => {
     return new Observable(observer => {
       var wishlist = [];
       var gainedCoins = 0;
       if (userID) {
+        //calling the getWishlist method defined above
         this.getWishlist(userID).subscribe(items => {
           wishlist.push(items);
           const products = [];
           items.forEach(item => {
             gainedCoins = item.gainedCoins;
+            //querying the products collection with the condition
+            //that the product id is equal to the one already found in the wishlist
             this.productsCollection
               .where(
                 firebase.firestore.FieldPath.documentId(),
                 "==",
                 item.productID
               )
+              //then getting the product data
               .onSnapshot(querySnapshot => {
                 querySnapshot.forEach(doc => {
                   const {
@@ -279,17 +300,23 @@ export default class FirebaseServices {
                 observer.next(products);
               });
           });
+          //if the wishlist was empty, the callback function is never called
+          //so i call it gets called in here
           if (items.length == 0) {
             observer.next([]);
           }
         });
+        //if the parameters are wrong (undefined or null)
       } else {
         observer.next([]);
       }
     });
   };
 
+  //method for getting a user by email
   getUserByEmail = email => {
+    //every query in the database have to return a promise, because javascript is asynchronous
+    //this method uses promises and not observable because it is no need to update anything on change
     return new Promise((resolve, reject) => {
       if (email) {
         this.usersCollection
@@ -342,15 +369,19 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting the connected user
   getConnectedUser = () => {
+    //calling the firebase method for the connected user (from this current session)
     var user = firebase.auth().currentUser;
     var userEmail = "";
     if (user) {
       userEmail = user.email;
-      console.log(userEmail);
     } else {
       console.log("no connected user found");
     }
+    //returns user data as observable, by querying the users table with
+    //with the condition of the email (firebase's method returns an object with email and an id
+    //which is not the same as the one in the collection)
     return new Observable(observer => {
       if (userEmail) {
         this.usersCollection
@@ -397,6 +428,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting a user using the userID
   getUser = userID => {
     return new Observable(observer => {
       if (userID) {
@@ -443,6 +475,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting all the users
   getAllUsers = () => {
     return new Observable(observer => {
       this.usersCollection.onSnapshot(querySnapshot => {
@@ -483,6 +516,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting device using device id
   getDevice = deviceID => {
     return new Observable(observer => {
       if (deviceID) {
@@ -492,12 +526,12 @@ export default class FirebaseServices {
             var device = {};
             querySnapshot.forEach(doc => {
               const {
-                accessToken,
-                refreshToken,
-                api,
-                distance,
-                apiClientID,
-                userID
+                accessToken, //token for accessing API data, after granting access by the user
+                refreshToken, //token for refreshing the accessToken after it expired
+                api, //fitbit or strava
+                distance, //last distance red from the api
+                apiClientID, //user's api id
+                userID //user id from users collection
               } = doc.data();
               device = {
                 key: doc.id,
@@ -518,6 +552,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting a device by the userid (any user can have only one device)
   getDevicebyUser = userID => {
     return new Promise((resolve, reject) => {
       if (userID) {
@@ -553,6 +588,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting all devices
   getDevices = () => {
     return new Observable(observer => {
       this.connectedDevicesCollection.onSnapshot(querySnapshot => {
@@ -582,6 +618,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting a brand using brandID
   getBrand = brandID => {
     return new Observable(observer => {
       if (brandID) {
@@ -617,6 +654,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting all brands
   getBrands = () => {
     return new Observable(observer => {
       this.brandsCollection.onSnapshot(querySnapshot => {
@@ -646,6 +684,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting a company by its id
   getCompany = companyID => {
     return new Observable(observer => {
       if (companyID) {
@@ -671,6 +710,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting all companies
   getCompanies = () => {
     return new Observable(observer => {
       this.companiesCollection.onSnapshot(querySnapshot => {
@@ -692,9 +732,12 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting a company's employees in descending order by coins
   getCompanyEmployees = companyID => {
     return new Observable(observer => {
       if (companyID) {
+        //querying the users collection
+        //and filtering the users by role and searching by user's companyId
         this.usersCollection
           .where("role", "==", "employee")
           .where("companyID", "==", companyID)
@@ -733,6 +776,7 @@ export default class FirebaseServices {
     });
   };
 
+  //method for getting a company by its name
   getCompanyByName = companyName => {
     return new Promise((resolve, reject) => {
       if (companyName) {
