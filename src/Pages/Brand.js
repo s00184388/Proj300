@@ -213,8 +213,8 @@ class Product extends React.Component {
     const userKey = user.key;
     const productName = product.name;
     const productDescription = product.description;
-    const productPicture = product.picture;
-    const brandPicture = brand.picture;
+    const productPicture = product.picURL;
+    const brandPicture = brand.picURL;
     const brandName = brand.name;
     const price = product.price;
     const productKey = product.key;
@@ -386,7 +386,7 @@ export class Brand extends Component {
     ));
     return (
       <div className="container">
-        <h1>
+        <h1 className="text-white">
           Welcome to the <b>{brandName}</b> page
         </h1>
         {fetchInProgress ? (

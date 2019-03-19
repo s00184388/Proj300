@@ -15,7 +15,7 @@ class BrandCard extends Component {
   render() {
     const brand = this.props.brand;
     const brandName = brand.name;
-    const brandPicture = brand.picture;
+    const brandPicture = brand.picURL;
     const brandDescription = brand.description;
     //style for the image
     const style = {
@@ -26,7 +26,9 @@ class BrandCard extends Component {
       <div className="col-md-3 m-4">
         <Link to={`/brands/${brandName}`} className="custom-card">
           <div className="card " style={{ width: "18rem" }}>
-            <h4 className="card-header text-center bg-primary">{brandName}</h4>
+            <h4 className="card-header text-center bg-primary text-white">
+              {brandName}
+            </h4>
             <img
               style={style}
               className="card-img-top rounded mx-auto d-block"

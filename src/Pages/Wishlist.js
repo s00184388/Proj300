@@ -255,12 +255,12 @@ class Products extends React.Component {
     const productName = product.name;
     const stock = product.stock;
     const productDescription = product.description;
-    const productPicture = product.picture;
-    const brandPicture = brand.picture;
+    const productPicture = product.picURL;
+    const brandPicture = brand.picURL;
     const brandName = brand.name;
     const company = this.state.company;
     const companyName = company.name;
-    const companyPicture = company.picture;
+    const companyPicture = company.picURL;
     const price = product.price;
     const tresholdPercentage = product.tresholdPercentage;
     const priceToUnlock = (price * tresholdPercentage).toFixed(2);

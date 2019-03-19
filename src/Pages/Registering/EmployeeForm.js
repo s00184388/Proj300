@@ -215,9 +215,9 @@ export class EmployeeForm extends Component {
         this.state.fields.pwd1
       )
       .then(() => {
-        console.log("role for creating: " + this.state.role);
+        //console.log("role for creating: " + this.state.role);
         if (this.state.role === "employee") {
-          console.log("creating employee");
+          //console.log("creating employee");
           fs.createUser(user)
             .then(userKey => {
               var currentUser = firebase.auth().currentUser;

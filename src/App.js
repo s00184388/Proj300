@@ -202,6 +202,9 @@ class App extends Component {
     const MyBrand = props => {
       return <Brand user={this.state.user} {...props} />;
     };
+    const MyBrands = props => {
+      return <Brands {...props} />;
+    };
 
     const MyCompanyDashboard = props => {
       return (
@@ -284,7 +287,7 @@ class App extends Component {
                   exact
                   path={"/brands"}
                   role={this.userRole("employee")}
-                  component={MyBrand}
+                  component={MyBrands}
                 />
                 <PrivateRoute
                   path="/profile"
