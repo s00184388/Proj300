@@ -33,7 +33,7 @@ export class Navbar extends React.Component {
         role = letter + role.substr(1);
       }
       return (
-        <div className="ml-2">
+        <div className="ml-2 pt-1">
           <span className="circle" data-tip="React-tooltip">
             <p>{letter}</p>
           </span>
@@ -46,18 +46,16 @@ export class Navbar extends React.Component {
 
     const User = props => {
       return (
-        <div className="pull-right">
-          {/*<ul className="ml-5 p-4">}*/}
-          <li className="dropdown row">
+        <div>
+          <li class="dropdown">
             <div
-              className="dropdown-toggle text-white rows p-1"
+              className="dropdown-toggle text-white myAccount"
               data-toggle="dropdown"
             >
-              Welcome, {this.props.userName}!
+              <div className="pt-2">Welcome, {this.props.userName}!</div>
             </div>
-            <Round />
-            <ul id="dropdown" className="dropdown-menu customMenu">
-              <div className="navbar-login ">
+            <div id="dropdown" className="dropdown-menu">
+              <div className="navbar-login">
                 <div className="row">
                   <div className="mx-auto row">
                     <FontAwesomeIcon icon={faUser} className="fa-lg mr-2" />
@@ -105,30 +103,30 @@ export class Navbar extends React.Component {
                   </button>
                 </div>
               </div>
-            </ul>
+            </div>
           </li>
         </div>
       );
     };
     return (
-      <nav className="navbar navbar-expand-lg navbar-dark backgr">
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon" />
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav mr-auto ">
-            <div className="row ml-4 p-2">
-              {this.props.authenticated == false ? (
+      <div className="pb-3">
+        <nav className="navbar navbar-expand-lg navbar-dark backgr">
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon" />
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav mr-auto ">
+              {this.props.authenticated === false ? (
                 <li>
-                  <Link to={"/"} className="nav-link text-white h6 ml-2">
+                  <Link to={"/"} className="nav-link text-white">
                     {" "}
                     Home{" "}
                   </Link>
@@ -137,32 +135,23 @@ export class Navbar extends React.Component {
                 <div>
                   {this.props.userRole === "employee" && (
                     <div className="row">
-                      <li>
-                        <Link to={"/"} className="nav-link text-white h6 ml-2">
+                      <li className="">
+                        <Link to={"/"} className="nav-link text-white">
                           Home{" "}
                         </Link>
                       </li>
                       <li>
-                        <Link
-                          to={"/rewards"}
-                          className="nav-link text-white h6 ml-2 "
-                        >
+                        <Link to={"/rewards"} className="nav-link text-white">
                           Rewards{" "}
                         </Link>
                       </li>
                       <li>
-                        <Link
-                          to={"/wishlist"}
-                          className="nav-link text-white h6 ml-2 "
-                        >
+                        <Link to={"/wishlist"} className="nav-link text-white">
                           Wishlist{" "}
                         </Link>
                       </li>
                       <li>
-                        <Link
-                          to={"/brands"}
-                          className="nav-link text-white h6 ml-2 "
-                        >
+                        <Link to={"/brands"} className="nav-link text-white">
                           Brands{" "}
                         </Link>
                       </li>
@@ -171,14 +160,14 @@ export class Navbar extends React.Component {
                   {this.props.userRole === "brandAdmin" && (
                     <div className="row">
                       <li>
-                        <Link to={"/"} className="nav-link text-white h6 ml-2 ">
+                        <Link to={"/"} className="nav-link text-white">
                           Home
                         </Link>
                       </li>
                       <li>
                         <Link
                           to={"/brandDashboard"}
-                          className="nav-link h6 text-white ml-2"
+                          className="nav-link text-white "
                         >
                           Dashboard{" "}
                         </Link>
@@ -189,23 +178,20 @@ export class Navbar extends React.Component {
                   {this.props.userRole === "companyAdmin" && (
                     <div className="row">
                       <li>
-                        <Link to={"/"} className="nav-link text-white ml-2 h6 ">
+                        <Link to={"/"} className="nav-link text-white ">
                           Home{" "}
                         </Link>
                       </li>
                       <li>
                         <Link
                           to={"/companyDashboard"}
-                          className="nav-link text-white ml-2 h6 "
+                          className="nav-link text-white "
                         >
                           Dashboard{" "}
                         </Link>
                       </li>
                       <li>
-                        <Link
-                          to={"/brands"}
-                          className="nav-link text-white ml-2 h6 "
-                        >
+                        <Link to={"/brands"} className="nav-link text-white">
                           Brands{" "}
                         </Link>
                       </li>
@@ -213,28 +199,23 @@ export class Navbar extends React.Component {
                   )}
                 </div>
               )}
-            </div>
-          </ul>
-          <ul className="navbar-nav">
+            </ul>
             {this.props.authenticated ? (
-              <User />
+              <form class="form-inline my-2 my-lg-0">
+                <ul className="navbar-nav mr-auto">
+                  <User /> <Round />
+                </ul>
+              </form>
             ) : (
-              <div className="pull-right">
-                <div className="nav-item mr-5">
-                  <div className="pt-4 col-lg-4 mx-auto">
-                    <Link
-                      to="/login"
-                      className="btn btn-warning btn-sm text-white"
-                    >
-                      Login
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <form class="form-inline my-2 my-lg-0">
+                <Link to="/login" className="nav-link text-white">
+                  Login
+                </Link>
+              </form>
             )}
-          </ul>
-        </div>
-      </nav>
+          </div>
+        </nav>
+      </div>
     );
   }
 }

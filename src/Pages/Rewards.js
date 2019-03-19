@@ -27,14 +27,12 @@ const modalStyle = {
     transform: "translate(-50%, -50%)",
     padding: "0",
     display: "inline-block",
-    overflow: "hidden"
+    overflow: "hidden",
+    width: "50%"
   }
 };
 
 class Picture extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     const productPicture = this.props.url;
     const productName = this.props.name;
@@ -42,7 +40,7 @@ class Picture extends React.Component {
       <img
         className="rounded imag"
         width="100"
-        height="90"
+        height="95"
         src={productPicture}
         alt={productName}
       />
@@ -51,9 +49,6 @@ class Picture extends React.Component {
 }
 
 class ProductPrice extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     const price = this.props.price;
     return <h6>{price} Kudos</h6>;
@@ -105,7 +100,6 @@ class WishlistButton extends React.Component {
     return (
       <button
         className="wishlistButton btn btn-primary btn-sm"
-        role="button"
         onClick={this.addToWishlist}
         disabled={inWishlist}
       >
@@ -133,9 +127,6 @@ class Title extends React.Component {
   }
 }
 class BrandPicture extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     var productPicture = this.props.brandPicture;
     var productName = this.props.brandName;
@@ -235,10 +226,9 @@ class Product extends React.Component {
     const companyName = company.name;
     const companyPicture = company.picURL;
     return (
-      <div className="pb-5">
+      <div className="card card-primary">
         <div
           className={
-            "card card-primary productCard" +
             (inWishlist ? " inWishlist " : " ") +
             (sponsored ? " sponsored " : " ")
           }
@@ -250,22 +240,22 @@ class Product extends React.Component {
             style={modalStyle}
             shouldCloseOnOverlayClick={true}
           >
-            <div style={{ height: "80%", position: "relative" }}>
+            <div style={{ height: "60%", position: "relative" }}>
               <ProductModal product={product} user={user} />
             </div>
             <a href="#" className="closeButton" onClick={this.closeModal} />
           </Modal>
-          <div
-            className="card-header bg-primary p-0"
-            style={{ width: "100%", height: "17%" }}
-          >
+
+          <div className="card-header bg-primary">
             <div className="row">
-              <div className="d-flex mx-auto">
+              <div className="col-sm-10" style={{ color: "white" }}>
                 <Title
                   brandName={brandName}
                   sponsored={sponsored}
                   companyName={companyName}
                 />
+              </div>
+              <div className="col-sm-2">
                 <BrandPicture
                   className="brandPicture"
                   companyName={companyName}
@@ -279,26 +269,33 @@ class Product extends React.Component {
           </div>
           <div className="card-body">
             <div className="row">
-              <div className="col-lg-4">
-                <Picture
-                  className="productPicture"
-                  url={productPicture}
-                  name={productName}
-                />
+              <div className="col-sm-9">
+                <h5 style={{ fontWeight: "bold", color: "dimgrey" }}>
+                  {productName}
+                </h5>
+                <hr />
+                <h6 style={{ fontWeight: "bold", color: "dimgrey" }}>
+                  <ProductPrice price={price} />
+                </h6>
               </div>
-              <div className="col-lg-6 pt-4 ml-3">
-                <h5>{productName}</h5>
+              <div className="col-sm-3">
+                <div className="d-flex justify-content-end">
+                  <Picture
+                    className="productPicture"
+                    url={productPicture}
+                    name={productName}
+                  />
+                </div>
               </div>
             </div>
-            <div className="row pt-2 ml-1">
-              <p>{productDescription}</p>
+            <div className="row ml-1 pt-2">
+              <p style={{ fontWeight: "bold", color: "dimgrey" }}>
+                {productDescription}
+              </p>
             </div>
-            <hr />
             <div className="row">
-              <div className="col-lg-6 d-flex justify-content-start">
-                <ProductPrice price={price} />
-              </div>
-              <div className="col-lg-6 d-flex justify-content-end">
+              <div className="col-sm-6 text-left" />
+              <div className="col-sm-6 d-flex justify-content-end">
                 <WishlistButton
                   productKey={productKey}
                   userKey={userKey}
@@ -429,8 +426,8 @@ class Filters extends React.Component {
     const { orderBy, order, doOrderBy, doOrder } = this.props;
 
     return (
-      <div className="col-lg">
-        <p className="h6 text-center py-3">Filter By</p>
+      <div className="pb-5">
+        <h6 className="h5text1 py-3">Filter By</h6>
         <div className="py-2">
           <DropdownList
             data={rewardsType}
@@ -458,17 +455,6 @@ class Filters extends React.Component {
           <label htmlFor="affordableChk">
             <span />
             <div className="color">Only Affordable Items</div>
-          </label>
-        </section>
-        <section className="checkboxSection">
-          <input
-            id="wishlistChk"
-            type="checkbox"
-            onClick={this.handleWishlistChange}
-          />
-          <label htmlFor="wishlistChk">
-            <span />
-            <div className="color">No Wishlist Items</div>
           </label>
         </section>
         <section className="checkboxSection">
@@ -612,7 +598,7 @@ class ProductContainer extends React.Component {
     }
 
     const listProducts = products.map(product => (
-      <div className="col-md-4" key={product.key}>
+      <div className="col-sm-6 pb-5" key={product.key}>
         <Product product={product} user={user} wishlist={wishlist} />
       </div>
     ));
@@ -628,7 +614,7 @@ class ProductContainer extends React.Component {
             />
           </div>
         ) : (
-          <div className="row p-0">{listProducts}</div>
+          <div className="row">{listProducts}</div>
         )}
       </div>
     );
@@ -711,55 +697,41 @@ export class Rewards extends React.Component {
     const order = this.state.order;
     const wishlist = this.state.wishlist;
     const user = this.state.user;
-    const userCoins = user.coins;
-    const userName = user.firstName;
     return (
-      <div className="ml-4 mr-4">
-        {/*{
-          <button
-            className="btn btn-primary btn-sm"
-            type="button"
-            onClick={this.addFirebaseData}
-          >
-            Add data to Firebase
-          </button>
-        }
-      Hello, {userName}, you have {userCoins} Kudos*/}
-        <div className="row py-5">
-          <div className="col-lg-3">
-            <div className="card-header p-0">
-              <Filters
-                user={user}
-                wishlist={wishlist}
-                categoryFilter={categoryFilter}
-                onCategoryChange={this.handleCategoryChange}
-                affordableChecked={affordableChecked}
-                onAffordableChange={this.handleAffordableChange}
-                sponsoredChecked={sponsoredChecked}
-                onSponsoredChange={this.handleSponsoredChange}
-                wishlistChecked={wishlistChecked}
-                onWishlistChange={this.handleWishlistChange}
-                doOrderBy={this.doOrderBy}
-                orderBy={orderBy}
-                doOrder={this.doOrder}
-                order={order}
-              />
-            </div>
-          </div>
-
-          <div className="col-lg-9">
-            <ProductContainer
+      <div className="row py-5">
+        <div className="col-sm-3">
+          <div className="card-header myCard">
+            <Filters
               user={user}
               wishlist={wishlist}
               categoryFilter={categoryFilter}
+              onCategoryChange={this.handleCategoryChange}
               affordableChecked={affordableChecked}
-              wishlistChecked={wishlistChecked}
+              onAffordableChange={this.handleAffordableChange}
               sponsoredChecked={sponsoredChecked}
+              onSponsoredChange={this.handleSponsoredChange}
+              wishlistChecked={wishlistChecked}
+              onWishlistChange={this.handleWishlistChange}
+              doOrderBy={this.doOrderBy}
               orderBy={orderBy}
+              doOrder={this.doOrder}
               order={order}
-              style={{ position: "fixed" }}
             />
           </div>
+        </div>
+
+        <div className="col-sm-9">
+          <ProductContainer
+            user={user}
+            wishlist={wishlist}
+            categoryFilter={categoryFilter}
+            affordableChecked={affordableChecked}
+            wishlistChecked={wishlistChecked}
+            sponsoredChecked={sponsoredChecked}
+            orderBy={orderBy}
+            order={order}
+            style={{ position: "fixed" }}
+          />
         </div>
       </div>
     );

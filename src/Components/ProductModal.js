@@ -11,9 +11,6 @@ library.add(faInfoCircle);
 const firebaseServices = new FirebaseServices();
 
 class ProductProgressbar extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     const quantity = this.props.quantity;
     const remaining = this.props.remaining;
@@ -53,14 +50,9 @@ class ProductProgressbar extends React.Component {
   }
 }
 
-{
-  /*Picture component-fixed */
-}
+/*Picture component-fixed */
 
 class Picture extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     const productPicture = this.props.url;
     const productName = this.props.name;
@@ -76,69 +68,20 @@ class Picture extends React.Component {
   }
 }
 
-class BrandPicture extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  render() {
-    var productPicture = this.props.brandPicture;
-    var productName = this.props.brandName;
-    var sponsored = this.props.sponsored;
-    if (!sponsored) {
-      productPicture = this.props.companyPicture;
-      productName = this.props.companyName;
-    }
-    return (
-      <img
-        className="rounded imag d-block"
-        width="35"
-        height="35"
-        src={productPicture}
-        alt={productName}
-      />
-    );
-  }
-}
-
 class Title extends React.Component {
   render() {
     const brandName = this.props.brandName;
     const companyName = this.props.companyName;
     return (
-      <div className="row">
-        <div className="col-lg mr-4 p-2">
-          <strong>
-            {this.props.sponsored
-              ? `Sponsored by ${brandName}`
-              : `${companyName}`}{" "}
-          </strong>
-        </div>
+      <div>
+        <strong>
+          {this.props.sponsored
+            ? `Sponsored by ${brandName}`
+            : `${companyName}`}{" "}
+        </strong>
       </div>
     );
   }
-}
-
-{
-  /*Status component-fixed */
-}
-class Status extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  render() {
-    return (
-      <div className="card card-primary status col-md-3">
-        <div className="card-header">Status</div>
-        <div className="card-body">
-          This is the status component body for each element from the wishlist!
-        </div>
-      </div>
-    );
-  }
-}
-
-{
-  /*Products component */
 }
 
 class ProductModal extends React.Component {
@@ -194,93 +137,83 @@ class ProductModal extends React.Component {
     const stock = product.stock;
     const productDescription = product.description;
     const productPicture = product.picture;
-    const brandPicture = brand.picture;
+
     const brandName = brand.name;
     const company = this.state.company;
     const companyName = company.name;
-    const companyPicture = company.picture;
+
     const price = product.price;
     const tresholdPercentage = product.tresholdPercentage;
     const priceToUnlock = (price * tresholdPercentage).toFixed(2);
 
     const avgOfCompetitors = this.state.avgOfCompetitors;
     return (
-      <div className="row py-4">
-        <div className="col-md-12">
+      <div className="row">
+        <div className="col-sm-12">
           <div className="card card-primary">
-            <div className="card">
-              <div className="card-header bg-primary  ">
-                <div className="row d-flex align-items-center">
-                  <div className="col-md-3 d-flex justify-content-start">
-                    <h6>{productName}</h6>
-                  </div>
-                  <div className="col-md-3 h6 text-white ">{price} Kudos</div>
-                  <div className="col-md-5 d-flex justify-content-end">
-                    <Title
-                      brandName={brandName}
-                      sponsored={sponsored}
-                      companyName={companyName}
+            <div className="card-header bg-primary  ">
+              <div className="row">
+                <div
+                  className="col-sm-6 text-white"
+                  style={{ fontWeight: "bold" }}
+                >
+                  {price} Kudos
+                </div>
+                <div className="col-sm-6 text-right text-white">
+                  <Title
+                    brandName={brandName}
+                    sponsored={sponsored}
+                    companyName={companyName}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-sm-4">
+                  <div className="row ml-0 mt-1">
+                    <Picture
+                      className="productPicture"
+                      url={productPicture}
+                      name={productName}
                     />
                   </div>
-                  <div className="col-md-1 d-flex justify-content-end ">
-                    <BrandPicture
-                      className="brandPicture"
-                      companyName={companyName}
-                      companyPicture={companyPicture}
-                      brandPicture={brandPicture}
-                      brandName={brandName}
-                      sponsored={sponsored}
+                  <p className="strong d-flex justify-content-left mt-2">
+                    Description:
+                  </p>
+                </div>
+                <div className="col-md-5">
+                  <div className="pb-2">Stock: {stock}</div>
+                  <p className="text-left mb-1">Average of competitors</p>
+                  <div className="pb-2">
+                    <ProductProgressbar
+                      quantity={priceToUnlock}
+                      remaining={avgOfCompetitors}
+                      label={"avgOfCompetitors"}
                     />
                   </div>
                 </div>
               </div>
-              <div className="card-body mb-0">
-                <div className="row">
-                  <div className="col-md-4">
-                    <div className="row ml-0 mt-1">
-                      <Picture
-                        className="productPicture"
-                        url={productPicture}
-                        name={productName}
-                      />
-                    </div>
-                    <p className="strong d-flex justify-content-left mt-2">
-                      Description:
-                    </p>
-                  </div>
-                  <div className="col-md-5">
-                    <div className="pb-2">Stock: {stock}</div>
-                    <p className="text-left mb-1">Average of competitors</p>
-                    <div className="pb-2">
-                      <ProductProgressbar
-                        quantity={priceToUnlock}
-                        remaining={avgOfCompetitors}
-                        label={"avgOfCompetitors"}
-                      />
-                    </div>
-                  </div>
+              <div className="row">
+                <div className="col-md">
+                  <p className="d-flex justify-content-left align-content-center">
+                    {productDescription}
+                  </p>
                 </div>
-                <div className="row">
-                  <div className="col-md">
-                    <p className="d-flex justify-content-left align-content-center">
-                      {productDescription}
+                <div className="col-md text-right">
+                  Price to unlock: {priceToUnlock} Kudos
+                  <FontAwesomeIcon
+                    style={{ marginLeft: "5px" }}
+                    data-tip="React-tooltip"
+                    icon="info-circle"
+                  />
+                  <ReactTooltip place="right" type="dark" effect="solid">
+                    <p>
+                      To unlock a product, you must gain at least this amount of
+                      Kudos from the moment you added it to the wishlist and
+                      have enough Kudos to buy it
                     </p>
-                  </div>
-                  <div className="col-md text-right">
-                    Price to unlock: {priceToUnlock} Kudos
-                    <FontAwesomeIcon
-                      style={{ marginLeft: "5px" }}
-                      data-tip="React-tooltip"
-                      icon="info-circle"
-                    />
-                    <ReactTooltip place="right" type="dark" effect="solid">
-                      <p>
-                        To unlock a product, you must gain at least this amount
-                        of Kudos from the moment you added it to the wishlist
-                        and have enough Kudos to buy it
-                      </p>
-                    </ReactTooltip>
-                  </div>
+                  </ReactTooltip>
                 </div>
               </div>
             </div>

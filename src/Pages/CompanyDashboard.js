@@ -144,19 +144,22 @@ class ProductForm extends Component {
     const { name, description } = this.state.fields;
     const options = categories.map(opt => <option key={opt}>{opt}</option>);
     return (
-      <div className="container">
+      <div>
         {this.state.showingAlert === true ? (
           <AlertContainer>
             <Alert type="success" headline="Success!">
-              <strong>You're product has been added!</strong>
+              <strong>Your product has been added!</strong>
             </Alert>
           </AlertContainer>
         ) : null}
-        <h6 className="text-white">Add a Product: </h6>
+        <h6 className="h5text">Add a Product: </h6>
         <hr />
         <form onSubmit={this.handleSubmit}>
           <div className="row">
             <div className="form-group input-group-sm col-sm-6">
+              <label htmlFor="categoryList" className="h5text">
+                <small>Product Category</small>
+              </label>
               <select
                 id="categoryList"
                 name="category"
@@ -169,11 +172,14 @@ class ProductForm extends Component {
                 </option>
                 {options}
               </select>
-              <div className="text-white">
+              <div className="h5text">
                 <small>{this.state.errors.category}</small>
               </div>
             </div>
             <div className="form-group input-group-sm col-sm-6">
+              <label htmlFor="formName" className="h5text">
+                <small>Product Name</small>
+              </label>
               <input
                 id="formName"
                 className="form-control col-sm-12"
@@ -183,13 +189,16 @@ class ProductForm extends Component {
                 onChange={this.handleChange}
                 value={name || ""}
               />
-              <div className="text-white">
+              <div className="h5text">
                 <small>{this.state.errors.name}</small>
               </div>
             </div>
           </div>
           <div className="row">
             <div className="form-group input-group-sm col-sm-12">
+              <label htmlFor="formDescription" className="h5text">
+                <small>Product Description</small>
+              </label>
               <input
                 id="formDescription"
                 className="form-control col-sm-12"
@@ -199,13 +208,16 @@ class ProductForm extends Component {
                 onChange={this.handleChange}
                 value={description || ""}
               />
-              <div className="text-white">
+              <div className="h5text">
                 <small>{this.state.errors.description}</small>
               </div>
             </div>
           </div>
           <div className="row">
             <div className="form-group input-group-sm col-sm-12">
+              <label htmlFor="formPicture" className="h5text">
+                <small>Product Picture</small>
+              </label>
               <input
                 id="formPicture"
                 className="form-control col-sm-12"
@@ -214,7 +226,7 @@ class ProductForm extends Component {
                 accept="image/jpeg, image/png"
                 onChange={this.handleChange}
               />
-              <div className="text-white">
+              <div className="h5text">
                 <small>{this.state.errors.picURL}</small>
               </div>
             </div>
@@ -233,7 +245,7 @@ class ProductForm extends Component {
                 onChange={this.handleChange}
                 value={this.state.fields.price || ""}
               />
-              <div className="text-white">
+              <div className="h5text">
                 <small>{this.state.errors.price}</small>
               </div>
             </div>
@@ -250,14 +262,14 @@ class ProductForm extends Component {
                 onChange={this.handleChange}
                 value={this.state.fields.quantity || ""}
               />
-              <div className="text-white">
+              <div className="h5text">
                 <small>{this.state.errors.quantity}</small>
               </div>
             </div>
           </div>
           <div className="d-flex justify-content-center pt-3">
             <button
-              className="btn btn-warning btn-sm text-white"
+              className="btn btn-warning btn-sm h5text"
               id="formSubmit"
               type="submit"
               onClick={this.handleSubmit}
@@ -390,7 +402,7 @@ class CompanyInfo extends Component {
     ));
     return (
       <div className="container">
-        <h6 className="text-white">Products List</h6>
+        <h6 className="h5text">Products List</h6>
         <hr />
         <table className="table table-striped table-sm table-light table-hover">
           <thead>
@@ -436,7 +448,7 @@ export class CompanyDashboard extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div>
         <h4 className="text-center text-white py-3">
           {" "}
           <strong>{this.state.company.name}</strong> Dashboard{" "}

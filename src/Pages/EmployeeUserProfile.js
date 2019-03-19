@@ -100,7 +100,7 @@ class Sidepage extends Component {
     const hasDevice = this.state.hasDevice ? "Yes" : "No";
     const emailConfirmed = this.state.emailConfirmed ? "Yes" : "No";
     return (
-      <div className="col-md-3">
+      <div>
         <ul className="list-group-sm small">
           <li className="list-group-item text-center">
             <b>Profile</b>
@@ -811,7 +811,10 @@ export class EmployeeProfile extends Component {
     return (
       <div>
         <div className="row">
-          <Sidepage user={user} />
+          <div className="col-md-6">
+            <Sidepage user={user} />
+          </div>
+
           <Panel
             user={user}
             showAlert={this.showAlert}

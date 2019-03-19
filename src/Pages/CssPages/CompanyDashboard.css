@@ -1,10 +1,15 @@
 .formRowContainer {
-    max-width: 500px;
-    clear: both;
-  }
-  
+  max-width: 500px;
+  clear: both;
+}
+
 .formRow {
-    width: 100%;
-    clear: both;
-    margin: 2%;
-  }
+  width: 100%;
+  clear: both;
+  margin: 2%;
+}
+
+.h5text {
+  font-weight: bold;
+  color: white;
+}

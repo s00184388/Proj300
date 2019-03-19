@@ -560,7 +560,7 @@ class Panel extends Component {
                   role="tablist"
                 >
                   <div
-                    className="link"
+                    className="link h5text"
                     id="nav-home-tab"
                     data-toggle="tab"
                     href="#nav-home"
@@ -571,7 +571,7 @@ class Panel extends Component {
                     Company Details
                   </div>
                   <div
-                    className="link"
+                    className="link h5text"
                     id="nav-device-tab"
                     data-toggle="tab"
                     href="#nav-device"
@@ -582,7 +582,7 @@ class Panel extends Component {
                     Employees
                   </div>
                   <div
-                    className="link"
+                    className="link h5text"
                     id="nav-settings-tab"
                     data-toggle="tab"
                     href="#nav-settings"
@@ -602,16 +602,34 @@ class Panel extends Component {
                   aria-labelledby="nav-home-tab"
                 >
                   <div className="row py-2">
-                    <div className="col-sm-4 d-flex justify-content-center">
-                      <img
-                        src={require("../Images/user.png")}
-                        height="150"
-                        weight="150"
-                        className="img-circle img-responsive "
-                      />
+                    <div className="col-sm-4">
+                      <h6
+                        style={{
+                          fontWeight: "bold",
+                          color: "white",
+                          textAlign: "center"
+                        }}
+                      >
+                        User Profile
+                      </h6>
+                      <div className="d-flex justify-content-center py-4">
+                        <img
+                          src={require("../Images/user.png")}
+                          height="150"
+                          weight="150"
+                          alt=""
+                          className="img-circle img-responsive "
+                        />
+                      </div>
                     </div>
-                    <div className="col-sm-8">
-                      <h6 className="p-3 text-white">Company Admin Details </h6>
+                    <div className="col-sm-8 text-white">
+                      <h5
+                        className="p-3"
+                        style={{ fontWeight: "bold", color: "white" }}
+                      >
+                        Company Admin Details{" "}
+                      </h5>
+                      <hr />
                       <div className="ml-3 p">
                         <b>User Email: </b> {user.email}
                       </div>
@@ -627,7 +645,7 @@ class Panel extends Component {
                       <div className="ml-3 p">
                         <b>Joined </b>: {created}
                       </div>
-                      <div className="ml-3 p">
+                      <div className="ml-2 p">
                         <FontAwesomeIcon
                           style={{ marginLeft: "5px" }}
                           data-tip="React-tooltip"
@@ -647,9 +665,9 @@ class Panel extends Component {
                         </ReactTooltip>
                         <b>Email confirmed: </b>
                         {emailConfirmed}
-                        {emailConfirmed == "No" ? (
+                        {emailConfirmed === "No" ? (
                           <button
-                            className="btn btn-info btn-sm mx-1"
+                            className="btn btn-warning h5text btn-sm"
                             onClick={this.resendConfirmation}
                           >
                             Resend Mail
@@ -657,7 +675,12 @@ class Panel extends Component {
                         ) : null}
                       </div>
                       <hr />
-                      <h6 className=" pt-2 text-white">Company Details</h6>
+                      <h5
+                        className="p-3"
+                        style={{ fontWeight: "bold", color: "white" }}
+                      >
+                        Company Details
+                      </h5>
                       <div className="ml-3 p">
                         <b>Company Name: </b> {companyName}
                       </div>
@@ -676,10 +699,11 @@ class Panel extends Component {
                   role="tabpanel"
                   aria-labelledby="nav-device-tab"
                 >
-                  <h3 className="p-3 text-white text-center">Employees</h3>
                   <div>
-                    <div className="container">
-                      <h6 className="text-white">Employee Management :</h6>
+                    <div className="container pt-3">
+                      <h5 className="text-white" style={{ fontWeight: "bold" }}>
+                        Employee Management :
+                      </h5>
                       <hr />
                       <table className="table table-striped table-sm table-light table-hover">
                         <thead>
@@ -705,13 +729,13 @@ class Panel extends Component {
                   aria-labelledby="nav-settings-tab"
                 >
                   <div className="col-sm-10 mx-auto">
-                    <h6 className="text-white">Company Admin Details</h6>
+                    <h5 className="h5text">Company Admin Details</h5>
                     <hr />
                     <div className="row">
                       <div className="form-group input-group-sm col-sm-6">
                         <label
                           htmlFor="firstNameInput"
-                          className="text-white small"
+                          className="h5text small"
                         >
                           First Name
                         </label>
@@ -726,10 +750,7 @@ class Panel extends Component {
                         />
                       </div>
                       <div className="form-group input-group-sm col-sm-6">
-                        <label
-                          htmlFor="lastNameInput"
-                          className="text-white small"
-                        >
+                        <label htmlFor="lastNameInput" className="h5text small">
                           Last Name
                         </label>
                         <input
@@ -748,10 +769,7 @@ class Panel extends Component {
                     <hr />
                     <div className="row">
                       <div className="form-group input-group-sm col-sm-6">
-                        <label
-                          htmlFor="companyName"
-                          className="text-white small"
-                        >
+                        <label htmlFor="companyName" className="h5text small">
                           Company Name
                         </label>
                         <input
@@ -765,7 +783,7 @@ class Panel extends Component {
                         />
                       </div>
                       <div className="form-group input-group-sm col-sm-6">
-                        <label htmlFor="address" className="text-white small">
+                        <label htmlFor="address" className="h5text small">
                           Address
                         </label>
                         <input
@@ -781,21 +799,21 @@ class Panel extends Component {
                     </div>
 
                     <div className="row pt-3">
-                      <div className="col-sm-2">
+                      <div className="col-sm-4">
                         <button
                           data-toggle="collapse"
                           data-target="#changeEmail"
-                          className="btn-sm btn-warning text-white col-sm-12"
+                          className="btn-sm btn-warning h5text col-sm-12"
                         >
                           Change Email
                         </button>
                       </div>
 
-                      <div className="col-sm-3">
+                      <div className="col-sm-4">
                         <button
                           data-toggle="collapse"
                           data-target="#changePassword"
-                          className="btn-sm btn-warning text-white col-sm-12"
+                          className="btn-sm btn-warning h5text col-sm-12"
                         >
                           Change Password
                         </button>
@@ -804,18 +822,9 @@ class Panel extends Component {
                         <button
                           data-toggle="collapse"
                           data-target="#changeCompanyEmail"
-                          className="btn-sm btn-warning text-white col-sm-12"
+                          className="btn-sm btn-warning  h5text col-sm-12"
                         >
                           Change Company Email
-                        </button>
-                      </div>
-                      <div className="col-sm-3">
-                        <button
-                          data-toggle="collapse"
-                          data-target="#deleteAccount"
-                          className="btn-sm btn-danger text-white col-sm-12"
-                        >
-                          Delete Account
                         </button>
                       </div>
                     </div>
@@ -823,10 +832,7 @@ class Panel extends Component {
                     <div id="changeEmail" className="collapse">
                       <div className="row pt-3">
                         <div className="form-group input-group-sm col-sm-6">
-                          <label
-                            htmlFor="emailInput"
-                            className="text-white small"
-                          >
+                          <label htmlFor="emailInput" className="h5text small">
                             User Email
                           </label>
                           <input
@@ -842,7 +848,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-6">
                           <label
                             htmlFor="emailPasswordInput"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             Password
                           </label>
@@ -863,7 +869,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-4">
                           <label
                             htmlFor="newPasswordInput"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             New Password
                           </label>
@@ -880,7 +886,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-4">
                           <label
                             htmlFor="newPassword2Input"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             Re-enter New Password
                           </label>
@@ -897,7 +903,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-4">
                           <label
                             htmlFor="oldPasswordInput"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             Old Password
                           </label>
@@ -918,7 +924,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-6">
                           <label
                             htmlFor="companyEmailInput"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             Company Email
                           </label>
@@ -936,7 +942,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-6">
                           <label
                             htmlFor="companyEmailPasswordInput"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             Password
                           </label>
@@ -953,15 +959,14 @@ class Panel extends Component {
                       </div>
                     </div>
                     <div className="collapse" id="deleteAccount">
-                      <p className="text-white">
-                        <b>
-                          This action cannot be undone! If You delete your
-                          account, you will delete the company and all the
-                          employee's accounts!
-                        </b>
-                      </p>
+                      <h6 className="h5text">
+                        This action cannot be undone! If You delete your
+                        account, you will delete the company and all the
+                        employee's accounts!
+                      </h6>
+
                       <button
-                        className="btn btn-danger btn-sm"
+                        className="btn btn-danger btn-sm h5text"
                         onClick={this.deleteAccount}
                       >
                         Delete Account
@@ -971,10 +976,20 @@ class Panel extends Component {
                   </div>
                   <div className="d-flex justify-content-center">
                     <button
-                      className="btn btn-sm btn-success"
+                      className="btn btn-sm btn-success h5text"
                       onClick={this.submitEdit}
                     >
                       Save Changes
+                    </button>
+                  </div>
+                  <p className="h5text text-center py-3"> Or Delete Account</p>
+                  <div className="d-flex justify-content-center">
+                    <button
+                      data-toggle="collapse"
+                      data-target="#deleteAccount"
+                      className="btn-sm btn-danger h5text"
+                    >
+                      Delete Account
                     </button>
                   </div>
                 </div>

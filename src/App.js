@@ -221,113 +221,115 @@ class App extends Component {
     };
 
     return (
-      <div
-        className={
-          fetchInProgress
-            ? "container d-flex justify-content-center"
-            : "container-fluid"
-        }
-      >
-        {this.state.alertVisible ? (
-          <div className="mr-4">
-            <AlertList
-              alerts={alerts}
-              onDismiss={this.AlertOnDismiss}
-              timeout={4000}
-            />
-          </div>
-        ) : null}
-        {fetchInProgress ? (
-          <ReactLoading
-            type={"spinningBubbles"}
-            color={"#fff"}
-            height={640}
-            width={256}
-          />
-        ) : (
-          <Router history={history}>
-            <div style={{ height: "100%" }}>
-              <Navbar
-                userName={this.state.user.firstName}
-                authenticated={this.state.authenticated}
-                userRole={this.state.user.role}
-                name={name}
-                userEmail={userEmail}
-                coins={this.state.coins}
-                {...this.props}
-                history={history}
+      <div>
+        <div
+          className={
+            fetchInProgress
+              ? "container d-flex justify-content-center"
+              : "container-fluid"
+          }
+        >
+          {this.state.alertVisible ? (
+            <div className="mr-4">
+              <AlertList
+                alerts={alerts}
+                onDismiss={this.AlertOnDismiss}
+                timeout={4000}
               />
-              {/*Employee  Role */}
-
-              <PrivateRoute
-                exact
-                path="/rewards"
-                role={this.userRole("employee")}
-                component={MyRewards}
-              />
-              <PrivateRoute
-                exact
-                path="/wishlist"
-                role={this.userRole("employee")}
-                component={MyWishlist}
-              />
-              <PrivateRoute
-                exact
-                path={"/brands"}
-                role={this.userRole("employee")}
-                component={MyBrand}
-              />
-              <PrivateRoute
-                path="/profile"
-                role={this.userRole("employee")}
-                component={MyProfile}
-              />
-              <PrivateRoute
-                exact
-                path="/brands/:brandName"
-                role={this.userRole("employee")}
-                component={MyBrand}
-              />
-
-              {/*Company*/}
-              <PrivateRoute
-                exact
-                path={"/companyDashboard"}
-                role={this.userRole("companyAdmin")}
-                component={MyCompanyDashboard}
-              />
-              <PrivateRoute
-                exact
-                path={"/companyProfile"}
-                role={this.userRole("companyAdmin")}
-                component={MyCompanyProfile}
-              />
-
-              <PrivateRoute
-                exact
-                path={"/admin"}
-                role={this.userRole("admin")}
-                component={Admin}
-              />
-
-              <PrivateRoute
-                exact
-                path={"/brandProfile"}
-                role={this.userRole("brandAdmin")}
-                component={MyBrandProfile}
-              />
-              <PrivateRoute
-                exact
-                path={"/brandDashboard"}
-                role={this.userRole("brandAdmin")}
-                component={MyBrandDashboard}
-              />
-              <Route exact path="/" component={Landing} />
-              <Route path="/login" component={Login} history={history} />
-              <Route path="/register" component={Register} />
             </div>
-          </Router>
-        )}
+          ) : null}
+          {fetchInProgress ? (
+            <ReactLoading
+              type={"spinningBubbles"}
+              color={"#fff"}
+              height={640}
+              width={256}
+            />
+          ) : (
+            <Router history={history}>
+              <div style={{ height: "100%" }}>
+                <Navbar
+                  userName={this.state.user.firstName}
+                  authenticated={this.state.authenticated}
+                  userRole={this.state.user.role}
+                  name={name}
+                  userEmail={userEmail}
+                  coins={this.state.coins}
+                  {...this.props}
+                  history={history}
+                />
+                {/*Employee  Role */}
+
+                <PrivateRoute
+                  exact
+                  path="/rewards"
+                  role={this.userRole("employee")}
+                  component={MyRewards}
+                />
+                <PrivateRoute
+                  exact
+                  path="/wishlist"
+                  role={this.userRole("employee")}
+                  component={MyWishlist}
+                />
+                <PrivateRoute
+                  exact
+                  path={"/brands"}
+                  role={this.userRole("employee")}
+                  component={MyBrand}
+                />
+                <PrivateRoute
+                  path="/profile"
+                  role={this.userRole("employee")}
+                  component={MyProfile}
+                />
+                <PrivateRoute
+                  exact
+                  path="/brands/:brandName"
+                  role={this.userRole("employee")}
+                  component={MyBrand}
+                />
+
+                {/*Company*/}
+                <PrivateRoute
+                  exact
+                  path={"/companyDashboard"}
+                  role={this.userRole("companyAdmin")}
+                  component={MyCompanyDashboard}
+                />
+                <PrivateRoute
+                  exact
+                  path={"/companyProfile"}
+                  role={this.userRole("companyAdmin")}
+                  component={MyCompanyProfile}
+                />
+
+                <PrivateRoute
+                  exact
+                  path={"/admin"}
+                  role={this.userRole("admin")}
+                  component={Admin}
+                />
+
+                <PrivateRoute
+                  exact
+                  path={"/brandProfile"}
+                  role={this.userRole("brandAdmin")}
+                  component={MyBrandProfile}
+                />
+                <PrivateRoute
+                  exact
+                  path={"/brandDashboard"}
+                  role={this.userRole("brandAdmin")}
+                  component={MyBrandDashboard}
+                />
+                <Route exact path="/" component={Landing} />
+                <Route path="/login" component={Login} history={history} />
+                <Route path="/register" component={Register} />
+              </div>
+            </Router>
+          )}
+        </div>
       </div>
     );
   }

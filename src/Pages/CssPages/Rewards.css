@@ -1,71 +1,80 @@
-  .productCard{
-    padding: 0px;
-    height: 280px;
-  }
+.productCard {
+  padding: 0px;
+  height: 280px;
+}
+.h5text1 {
+  font-weight: bold;
+  color: dimgrey;
+  text-align: center;
+}
+.myCard {
+  background-color: #dddddd;
+  text-decoration-color: #1d1c1c;
+}
 
-  .sponsored{
-    -webkit-box-shadow: 0px 0px 10px 2px #303030;
-    -moz-box-shadow: 0px 0px 10px 2px #303030;
-    box-shadow: 0px 0px 10px 2px #303030
-  }
+.sponsored {
+  -webkit-box-shadow: 0px 0px 10px 2px #e0d8d8;
+  -moz-box-shadow: 0px 0px 10px 2px #e0d8d8;
+  box-shadow: 0px 0px 8px 2px #ffffff;
+}
 
-  .sponsored:hover{
-    -webkit-box-shadow: 0px 0px 10px 2px ;
-    -moz-box-shadow: 0px 0px 10px 2px #25A0E6;
-    box-shadow: 0px 0px 10px 2px #25A0E6
-  }
-  
-  .productCardContent{
-    width: 100%;
-    height: 100%;
-  }
+.sponsored:hover {
+  -webkit-box-shadow: 0px 0px 10px 2px;
+  -moz-box-shadow: 0px 0px 10px 2px #25a0e6;
+  box-shadow: 0px 0px 10px 2px #25a0e6;
+}
 
-  .imag {
-    border: 2px solid #303030;
-  }
-  
-  .inWishlist{
-    opacity: 0.4;
-    background-color: #dddddd;
-  }
-  
-  .productModal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width:100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-  }
-  
-  .product-modal-main {
-    position:fixed;
-    background: white;
-    width: 80%;
-    height: auto;
-    top:50%;
-    left:50%;
-    transform: translate(-50%,-50%);
-  }
-  
-  .product-modal-display-block {
-    display: block;
-  }
-  
-  .product-modal-display-none {
-    display: none;
-  }
+.productCardContent {
+  width: 100%;
+  height: 100%;
+}
 
-  .sortbutton{
-    color: #999999;
-    background-color: #FFFFFF;
-    width: 100%;
-    text-align: left;
-    border: 1px  solid #CCCCCC;  
-    font-size: 15px; 
-  }
+.imag {
+  border: 2px solid #303030;
+}
 
-  .color{
-    color: dimgrey;
-    font-size: 14px;
-  }
+.inWishlist {
+  opacity: 0.4;
+  background-color: #dddddd;
+}
+
+.productModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.product-modal-main {
+  position: fixed;
+  background: white;
+  width: 80%;
+  height: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.product-modal-display-block {
+  display: block;
+}
+
+.product-modal-display-none {
+  display: none;
+}
+
+.sortbutton {
+  color: #999999;
+  background-color: #ffffff;
+  width: 100%;
+  text-align: left;
+  border: 1px solid #cccccc;
+  font-size: 15px;
+}
+
+.color {
+  color: dimgrey;
+  font-size: 14px;
+}

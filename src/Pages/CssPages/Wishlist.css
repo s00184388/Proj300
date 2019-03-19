@@ -1,13 +1,9 @@
-.status {
-  position: fixed;
-  margin-left: 7%;
-  height: 450px;
-}
-
 .imag {
   border: 2px solid #f7f7f7;
 }
 
-p {
-  font-size: 13px;
+.h6text {
+  font-weight: bold;
+  color: white;
+  text-align: center;
 }
