@@ -9,6 +9,7 @@ Modal.setAppElement("#root");
 
 const firebaseServices = new FirebaseServices();
 
+//styles for the modal
 const customStyles = {
   content: {
     top: "50%",
@@ -20,10 +21,24 @@ const customStyles = {
   }
 };
 
+//component for representing a row
+//this is the row compnent for the products collection
+//i chose to make a table and a row for each collection
+//because i didn't wanted to have all the fields in the table
+//only some fields
+//and it was also very difficult to know what data type each field is, in what collection to look to update/delete
+//creating tables dynamically was much more complicated
+
+//the basic idea for this page is that there is a field for each collection
+//each table shows some of the properties and has a button for viewing all properties
+//upon clicking that button, a modal with a form with input fields already populated with properties values is shown
+//the admin can edit them and update the object or delete it
 class TableRowProducts extends Component {
   constructor(props) {
     super(props);
+    //props are received from the mother-component calling this component
     const row = this.props.row;
+    //the state which is basically properties of objects
     this.state = {
       modalIsOpen: false,
       product: {
@@ -38,6 +53,7 @@ class TableRowProducts extends Component {
         category: row.category
       }
     };
+    //binding methods (for using "this.")
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.submitEdit = this.submitEdit.bind(this);
@@ -45,39 +61,53 @@ class TableRowProducts extends Component {
     this.deleteProduct = this.deleteProduct.bind(this);
   }
 
+  //method called for opening the modal
   openModal() {
     this.setState({ modalIsOpen: true });
   }
 
+  //method called for closing the modal
   closeModal() {
     this.setState({ modalIsOpen: false });
   }
 
+  ////method called whenever a form field is changed
   handleChange(e) {
     var product = {};
+    //the product object gets populated with the properties of the object stored in the state
     product = { ...this.state.product };
+    //property name is the field name
     product[e.target.name] = e.target.value;
     this.setState({ product });
   }
 
+  //method called upon clicking the submit button
   submitEdit(e) {
+    //to prevent the default action caused by the submit button
     e.preventDefault();
+    //data edited and saved, time to close the modal
     this.closeModal();
-    console.log(this.state.product);
+    //updating the product in the database
     firebaseServices.productsCollection
       .doc(this.props.row.key)
       .update(this.state.product);
   }
 
+  //method for deleting the product
   deleteProduct(e) {
     e.preventDefault();
+    //after clicking the delete button, no fields (so no modal) should be shown
     this.closeModal();
+    //deleting the product from the database
     firebaseServices.productsCollection.doc(this.props.row.key).delete();
   }
 
   render() {
     const row = this.props.row;
     return (
+      //this is how a row looks like
+      //keys are for React to know what gets updated, to update as less as possible
+      //react can rerender only a cell, not the entire row, not the entire table
       <tr key={`${row}`}>
         <td key={`${row.key}`}>{row.key}</td>
         <td key={`${row.key}name`}>{row.name}</td>
@@ -223,11 +253,16 @@ class TableRowProducts extends Component {
   }
 }
 
+//component for the table
+//this case the products table
 class ProductsTable extends Component {
   constructor(props) {
     super(props);
   }
   render() {
+    //maps all the products from the array that comes as props
+    //foreach element in the array, the TableRow component is called and rendered
+    //with the data for that product
     var row = this.props.data.map(row => (
       <TableRowProducts key={row.key} row={row} />
     ));
@@ -1191,17 +1226,21 @@ class TableRowWishlists extends Component {
   }
 }
 
+//component that renders all the tables
 class Tables extends Component {
   constructor(props) {
     super(props);
   }
   render() {
+    //all these arrays come as props
     var products = this.props.products;
     var users = this.props.users;
     var brands = this.props.brands;
     var companies = this.props.companies;
     var devices = this.props.devices;
     var wishlists = this.props.wishlists;
+    //it also has a scrollspy to facilitate navigating on the page
+    //this means there is a navbar and links to each table
     return (
       <div
         data-spy="scroll"
@@ -1283,6 +1322,10 @@ export class Admin extends Component {
     this.subscriptions = [];
   }
   componentDidMount() {
+    //when component is mounted, the observable pattern is used to fetch collections from the database
+    //every subscription is pushed in an array
+    //the fetchinprogress is for the loading animation
+    //there is a loading animation until all the data is fetched from the database
     this.setState({ fetchInProgress: true });
     this.subscriptions.push(
       firebaseServices.getAllProducts().subscribe(products => {
@@ -1317,6 +1360,7 @@ export class Admin extends Component {
   }
 
   componentWillUnmount() {
+    //upon component unmounting, each subscription gets unsubscribed
     this.subscriptions.forEach(obs => obs.unsubscribe());
   }
 
