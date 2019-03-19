@@ -11,7 +11,7 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 library.add(faInfoCircle);
 
 const fs = new FirebaseServices();
-
+//simalar to the other two profile pages
 class Sidepage extends Component {
   constructor(props) {
     super(props);

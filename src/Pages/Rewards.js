@@ -17,6 +17,7 @@ const firebaseServices = new FirebaseServices();
 Modal.setAppElement("#root");
 library.add(faCheck);
 
+// CSS style for modal
 const modalStyle = {
   content: {
     top: "50%",
@@ -32,6 +33,7 @@ const modalStyle = {
   }
 };
 
+//component for rendering the picture
 class Picture extends React.Component {
   render() {
     const productPicture = this.props.url;
@@ -48,6 +50,7 @@ class Picture extends React.Component {
   }
 }
 
+//component for rendering the price
 class ProductPrice extends React.Component {
   render() {
     const price = this.props.price;
@@ -55,6 +58,7 @@ class ProductPrice extends React.Component {
   }
 }
 
+//component for rendering the wishlist button
 class WishlistButton extends React.Component {
   productKey = "";
   userKey = "";
@@ -68,6 +72,7 @@ class WishlistButton extends React.Component {
       isInWishlist: false
     };
   }
+  //subscribing to the wishlist collection for getting all the wishlist
   componentDidMount() {
     this.productKey = this.props.productKey;
     this.userKey = this.props.userKey;
@@ -80,14 +85,17 @@ class WishlistButton extends React.Component {
     );
   }
 
+  //unsubscribing to the observables
   componentWillUnmount() {
     this.subscriptions.forEach(obs => obs.unsubscribe());
   }
 
+  //button for adding items to the wishlist in the database
   addToWishlist(event) {
     firebaseServices.addToWishlist(this.productKey, this.userKey);
     event.stopPropagation();
   }
+  //method for checking if an item is already in the wishlist
   isInWishlist() {
     this.wishlist.forEach(item => {
       if (item.productID === this.productKey) {
@@ -95,7 +103,9 @@ class WishlistButton extends React.Component {
       }
     });
   }
+
   render() {
+    //if the item is in wishlist, button gets disabled and text changes to "item in wishlist"
     const inWishlist = this.state.isInWishlist;
     return (
       <button
@@ -109,6 +119,9 @@ class WishlistButton extends React.Component {
   }
 }
 
+//component for the title
+//the title shows the name of the entity that provides the product
+//if it is provided by a brand, it sais that the product is sponsored
 class Title extends React.Component {
   render() {
     const brandName = this.props.brandName;
@@ -126,6 +139,8 @@ class Title extends React.Component {
     );
   }
 }
+
+//component for displaying the brand or company picture
 class BrandPicture extends React.Component {
   render() {
     var productPicture = this.props.brandPicture;
@@ -147,6 +162,7 @@ class BrandPicture extends React.Component {
   }
 }
 
+//the product component which assambles all the components defined above
 class Product extends React.Component {
   constructor(props) {
     super(props);
@@ -164,6 +180,7 @@ class Product extends React.Component {
     this.userKey = this.props.user.key;
   }
 
+  //getting the wishlsit, the brand and the company from the database
   componentDidMount() {
     this.subscriptions.push(
       firebaseServices.getWishlist(this.userKey).subscribe(items => {
@@ -198,11 +215,13 @@ class Product extends React.Component {
     });
   }
 
+  //method for showing the modal
   openModal() {
     if (!this.state.modalIsOpen) {
       this.setState({ modalIsOpen: true });
     }
   }
+  //method for hiding the modal
   closeModal() {
     this.setState({ modalIsOpen: false });
   }
@@ -310,6 +329,7 @@ class Product extends React.Component {
   }
 }
 
+//the dropdown component for displaying the options for sorting the products
 class Dropdown extends React.Component {
   constructor(props) {
     super(props);
@@ -317,11 +337,13 @@ class Dropdown extends React.Component {
     this.doOrderBy = this.doOrderBy.bind(this);
     this.doOrder = this.doOrder.bind(this);
   }
-
+  //orderby means the categories
   doOrderBy(e) {
     const newOrderBy = e.target.getAttribute("data-value");
     this.props.doOrderBy(newOrderBy);
   }
+
+  //doOrder means if ascending or descending
   doOrder(e) {
     const newOrder = e.target.checked;
     this.props.doOrder(newOrder);
@@ -388,6 +410,8 @@ class Dropdown extends React.Component {
     );
   }
 }
+
+//component for displaying the filters
 class Filters extends React.Component {
   constructor(props) {
     super(props);
@@ -473,6 +497,7 @@ class Filters extends React.Component {
   }
 }
 
+//component for rendering all the products
 class ProductContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -489,6 +514,7 @@ class ProductContainer extends React.Component {
     this.filterbySponsored = this.filterbySponsored.bind(this);
     this.userKey = "";
   }
+  //getting wishlist, company and sponsored products
   componentWillReceiveProps(nextProps) {
     this.setState({ fetchInProgress: true });
     this.userKey = nextProps.user.key;
@@ -528,6 +554,7 @@ class ProductContainer extends React.Component {
   componentWillUnmount() {
     this.subscriptions.forEach(obs => obs.unsubscribe());
   }
+  //cheching if an item is in the wishlist
   isInWishlist(prod) {
     this.state.wishlist.forEach(item => {
       if (item.productID === prod.key) {
@@ -536,6 +563,7 @@ class ProductContainer extends React.Component {
     });
     return false;
   }
+  //filter by category method
   filterbyCategory(str) {
     return function(product) {
       if (str && str !== "All") {
@@ -544,21 +572,25 @@ class ProductContainer extends React.Component {
       return true;
     };
   }
+  //method for filtering by affordable items (items with price less than available coins are shown)
   filterbyAffordable(coins) {
     return function(product) {
       return product.price > coins ? 0 : 1;
     };
   }
+  //filtering by wishlist. only products that are not in the wishlist are shown
   filterbyWishlist(prod) {
     return !this.isInWishlist(prod);
   }
+  //only sponsored products are displayed
   filterbySponsored(prod) {
     return prod.sponsored;
   }
+  //sorting by price
   sortbyPrice(a, b) {
     return a.price > b.price ? 1 : a.price < b.price ? -1 : 0;
   }
-
+  //sorting by stock
   sortbyRemaining(a, b) {
     return a.stock > b.stock ? 1 : a.stock < b.stock ? -1 : 0;
   }
@@ -572,6 +604,7 @@ class ProductContainer extends React.Component {
     var products = companyProducts.concat(sponsoredProducts);
     const wishlist = this.props.wishlist;
     const fetchInProgress = this.state.fetchInProgress;
+    //aplying filters and sorting if the coresponding checkbox is checked
     if (this.props.affordableChecked) {
       products = products.filter(this.filterbyAffordable(userCoins));
     }
@@ -621,10 +654,13 @@ class ProductContainer extends React.Component {
   }
 }
 
+//main component for rendering the other components
+//the page is build out of two main components, the product container and the filters/sorting container
+//this is because I used the "lifting state up" pattern by react
+//for the filtering/sorting component to communicate (share the state) with the product container component
 export class Rewards extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props.user);
     this.subscriptions = [];
 
     this.state = {
@@ -647,7 +683,6 @@ export class Rewards extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ user: nextProps.user });
-    console.log(nextProps.user);
   }
 
   componentDidMount() {
