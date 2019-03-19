@@ -103,7 +103,7 @@ class Sidepage extends Component {
       <div>
         <ul className="list-group-sm small">
           <li className="list-group-item text-center">
-            <b>Profile</b>
+            <h6 style={{ fontWeight: "bold", color: "dimgrey" }}>Profile</h6>
           </li>
           <li className="list-group-item">
             <span className="pull-left">
@@ -157,7 +157,7 @@ class Sidepage extends Component {
               <strong>Email confirmed: </strong>
             </span>
             {emailConfirmed}
-            {emailConfirmed == "No" ? (
+            {emailConfirmed === "No" ? (
               <div className="d-flex justify-content-center pt-2">
                 <button
                   className="btn btn-sm btn-warning text-white"
@@ -541,22 +541,28 @@ export class Panel extends Component {
                       <div className="col-sm-4 d-flex justify-content-center">
                         <img
                           src={require("../Images/user.png")}
+                          alt=""
                           height="150"
                           weight="150"
                           className="img-circle img-responsive "
                         />
                       </div>
-                      <div className="col-sm-8">
-                        <h5 className="p-3 text-white">{name}</h5>
+                      <div className="col-sm-8 text-white">
+                        <h5 style={{ fontWeight: "bold", color: "white" }}>
+                          {name}
+                        </h5>
                         <hr />
-                        <p className="ml-3">
+                        <p>
                           <b>Email: </b> {email}
                         </p>
-                        <p className="ml-3">
+                        <p>
                           <b>Company: </b> {company}
                         </p>
-                        <p className="ml-3">
-                          <b>Conected to:</b> {deviceApi}
+                        <p>
+                          <b>Conected to:</b>{" "}
+                          {deviceApi
+                            ? { deviceApi }
+                            : "No device connected. Please connect your device."}
                         </p>
                       </div>
                     </div>
@@ -576,16 +582,16 @@ export class Panel extends Component {
                     {device.key ? (
                       `Connected with ${deviceApi}`
                     ) : (
-                      <div>
+                      <div className="d-flex justify-content-center">
                         <a
                           href={`https://stravakudos.herokuapp.com/strava/authorize?userId=${userID}`}
-                          className="btn btn-sm btn-warning col-lg-6"
+                          className="btn btn-sm text-white btn-warning col-sm-4 m-3"
                         >
                           Strava
                         </a>
                         <a
                           href={`https://stravakudos.herokuapp.com/fitbit/authorize?userId=${userID}`}
-                          className="btn btn-sm btn-warning col-lg-6"
+                          className="btn btn-sm text-white btn-warning col-sm-4 m-3"
                         >
                           Fitbit
                         </a>
@@ -604,7 +610,10 @@ export class Panel extends Component {
                     </h3>
                     <div className="row">
                       <div className="form-group input-group-sm col-sm-6">
-                        <label htmlFor="firstNameInput" className="text-white">
+                        <label
+                          htmlFor="firstNameInput"
+                          className="h6text small"
+                        >
                           First Name
                         </label>
                         <input
@@ -618,7 +627,7 @@ export class Panel extends Component {
                         />
                       </div>
                       <div className="form-group input-group-sm col-sm-6">
-                        <label htmlFor="lastNameInput" className="text-white">
+                        <label htmlFor="lastNameInput" className="small h6text">
                           Last Name
                         </label>
                         <input
@@ -634,33 +643,37 @@ export class Panel extends Component {
                     </div>
 
                     <div className="row py-2">
-                      <button
-                        className="btn btn-primary"
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#collapseEmail"
-                        aria-expanded="false"
-                        aria-controls="collapseEmail"
-                      >
-                        Change Email
-                      </button>
-                      <button
-                        className="btn btn-primary mx-2"
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#collapsePassword"
-                        aria-expanded="false"
-                        aria-controls="collapsePassword"
-                      >
-                        Change Password
-                      </button>
-                      <button
-                        data-toggle="collapse"
-                        data-target="#deleteAccount"
-                        className="btn-sm btn-danger text-white mx-2"
-                      >
-                        Delete Account
-                      </button>
+                      <div className="col-sm-4">
+                        <button
+                          className="btn-warning h5text col-sm-10 btn-sm p-2"
+                          data-toggle="collapse"
+                          data-target="#collapseEmail"
+                          aria-expanded="false"
+                          aria-controls="collapseEmail"
+                        >
+                          Change Email
+                        </button>
+                      </div>
+                      <div className="col-sm-4">
+                        <button
+                          className="btn-warning h5text col-sm-10 btn-sm p-2"
+                          data-toggle="collapse"
+                          data-target="#collapsePassword"
+                          aria-expanded="false"
+                          aria-controls="collapsePassword"
+                        >
+                          Change Password
+                        </button>
+                      </div>
+                      <div className="col-sm-4">
+                        <button
+                          data-toggle="collapse"
+                          data-target="#deleteAccount"
+                          className="btn-sm btn-danger col-sm-10 h5text p-2"
+                        >
+                          Delete Account
+                        </button>
+                      </div>
                     </div>
 
                     <div
@@ -670,7 +683,7 @@ export class Panel extends Component {
                     >
                       <div className="row">
                         <div className="form-group input-group-sm col-sm-6">
-                          <label htmlFor="emailInput" className="text-white">
+                          <label htmlFor="emailInput" className="h5text small">
                             Email
                           </label>
                           <input
@@ -686,7 +699,7 @@ export class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-6">
                           <label
                             htmlFor="emailPasswordInput"
-                            className="text-white"
+                            className="h5text small"
                           >
                             Password
                           </label>
@@ -711,7 +724,7 @@ export class Panel extends Component {
                         <div className="form-group input-group-sm col-md-4">
                           <label
                             htmlFor="newPasswordInput"
-                            className="text-white"
+                            className="h5text small"
                           >
                             New Password
                           </label>
@@ -728,7 +741,7 @@ export class Panel extends Component {
                         <div className="form-group input-group-sm col-md-4">
                           <label
                             htmlFor="newPassword2Input"
-                            className="text-white"
+                            className="h5text small"
                           >
                             Re-enter New Password
                           </label>
@@ -743,7 +756,7 @@ export class Panel extends Component {
                           />
                         </div>
                         <div className="form-group input-group-sm col-md-4">
-                          <label htmlFor="oldPassword" className="text-white">
+                          <label htmlFor="oldPassword" className="h5text small">
                             Old Password
                           </label>
                           <input
@@ -759,22 +772,22 @@ export class Panel extends Component {
                       </div>
                     </div>
                     <div className="collapse" id="deleteAccount">
-                      <p className="text-white">
-                        <b>
-                          This action cannot be undone! If You delete your
-                          account, you will loose all your Kudos Coins!
-                        </b>
-                      </p>
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={this.deleteAccount}
-                      >
-                        Delete Account
-                      </button>
+                      <h6 className="h5text small text-center">
+                        This action cannot be undone! If You delete your
+                        account, you will loose all your Kudos Coins!
+                      </h6>
+                      <div className="d-flex justify-content-center pt-4">
+                        <button
+                          className="btn-danger btn-sm h5text"
+                          onClick={this.deleteAccount}
+                        >
+                          Delete Account
+                        </button>
+                      </div>
                     </div>
-                    <div className="d-flex justify-content-center">
+                    <div className="d-flex justify-content-center py-5">
                       <button
-                        className="btn btn-sm btn-success"
+                        className="btn-sm btn-success  h5text"
                         onClick={this.submitEdit}
                       >
                         Save Changes
@@ -811,7 +824,7 @@ export class EmployeeProfile extends Component {
     return (
       <div>
         <div className="row">
-          <div className="col-md-6">
+          <div className="col-sm-3">
             <Sidepage user={user} />
           </div>
 

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import "./CssPages/Admin.css";
 import FirebaseServices from "../firebase/services";
 import Modal from "react-modal";
@@ -224,9 +223,6 @@ class TableRowProducts extends Component {
 }
 
 class ProductsTable extends Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     var row = this.props.data.map(row => (
       <TableRowProducts key={row.key} row={row} />
@@ -453,9 +449,6 @@ class TableRowUsers extends Component {
 }
 
 class UsersTable extends Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     var row = this.props.data.map(row => (
       <TableRowUsers key={row.key} row={row} />
@@ -680,9 +673,6 @@ class BrandsTable extends Component {
 }
 
 class CompaniesTable extends Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     var row = this.props.data.map(row => (
       <TableRowCompanies key={row.key} row={row} />

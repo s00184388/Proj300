@@ -52,6 +52,8 @@ const PrivateRoute = ({ component: Component, role, ...rest }) => (
         <Component {...props} />
       ) : role === "brandAdmin" ? (
         <Component {...props} />
+      ) : role === "admin" ? (
+        <Component {...props} />
       ) : (
         <Redirect to="/login" />
       )
@@ -259,6 +261,12 @@ class App extends Component {
                   history={history}
                 />
                 {/*Employee  Role */}
+                <PrivateRoute
+                  exact
+                  path={"/admin"}
+                  role={this.userRole("admin")}
+                  component={Admin}
+                />
 
                 <PrivateRoute
                   exact
