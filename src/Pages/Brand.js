@@ -5,7 +5,8 @@ import ProductModal from "../Components/ProductModal";
 import ReactLoading from "react-loading";
 
 const firebaseServices = new FirebaseServices();
-
+//this page is similar to the rewards page, it just displays only the products from one specific brand
+//style for the modal
 const modalStyle = {
   content: {
     top: "50%",
@@ -20,6 +21,7 @@ const modalStyle = {
   }
 };
 
+//component for displaying the picture of the product
 class Picture extends React.Component {
   constructor(props) {
     super(props);
@@ -39,6 +41,7 @@ class Picture extends React.Component {
   }
 }
 
+//component for displaying the price
 class ProductPrice extends React.Component {
   constructor(props) {
     super(props);
@@ -49,6 +52,7 @@ class ProductPrice extends React.Component {
   }
 }
 
+//component for rendering the "add to wishlist" button
 class WishlistButton extends React.Component {
   productKey = "";
   userKey = "";
@@ -63,6 +67,7 @@ class WishlistButton extends React.Component {
     };
   }
   componentDidMount() {
+    //getting all the items in the wishlsit for knowing if this item is already in wishlist or not
     this.productKey = this.props.productKey;
     this.userKey = this.props.userKey;
     this.subscriptions.push(
@@ -78,10 +83,13 @@ class WishlistButton extends React.Component {
     this.subscriptions.forEach(obs => obs.unsubscribe());
   }
 
+  //method for adding the product in the wishlist in the database
   addToWishlist(event) {
     firebaseServices.addToWishlist(this.productKey, this.userKey);
     event.stopPropagation();
   }
+
+  //method for checking if the product is already in the wishlist or not
   isInWishlist() {
     this.wishlist.forEach(item => {
       if (item.productID === this.productKey) {
@@ -104,6 +112,7 @@ class WishlistButton extends React.Component {
   }
 }
 
+//component for rendering the title of the product
 class Title extends React.Component {
   render() {
     const brandName = this.props.brandName;
@@ -116,6 +125,8 @@ class Title extends React.Component {
     );
   }
 }
+
+//component for showing the brand logo
 class BrandPicture extends React.Component {
   constructor(props) {
     super(props);
@@ -135,6 +146,8 @@ class BrandPicture extends React.Component {
   }
 }
 
+//component for showing the whole product card
+//this calls all the components defined above
 class Product extends React.Component {
   constructor(props) {
     super(props);
@@ -151,6 +164,7 @@ class Product extends React.Component {
     this.userKey = this.props.user.key;
   }
 
+  //getting the wishlist items and the brands from the db
   componentDidMount() {
     this.subscriptions.push(
       firebaseServices.getWishlist(this.userKey).subscribe(items => {
@@ -170,6 +184,7 @@ class Product extends React.Component {
     this.subscriptions.forEach(obs => obs.unsubscribe());
   }
 
+  //checks if the product is in wishlist for applying a CSS that makes it blured out
   isInWishlist() {
     this.wishlist.forEach(item => {
       if (item.productID === this.productKey) {
@@ -178,11 +193,14 @@ class Product extends React.Component {
     });
   }
 
+  //method called to open the modal
   openModal() {
     if (!this.state.modalIsOpen) {
       this.setState({ modalIsOpen: true });
     }
   }
+
+  //method called to close the modal
   closeModal() {
     this.setState({ modalIsOpen: false });
   }
@@ -272,6 +290,7 @@ class Product extends React.Component {
   }
 }
 
+//component for showing the whole brand page which calls the product component for each product the brand has
 export class Brand extends Component {
   constructor(props) {
     super(props);
@@ -287,6 +306,10 @@ export class Brand extends Component {
     this.getOnlyThisBrandItems = this.getOnlyThisBrandItems.bind(this);
   }
 
+  //getting the wishlist, the brand, the sponsored items from the database
+  //these methods get called multiple times for saving time
+  //components render very fast
+  //so it's easier to call multiple times the database
   componentDidMount() {
     this.setState({
       name: this.props.match.params.brandName,
@@ -321,6 +344,7 @@ export class Brand extends Component {
     );
   }
 
+  //filtering the products to get only the ones by this brand
   getOnlyThisBrandItems(arr, brandID) {
     var newArray = [];
     for (var i = 0; i < arr.length; i++) {
