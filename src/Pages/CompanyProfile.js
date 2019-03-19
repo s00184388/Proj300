@@ -630,22 +630,22 @@ class Panel extends Component {
                         Company Admin Details{" "}
                       </h5>
                       <hr />
-                      <div className="ml-3 p">
+                      <h6 className="ml-3 text-white small">
                         <b>User Email: </b> {user.email}
-                      </div>
-                      <div className="ml-3 p">
+                      </h6>
+                      <h6 className="ml-3 text-white small">
                         <b>First Name: </b> {user.firstName}
-                      </div>
-                      <div className="ml-3 p">
+                      </h6>
+                      <h6 className="ml-3 text-white small ">
                         <b>Last Name:</b> {user.lastName}
-                      </div>
-                      <div className="ml-3 p">
+                      </h6>
+                      <h6 className="ml-3 text-white small">
                         <b>Role </b>: Company Admin
-                      </div>
-                      <div className="ml-3 p">
+                      </h6>
+                      <h6 className="ml-3 text-white small">
                         <b>Joined </b>: {created}
-                      </div>
-                      <div className="ml-2 p">
+                      </h6>
+                      <h6 className="ml-2 text-white small">
                         <FontAwesomeIcon
                           style={{ marginLeft: "5px" }}
                           data-tip="React-tooltip"
@@ -673,7 +673,7 @@ class Panel extends Component {
                             Resend Mail
                           </button>
                         ) : null}
-                      </div>
+                      </h6>
                       <hr />
                       <h5
                         className="p-3"
@@ -681,15 +681,15 @@ class Panel extends Component {
                       >
                         Company Details
                       </h5>
-                      <div className="ml-3 p">
+                      <h6 className="ml-3 text-white small">
                         <b>Company Name: </b> {companyName}
-                      </div>
-                      <div className="ml-3 p">
+                      </h6>
+                      <h6 className="ml-3 text-white small">
                         <b>Adress: </b> {address}
-                      </div>
-                      <div className="ml-3 p">
+                      </h6>
+                      <h6 className="ml-3 text-white small">
                         <b>HR Department email: </b> {companyEmail}
-                      </div>
+                      </h6>
                     </div>
                   </div>
                 </div>
@@ -959,18 +959,19 @@ class Panel extends Component {
                       </div>
                     </div>
                     <div className="collapse" id="deleteAccount">
-                      <h6 className="h5text">
+                      <h6 className="h5text py-3 text-center">
                         This action cannot be undone! If You delete your
                         account, you will delete the company and all the
                         employee's accounts!
                       </h6>
-
-                      <button
-                        className="btn btn-danger btn-sm h5text"
-                        onClick={this.deleteAccount}
-                      >
-                        Delete Account
-                      </button>
+                      <div className="d-flex justify-content-center">
+                        <button
+                          className="btn btn-danger btn-sm h5text"
+                          onClick={this.deleteAccount}
+                        >
+                          Delete Account
+                        </button>
+                      </div>
                     </div>
                     <hr />
                   </div>

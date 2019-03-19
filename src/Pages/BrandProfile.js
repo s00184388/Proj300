@@ -440,7 +440,7 @@ class Panel extends Component {
                   role="tablist"
                 >
                   <div
-                    className="link col-sm-6 active"
+                    className="link col-sm-6 active h5text"
                     id="nav-home-tab"
                     data-toggle="tab"
                     href="#nav-home"
@@ -451,7 +451,7 @@ class Panel extends Component {
                     Brand Details
                   </div>
                   <div
-                    className="link col-sm-6"
+                    className="link col-sm-6 h5text"
                     id="nav-settings-tab"
                     data-toggle="tab"
                     href="#nav-settings"
@@ -475,30 +475,35 @@ class Panel extends Component {
                       <img
                         src={require("../Images/user.png")}
                         height="150"
+                        alt=""
                         weight="150"
                         className="img-circle img-responsive "
                       />
                     </div>
                     <div className="col-sm-8">
-                      <h6 className="p-3 text-white">Brand Admin Details </h6>
-                      <p className="ml-3">
-                        <b>User Email: </b> {user.email}
+                      <h5 className="p-3 text-white h5text">
+                        Brand Admin Details{" "}
+                      </h5>
+                      <hr />
+                      <p className="ml-3 text-white">
+                        <b>User Email: </b>
+                        {user.email}
                       </p>
-                      <p className="ml-3">
+                      <p className="ml-3 text-white">
                         <b>First Name: </b> {user.firstName}
                       </p>
-                      <p className="ml-3">
+                      <p className="ml-3 text-white">
                         <b>Last Name:</b> {user.lastName}
                       </p>
-                      <p className="ml-3">
+                      <p className="ml-3 text-white">
                         <b>Role </b>: Brand Admin
                       </p>
-                      <p className="ml-3">
+                      <p className="ml-3 text-white">
                         <b>Email confirmed: </b>
                         {emailConfirmed}
-                        {emailConfirmed == "No" ? (
+                        {emailConfirmed === "No" ? (
                           <button
-                            className="btn btn-info btn-sm mx-1"
+                            className="btn btn-warning btn-sm mx-2 h5text"
                             onClick={this.resendConfirmation}
                           >
                             Resend Mail
@@ -506,15 +511,16 @@ class Panel extends Component {
                         ) : null}
                       </p>
                       <hr />
-                      <h6 className=" pt-2 text-white">Brand Details</h6>
-                      <p className="ml-3">
+                      <h5 className="ml-3 h5text">Brand Details</h5>
+                      <hr />
+                      <p className="ml-3 text-white">
                         <b>Brand Name: </b> {brand.name}
                       </p>
-                      <p className="ml-3">
+                      <p className="ml-3 text-white">
                         <b>Adress: </b> {brand.address}
                       </p>
 
-                      <p className="ml-3">
+                      <p className="ml-3 text-white">
                         <b>HR Department email: </b> {brand.email}
                       </p>
                     </div>
@@ -527,13 +533,13 @@ class Panel extends Component {
                   aria-labelledby="nav-settings-tab"
                 >
                   <div className="col-sm-10 mx-auto">
-                    <h6 className="text-white">Brand Admin Details</h6>
+                    <h5 className="h5text">Brand Admin Details</h5>
                     <hr />
                     <div className="row">
                       <div className="form-group input-group-sm col-sm-6">
                         <label
                           htmlFor="firstNameInput"
-                          className="text-white small"
+                          className="h5text small"
                         >
                           First Name
                         </label>
@@ -548,10 +554,7 @@ class Panel extends Component {
                         />
                       </div>
                       <div className="form-group input-group-sm col-sm-6">
-                        <label
-                          htmlFor="lastNameInput"
-                          className="text-white small"
-                        >
+                        <label htmlFor="lastNameInput" className="h5text small">
                           Last Name
                         </label>
                         <input
@@ -566,11 +569,11 @@ class Panel extends Component {
                       </div>
                     </div>
 
-                    <h6 className="text-white"> Brand Details</h6>
+                    <h5 className="h5text"> Brand Details</h5>
                     <hr />
                     <div className="row">
                       <div className="form-group input-group-sm col-sm-6">
-                        <label htmlFor="brandName" className="text-white small">
+                        <label htmlFor="brandName" className="h5text small">
                           Brand Name
                         </label>
                         <input
@@ -584,7 +587,7 @@ class Panel extends Component {
                         />
                       </div>
                       <div className="form-group input-group-sm col-sm-6">
-                        <label htmlFor="address" className="text-white small">
+                        <label htmlFor="address" className="h5text small">
                           Address
                         </label>
                         <input
@@ -604,7 +607,7 @@ class Panel extends Component {
                         <button
                           data-toggle="collapse"
                           data-target="#changeEmail"
-                          className="btn-sm btn-warning text-white col-sm-12"
+                          className="btn-sm btn-warning h5text col-sm-12"
                         >
                           Change Email
                         </button>
@@ -614,7 +617,7 @@ class Panel extends Component {
                         <button
                           data-toggle="collapse"
                           data-target="#changePassword"
-                          className="btn-sm btn-warning text-white col-sm-12"
+                          className="btn-sm btn-warning h5text col-sm-12"
                         >
                           Change Password
                         </button>
@@ -623,7 +626,7 @@ class Panel extends Component {
                         <button
                           data-toggle="collapse"
                           data-target="#changeBrandEmail"
-                          className="btn-sm btn-warning text-white col-sm-12"
+                          className="btn-sm btn-warning h5text col-sm-12"
                         >
                           Change Brand Email
                         </button>
@@ -632,7 +635,7 @@ class Panel extends Component {
                         <button
                           data-toggle="collapse"
                           data-target="#deleteAccount"
-                          className="btn-sm btn-danger text-white col-sm-12"
+                          className="btn-sm btn-danger h5text col-sm-12"
                         >
                           Delete Account
                         </button>
@@ -642,10 +645,7 @@ class Panel extends Component {
                     <div id="changeEmail" className="collapse">
                       <div className="row pt-3">
                         <div className="form-group input-group-sm col-sm-6">
-                          <label
-                            htmlFor="emailInput"
-                            className="text-white small"
-                          >
+                          <label htmlFor="emailInput" className="h5text small">
                             User Email
                           </label>
                           <input
@@ -661,7 +661,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-6">
                           <label
                             htmlFor="emailPasswordInput"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             Password
                           </label>
@@ -682,7 +682,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-4">
                           <label
                             htmlFor="newPasswordInput"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             New Password
                           </label>
@@ -699,7 +699,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-4">
                           <label
                             htmlFor="newPassword2Input"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             Re-enter New Password
                           </label>
@@ -716,7 +716,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-4">
                           <label
                             htmlFor="oldPasswordInput"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             Old Password
                           </label>
@@ -737,7 +737,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-6">
                           <label
                             htmlFor="brandEmailInput"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             Brand Email
                           </label>
@@ -755,7 +755,7 @@ class Panel extends Component {
                         <div className="form-group input-group-sm col-sm-6">
                           <label
                             htmlFor="brandEmailPasswordInput"
-                            className="text-white small"
+                            className="h5text small"
                           >
                             Password
                           </label>
@@ -772,19 +772,21 @@ class Panel extends Component {
                       </div>
                     </div>
                     <div className="collapse" id="deleteAccount">
-                      <p className="text-white">
+                      <p className="h5text text-center">
                         <b>
                           This action cannot be undone! If You delete your
                           account, you will delete the brand and all the brand
                           products!
                         </b>
                       </p>
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={this.deleteAccount}
-                      >
-                        Delete Account
-                      </button>
+                      <div className="d-flex justify-content-center">
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={this.deleteAccount}
+                        >
+                          Delete Account
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <hr />
