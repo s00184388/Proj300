@@ -566,9 +566,9 @@ export class Panel extends Component {
                           <b>Company: </b> {company}
                         </p>
                         <p>
-                          <b>Conected to:</b>{" "}
+                          <b>Conected to:</b>
                           {deviceApi
-                            ? { deviceApi }
+                            ? deviceApi
                             : "No device connected. Please connect your device."}
                         </p>
                       </div>

@@ -221,6 +221,8 @@ export class EmployeeForm extends Component {
           fs.createUser(user)
             .then(userKey => {
               var currentUser = firebase.auth().currentUser;
+              user.key = userKey;
+              this.getCompanyAndSendConfirmationEmail(user);
               currentUser
                 .updateProfile({ displayName: user.firstName })
                 .then(() => {
@@ -228,7 +230,7 @@ export class EmployeeForm extends Component {
                     .sendEmailVerification()
                     .then(() => {
                       user.key = userKey;
-                      this.getCompanyAndSendConfirmationEmail(user);
+                      //this.getCompanyAndSendConfirmationEmail(user);
                       this.setState({ fetchInProgress: false });
                       this.showAlert(
                         "success",

@@ -1,0 +1,54 @@
+[debug] [2019-03-19T22:00:22.365Z] ----------------------------------------------------------------------
+[debug] [2019-03-19T22:00:22.371Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\becke\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2019-03-19T22:00:22.372Z] CLI Version:   6.4.0
+[debug] [2019-03-19T22:00:22.372Z] Platform:      win32
+[debug] [2019-03-19T22:00:22.372Z] Node Version:  v10.15.0
+[debug] [2019-03-19T22:00:22.376Z] Time:          Tue Mar 19 2019 22:00:22 GMT+0000 (GMT)
+[debug] [2019-03-19T22:00:22.376Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-03-19T22:00:22.425Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-03-19T22:00:22.428Z] > authorizing via signed-in user
+[debug] [2019-03-19T22:00:22.428Z] [iam] checking project kudoshealth-2961f for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2019-03-19T22:00:22.433Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2019-03-19T22:00:22.434Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2019-03-19T22:00:36.431Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-19T22:00:36.443Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/kudoshealth-2961f:testIamPermissions  
+
+[debug] [2019-03-19T22:00:46.791Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-19T22:00:46.793Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/kudoshealth-2961f  
+ 
+[debug] [2019-03-19T22:00:57.160Z] Error: Client network socket disconnected before secure TLS connection was established
+    at TLSSocket.onConnectEnd (_tls_wrap.js:1086:19)
+    at Object.onceWrapper (events.js:273:13)
+    at TLSSocket.emit (events.js:187:15)
+    at TLSSocket.EventEmitter.emit (domain.js:441:20)
+    at endReadableNT (_stream_readable.js:1094:12)
+    at process._tickCallback (internal/process/next_tick.js:63:19)
+[error] 
+[error] Error: Server Error. Client network socket disconnected before secure TLS connection was established
+[debug] [2019-03-19T22:01:09.188Z] ----------------------------------------------------------------------
+[debug] [2019-03-19T22:01:09.193Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\becke\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2019-03-19T22:01:09.193Z] CLI Version:   6.4.0
+[debug] [2019-03-19T22:01:09.193Z] Platform:      win32
+[debug] [2019-03-19T22:01:09.194Z] Node Version:  v10.15.0
+[debug] [2019-03-19T22:01:09.196Z] Time:          Tue Mar 19 2019 22:01:09 GMT+0000 (GMT)
+[debug] [2019-03-19T22:01:09.196Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-03-19T22:01:09.223Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-03-19T22:01:09.226Z] > authorizing via signed-in user
+[debug] [2019-03-19T22:01:09.226Z] [iam] checking project kudoshealth-2961f for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2019-03-19T22:01:09.230Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/kudoshealth-2961f:testIamPermissions  
+
+[debug] [2019-03-19T22:01:18.716Z] <<< HTTP RESPONSE 200
+[debug] [2019-03-19T22:01:18.720Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/kudoshealth-2961f  
+ 
+[debug] [2019-03-19T22:01:35.291Z] Error: Client network socket disconnected before secure TLS connection was established
+    at TLSSocket.onConnectEnd (_tls_wrap.js:1086:19)
+    at Object.onceWrapper (events.js:273:13)
+    at TLSSocket.emit (events.js:187:15)
+    at TLSSocket.EventEmitter.emit (domain.js:441:20)
+    at endReadableNT (_stream_readable.js:1094:12)
+    at process._tickCallback (internal/process/next_tick.js:63:19)
+[error] 
+[error] Error: Server Error. Client network socket disconnected before secure TLS connection was established
