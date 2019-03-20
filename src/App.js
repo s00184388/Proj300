@@ -36,6 +36,7 @@ import Brand from "./Pages/Brand";
 import EmployeeUserProfile from "./Pages/EmployeeUserProfile";
 import CompanyProfile from "./Pages/CompanyProfile";
 import BrandProfile from "./Pages/BrandProfile";
+import Footer from "./Components/Footer";
 
 const fs = new FirebaseServices();
 const history = createHistory();
@@ -52,10 +53,8 @@ const PrivateRoute = ({ component: Component, role, ...rest }) => (
         <Component {...props} />
       ) : role === "brandAdmin" ? (
         <Component {...props} />
-      ) : role === "admin" ? (
-        <Component {...props} />
       ) : (
-        <Redirect to="/login" />
+        <Redirect to="/" />
       )
     }
   />
@@ -251,94 +250,93 @@ class App extends Component {
               width={256}
             />
           ) : (
-            <Router history={history}>
-              <div style={{ height: "100%" }}>
-                <Navbar
-                  userName={this.state.user.firstName}
-                  authenticated={this.state.authenticated}
-                  userRole={this.state.user.role}
-                  name={name}
-                  userEmail={userEmail}
-                  coins={this.state.coins}
-                  {...this.props}
-                  history={history}
-                />
-                {/*Employee  Role */}
-                <PrivateRoute
-                  exact
-                  path={"/admin"}
-                  role={this.userRole("admin")}
-                  component={Admin}
-                />
+            <div>
+              <Router history={history}>
+                <div style={{ height: "100%" }}>
+                  <Navbar
+                    userName={this.state.user.firstName}
+                    authenticated={this.state.authenticated}
+                    userRole={this.state.user.role}
+                    name={name}
+                    userEmail={userEmail}
+                    coins={this.state.coins}
+                    {...this.props}
+                    history={history}
+                  />
+                  {/*Employee  Role */}
+                  <PrivateRoute
+                    exact
+                    path={"/admin"}
+                    role={this.userRole("admin")}
+                    component={Admin}
+                  />
 
-                <PrivateRoute
-                  exact
-                  path="/rewards"
-                  role={this.userRole("employee")}
-                  component={MyRewards}
-                />
-                <PrivateRoute
-                  exact
-                  path="/wishlist"
-                  role={this.userRole("employee")}
-                  component={MyWishlist}
-                />
-                <PrivateRoute
-                  exact
-                  path={"/brands"}
-                  role={this.userRole("employee")}
-                  component={MyBrands}
-                />
-                <PrivateRoute
-                  path="/profile"
-                  role={this.userRole("employee")}
-                  component={MyProfile}
-                />
-                <PrivateRoute
-                  exact
-                  path="/brands/:brandName"
-                  role={this.userRole("employee")}
-                  component={MyBrand}
-                />
+                  <PrivateRoute
+                    exact
+                    path="/rewards"
+                    role={this.userRole("employee")}
+                    component={MyRewards}
+                  />
+                  <PrivateRoute
+                    exact
+                    path="/wishlist"
+                    role={this.userRole("employee")}
+                    component={MyWishlist}
+                  />
+                  <PrivateRoute
+                    exact
+                    path={"/brands"}
+                    role={this.userRole("employee")}
+                    component={MyBrands}
+                  />
+                  <PrivateRoute
+                    path="/profile"
+                    role={this.userRole("employee")}
+                    component={MyProfile}
+                  />
+                  <PrivateRoute
+                    exact
+                    path="/brands/:brandName"
+                    role={this.userRole("employee")}
+                    component={MyBrand}
+                  />
 
-                {/*Company*/}
-                <PrivateRoute
-                  exact
-                  path={"/companyDashboard"}
-                  role={this.userRole("companyAdmin")}
-                  component={MyCompanyDashboard}
-                />
-                <PrivateRoute
-                  exact
-                  path={"/companyProfile"}
-                  role={this.userRole("companyAdmin")}
-                  component={MyCompanyProfile}
-                />
+                  {/*Company*/}
+                  <PrivateRoute
+                    exact
+                    path={"/companyDashboard"}
+                    role={this.userRole("companyAdmin")}
+                    component={MyCompanyDashboard}
+                  />
+                  <PrivateRoute
+                    exact
+                    path={"/companyProfile"}
+                    role={this.userRole("companyAdmin")}
+                    component={MyCompanyProfile}
+                  />
 
-                <PrivateRoute
-                  exact
-                  path={"/admin"}
-                  role={this.userRole("admin")}
-                  component={Admin}
-                />
-
-                <PrivateRoute
-                  exact
-                  path={"/brandProfile"}
-                  role={this.userRole("brandAdmin")}
-                  component={MyBrandProfile}
-                />
-                <PrivateRoute
-                  exact
-                  path={"/brandDashboard"}
-                  role={this.userRole("brandAdmin")}
-                  component={MyBrandDashboard}
-                />
-                <Route exact path="/" component={Landing} />
-                <Route path="/login" component={Login} history={history} />
-                <Route path="/register" component={Register} />
-              </div>
-            </Router>
+                  <PrivateRoute
+                    exact
+                    path={"/brandProfile"}
+                    role={this.userRole("brandAdmin")}
+                    component={MyBrandProfile}
+                  />
+                  <PrivateRoute
+                    exact
+                    path={"/brandDashboard"}
+                    role={this.userRole("brandAdmin")}
+                    component={MyBrandDashboard}
+                  />
+                  <Route exact path="/" component={Landing} />
+                  <Route path="/login" component={Login} />
+                  <Route
+                    path="/register"
+                    component={Register}
+                    history={history}
+                  />
+                </div>
+              </Router>
+            </div>
           )}
         </div>
       </div>
