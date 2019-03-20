@@ -179,7 +179,7 @@ export class EmployeeForm extends Component {
               email: employee.email
             }
           };
-          var url = `http://stravakudos.herokuapp.com/mail/sendConfirmationEmail`;
+          var url = `https://stravakudos.herokuapp.com/mail/sendConfirmationEmail`;
           fetch(url, {
             method: "POST", // *GET, POST, PUT, DELETE, etc.
             mode: "cors", // no-cors, cors, *same-origin
@@ -207,7 +207,7 @@ export class EmployeeForm extends Component {
 
   createAuthUser = (user, company, brand) => {
     this.setState({ fetchInProgress: true });
-    console.log(this.state.fields);
+    //console.log(this.state.fields);
     firebase
       .auth()
       .createUserWithEmailAndPassword(
@@ -253,7 +253,7 @@ export class EmployeeForm extends Component {
               this.setState({ fetchInProgress: false });
             });
         } else if (this.state.role === "companyAdmin") {
-          console.log("creating companyAdmin");
+          //console.log("creating companyAdmin");
           var userID;
           fs.createUser(user)
             .then(adminUserID => {
@@ -304,7 +304,7 @@ export class EmployeeForm extends Component {
               this.setState({ err: err.message });
             });
         } else if (this.state.role === "brandAdmin") {
-          console.log("creating brandAdmin");
+          //console.log("creating brandAdmin");
           let userID;
           fs.createUser(user)
             .then(adminUserID => {
@@ -355,16 +355,16 @@ export class EmployeeForm extends Component {
       selectedOption: changeEvent.target.value,
       role: changeEvent.target.value
     });
-    console.log(changeEvent.target.value);
+    //console.log(changeEvent.target.value);
   };
 
   nameFree(name, role) {
     let found = false;
-    console.log("Comparing:" + name);
+    //console.log("Comparing:" + name);
     if (role === "company") {
       this.state.companies.forEach(comp => {
         if (comp.name === name) {
-          console.log("found " + comp.name);
+          //console.log("found " + comp.name);
           found = true;
         }
       });
@@ -395,7 +395,7 @@ export class EmployeeForm extends Component {
     fields["brandName"] = this.state.fields.brandName;
     fields["brandAddress"] = this.state.fields.brandAddress;
     fields["brandEmail"] = this.state.fields.brandEmail;
-    console.log(this.validate());
+    //console.log(this.validate());
 
     if (this.validate()) {
       if (this.state.role === "employee") {
@@ -418,7 +418,7 @@ export class EmployeeForm extends Component {
           })
           .catch(err => {
             this.setState({ companyError: err.message }, () => {
-              console.log(this.state.companyError);
+              //console.log(this.state.companyError);
             });
           });
       } else if (this.state.role === "companyAdmin") {
@@ -444,7 +444,7 @@ export class EmployeeForm extends Component {
           });
         }
 
-        console.log(this.state.role);
+        //console.log(this.state.role);
       } else if (this.state.role === "brandAdmin") {
         let user = {
           firstName: fields["firstName"],
@@ -461,7 +461,7 @@ export class EmployeeForm extends Component {
         };
 
         if (this.nameFree(fields["brandName"], "brand")) {
-          console.log("Step1.User data for brand inserted in db");
+          //console.log("Step1.User data for brand inserted in db");
           this.createAuthUser(user, null, brand);
           this.props.history.push("/");
         } else {
