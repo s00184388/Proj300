@@ -414,7 +414,9 @@ export class EmployeeForm extends Component {
               approved: false
             };
             this.createAuthUser(user, null, null);
-            this.props.history.push("/");
+            setTimeout(() => {
+              this.props.history.push("/");
+            }, 3000);
           })
           .catch(err => {
             this.setState({ companyError: err.message }, () => {
@@ -437,7 +439,9 @@ export class EmployeeForm extends Component {
         };
         if (this.nameFree(fields["companyName"], "company")) {
           this.createAuthUser(user, company, null);
-          this.props.history.push("/");
+          setTimeout(() => {
+            this.props.history.push("/");
+          }, 2000);
         } else {
           this.setState({
             companyError: "There is already a company with the same name!"
@@ -463,7 +467,9 @@ export class EmployeeForm extends Component {
         if (this.nameFree(fields["brandName"], "brand")) {
           console.log("Step1.User data for brand inserted in db");
           this.createAuthUser(user, null, brand);
-          this.props.history.push("/");
+          setTimeout(() => {
+            this.props.history.push("/brandProfile");
+          }, 3000);
         } else {
           this.setState({
             companyError: "There is already a brand with the same name!"

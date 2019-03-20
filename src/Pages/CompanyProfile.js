@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import "./CssPages/UserProfile.css";
 import "./CssPages/CompanyProfile.css";
 import FirebaseServices from "../firebase/services";
-import { withRouter } from "react-router-dom";
 import firebase from "firebase";
 import ReactTooltip from "react-tooltip";
 import { library } from "@fortawesome/fontawesome-svg-core";

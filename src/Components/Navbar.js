@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Redirect, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import firebase from "firebase";
@@ -19,7 +19,9 @@ export class Navbar extends React.Component {
       .auth()
       .signOut()
       .then(() => {
-        this.props.history.push("/login");
+        setTimeout(() => {
+          this.props.history.push("/");
+        }, 500);
       });
   };
 
@@ -188,11 +190,6 @@ export class Navbar extends React.Component {
                           className="nav-link text-white "
                         >
                           Dashboard{" "}
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to={"/brands"} className="nav-link text-white">
-                          Brands{" "}
                         </Link>
                       </li>
                     </div>
