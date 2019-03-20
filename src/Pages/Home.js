@@ -10,7 +10,7 @@ export class Home extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.role);
+    //console.log(this.props.role);
     this.choose(this.props.role);
   }
 
@@ -25,8 +25,8 @@ export class Home extends Component {
   };
 
   render() {
-    console.log(this.props.role);
-    console.log(this.choose(this.props.role));
+    //(this.props.role);
+    //console.log(this.choose(this.props.role));
     return (
       <div>
         <div className="container-fluid py-5">

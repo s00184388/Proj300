@@ -378,7 +378,6 @@ export class Brand extends Component {
     const wishlist = this.props.wishlist;
     const brandName = this.state.name;
     var fetchInProgress = this.state.fetchInProgress;
-    console.log("fetch in progress:" + fetchInProgress);
     const listProducts = products.map(product => (
       <div className="col-md-4" key={product.key}>
         <Product product={product} user={user} wishlist={wishlist} />

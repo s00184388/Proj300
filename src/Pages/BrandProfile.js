@@ -873,7 +873,7 @@ export class BrandProfile extends Component {
 
   render() {
     const user = this.state.user;
-    console.log(this.state.user);
+    //console.log(this.state.user);
     const brand = this.state.brand;
     const fetchInProgress = this.state.fetchInProgress;
     return (

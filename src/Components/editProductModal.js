@@ -29,7 +29,7 @@ class BrandProductEditingModal extends React.Component {
       this.setState({
         picture: e.target.files[0]
       });
-      console.log(e.target.files[0]);
+      //console.log(e.target.files[0]);
     } else newState[e.target.name] = e.target.value;
     this.setState(newState);
   };
@@ -70,7 +70,10 @@ class BrandProductEditingModal extends React.Component {
             id="categoryList"
             name="category"
             className="form-control"
-            defaultValue={this.state.category.charAt(0).toUpperCase() + this.state.category.slice(1)}
+            defaultValue={
+              this.state.category.charAt(0).toUpperCase() +
+              this.state.category.slice(1)
+            }
             onChange={this.handleChange}
           >
             <option value="" disabled hidden>

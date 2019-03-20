@@ -112,7 +112,7 @@ class ProductModal extends React.Component {
     )
       .then(res => {
         if (res.status !== 200) {
-          console.log("Could not fetch average of competitors");
+          //console.log("Could not fetch average of competitors");
           return;
         }
         res

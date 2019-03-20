@@ -398,7 +398,7 @@ class Panel extends Component {
         .doc(user.key)
         .update(userDetails)
         .then(() => {
-          console.log(this.state.userDetails);
+          //console.log(this.state.userDetails);
           this.decrementLoading();
           this.handleLogout();
         })

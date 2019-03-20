@@ -101,7 +101,7 @@ class App extends Component {
       if (this.state.authenticated) {
         this.subscriptions.push(
           fs.getConnectedUser().subscribe(user => {
-            console.log(user);
+            //console.log(user);
             this.setState({
               user: user,
               userRole: user.role,
@@ -143,7 +143,7 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state.userRole);
+    //console.log(this.state.userRole);
     const name = this.state.user.firstName + " " + this.state.user.lastName;
     const userEmail = this.state.user.email;
     const fetchInProgress = this.state.fetchInProgress;

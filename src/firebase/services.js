@@ -939,7 +939,7 @@ export default class FirebaseServices {
           .then(docRef => resolve(docRef.id))
           .catch(err => {
             alert("Auth:" + err);
-            //console.log(err);
+            console.log(err);
             reject(err);
           });
       } else {

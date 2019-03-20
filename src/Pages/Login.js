@@ -31,7 +31,7 @@ export class Login extends Component {
   };
 
   history() {
-    console.log(this.state.user.role);
+    //console.log(this.state.user.role);
 
     if (this.state.user.role === "employee") {
       return "/profile";
@@ -44,8 +44,8 @@ export class Login extends Component {
 
   handleSubmit = async e => {
     this.setState({ fetchInProgress: true });
-    console.log(this.state.email);
-    console.log(this.state.password);
+    //(this.state.email);
+    //console.log(this.state.password);
 
     e.preventDefault();
 
@@ -77,7 +77,7 @@ export class Login extends Component {
           fetchInProgress: false
         });
       });
-    console.log(this.state.error);
+    //console.log(this.state.error);
   };
   render() {
     const email = this.state.email;

@@ -112,10 +112,10 @@ class BuyButton extends React.Component {
       productID: this.state.product.key,
       recipient: this.state.recipient
     };
-    console.log("userID: " + this.state.user.key);
-    console.log("productID " + this.state.product.key);
-    console.log("recipient:");
-    console.log(this.state.recipient);
+    //console.log("userID: " + this.state.user.key);
+    //console.log("productID " + this.state.product.key);
+    //console.log("recipient:");
+    //console.log(this.state.recipient);
     var url = `http://stravakudos.herokuapp.com/buy`;
     fetch(url, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.

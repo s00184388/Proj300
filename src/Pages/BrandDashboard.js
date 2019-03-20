@@ -91,7 +91,7 @@ class ProductForm extends Component {
     this.setState({
       errors: errors
     });
-    console.log(this.state.errors);
+    //console.log(this.state.errors);
 
     return formIsValid;
   };
@@ -99,9 +99,6 @@ class ProductForm extends Component {
   //method called on clicking the submit button
   handleSubmit = e => {
     e.preventDefault();
-
-    console.log(this.state);
-
     let product = {
       brandID: this.state.brandID,
       category: this.state.category.toLowerCase(),
@@ -299,7 +296,7 @@ class TableRow extends Component {
 
   deleteItem(key) {
     fs.deleteItemFromDashboard(key);
-    console.log("deleting item : " + key);
+    //console.log("deleting item : " + key);
   }
 
   render() {

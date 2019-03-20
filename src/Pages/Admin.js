@@ -323,7 +323,7 @@ class TableRowUsers extends Component {
 
   submitEdit(e) {
     e.preventDefault();
-    console.log(this.state.user);
+    //console.log(this.state.user);
     this.closeModal();
     firebaseServices.usersCollection
       .doc(this.props.row.key)
@@ -548,7 +548,7 @@ class TableRowBrands extends Component {
 
   submitEdit(e) {
     e.preventDefault();
-    console.log(this.state.brand);
+    //console.log(this.state.brand);
     this.closeModal();
     firebaseServices.brandsCollection
       .doc(this.props.row.key)
@@ -768,7 +768,7 @@ class TableRowCompanies extends Component {
 
   submitEdit(e) {
     e.preventDefault();
-    console.log(this.state.company);
+    //console.log(this.state.company);
     this.closeModal();
     firebaseServices.companiesCollection
       .doc(this.props.row.key)
@@ -953,7 +953,7 @@ class TableRowDevices extends Component {
 
   submitEdit(e) {
     e.preventDefault();
-    console.log(this.state.device);
+    //console.log(this.state.device);
     this.closeModal();
     firebaseServices.connectedDevicesCollection
       .doc(this.props.row.key)
@@ -1123,7 +1123,7 @@ class TableRowWishlists extends Component {
 
   submitEdit(e) {
     e.preventDefault();
-    console.log(this.state.wishlist);
+    //console.log(this.state.wishlist);
     this.closeModal();
     firebaseServices.wishlistsCollection
       .doc(this.props.row.key)

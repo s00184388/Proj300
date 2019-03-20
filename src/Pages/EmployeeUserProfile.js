@@ -247,7 +247,7 @@ export class Panel extends Component {
     userDetails = { ...this.state.userDetails };
     userDetails[e.target.name] = e.target.value;
     this.setState({ userDetails });
-    console.log(userDetails);
+    //console.log(userDetails);
   }
 
   handlePasswordChange(e) {
@@ -827,7 +827,7 @@ export class EmployeeProfile extends Component {
 
   render() {
     const user = this.state.user;
-    console.log(this.state.user);
+    //console.log(this.state.user);
     return (
       <div>
         <div className="row">
