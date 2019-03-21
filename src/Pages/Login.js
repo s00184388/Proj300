@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link, withRouter, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./CssPages/Login.css";
 import fire from "firebase";
 import FirebaseServices from "../firebase/services";

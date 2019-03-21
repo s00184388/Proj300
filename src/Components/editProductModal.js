@@ -1,6 +1,5 @@
 import React from "react";
 import FirebaseServices from "../firebase/services";
-import BrandDashboard from "../Pages/BrandDashboard";
 
 const fs = new FirebaseServices();
 
@@ -25,7 +24,7 @@ class BrandProductEditingModal extends React.Component {
 
   handleChange = e => {
     let newState = {};
-    if (e.target.name == "picture") {
+    if (e.target.name === "picture") {
       this.setState({
         picture: e.target.files[0]
       });

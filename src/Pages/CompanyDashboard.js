@@ -41,7 +41,7 @@ class ProductForm extends Component {
   //method gets called when the input fields are changed
   handleChange = e => {
     let fields = this.state.fields;
-    if ([e.target.name] == "picture") {
+    if ([e.target.name] === "picture") {
       this.setState({
         picture: e.target.files[0]
       });
