@@ -198,7 +198,7 @@ export class Navbar extends React.Component {
               )}
             </ul>
             {this.props.authenticated ? (
-              <form class="form-inline my-2 my-lg-0">
+              <form className="form-inline my-2 my-lg-0">
                 <ul className="navbar-nav mr-auto">
                   <User /> <Round />
                 </ul>
