@@ -41,7 +41,7 @@ class ProductForm extends Component {
   //method gets called when the input fields are changed
   handleChange = e => {
     let fields = this.state.fields;
-    if ([e.target.name] === "picture") {
+    if ([e.target.name] == "picture") {
       this.setState({
         picture: e.target.files[0]
       });
@@ -81,10 +81,6 @@ class ProductForm extends Component {
       errors["category"] = "*Please choose a category!";
     }
 
-    if (!fields["picture"]) {
-      formIsValid = false;
-      errors["picture"] = "*Please use a picture";
-    }
     this.setState({ errors: errors });
     return formIsValid;
   };
@@ -115,6 +111,7 @@ class ProductForm extends Component {
     };
 
     if (this.validate()) {
+      console.log("Validated");
       fs.addProduct(product);
       this.setState({
         fields: "",
@@ -279,7 +276,6 @@ class TableRow extends Component {
     this.state = {
       show: false
     };
-    this.setEditProduct = this.setEditProduct.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
   }
 
@@ -290,25 +286,6 @@ class TableRow extends Component {
   hideModal = () => {
     this.setState({ show: false });
   };
-
-  setEditProduct(e) {
-    //const ep = this.state.editProduct
-
-    this.state.editProduct = {
-      companyID: e.companyID,
-      category: e.category,
-      description: e.description,
-      name: e.name,
-      picture: e.picture,
-      price: e.price,
-      stock: e.stock,
-      sponsored: false,
-      tresholdPercentage: e.tresholdPercentage
-    };
-    this.state.isEditing = this.state.isEditing;
-    //this.setState(state => ({isEditing : true}));
-    fs.updateProduct(this.state.editProduct, e.key);
-  }
 
   deleteItem(key) {
     fs.deleteItemFromDashboard(key);
