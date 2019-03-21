@@ -219,7 +219,7 @@ class ProductForm extends Component {
             </div>
           </div>
           <div className="row">
-            <div className="form-group input-group-sm col-sm-6">
+            <div className="form-group input-group-sm col-sm-3">
               <label htmlFor="formPrice" className="text-white">
                 <small>Product Price</small>
               </label>
@@ -228,7 +228,7 @@ class ProductForm extends Component {
                 className="form-control"
                 name="price"
                 type="number"
-                placeholder="Enter Product Price"
+                placeholder="Enter the Price"
                 onChange={this.handleChange}
                 value={this.state.fields.price || ""}
               />
@@ -236,7 +236,7 @@ class ProductForm extends Component {
                 <small>{this.state.errors.price}</small>
               </div>
             </div>
-            <div className="form-group input-group-sm col-sm-6">
+            <div className="form-group input-group-sm col-sm-4">
               <label htmlFor="formQuantity" className="text-white">
                 <small>Product Quantity</small>
               </label>
@@ -248,6 +248,23 @@ class ProductForm extends Component {
                 placeholder="Enter Product Quantity"
                 onChange={this.handleChange}
                 value={this.state.fields.quantity || ""}
+              />
+              <div className="h5text">
+                <small>{this.state.errors.quantity}</small>
+              </div>
+            </div>
+            <div className="form-group input-group-sm col-sm-5">
+              <label htmlFor="formtresholdPercentage" className="text-white">
+                <small>Treshold Percentage</small>
+              </label>
+              <input
+                id="formtresholdPercentage"
+                className="form-control"
+                name="tresholdPercentage"
+                type="number"
+                placeholder="Values between 0 and 100"
+                onChange={this.handleChange}
+                value={this.state.fields.tresholdPercentage || ""}
               />
               <div className="h5text">
                 <small>{this.state.errors.quantity}</small>
