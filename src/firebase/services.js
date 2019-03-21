@@ -417,7 +417,7 @@ export default class FirebaseServices {
                 created
               };
             });
-            console.log(user);
+            //console.log(user);
             observer.next(user);
           });
       } else {
