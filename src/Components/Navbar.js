@@ -204,7 +204,7 @@ export class Navbar extends React.Component {
                 </ul>
               </form>
             ) : (
-              <form class="form-inline my-2 my-lg-0">
+              <form className="form-inline my-2 my-lg-0">
                 <Link to="/login" className="nav-link text-white">
                   Login
                 </Link>
