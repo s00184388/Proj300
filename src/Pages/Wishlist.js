@@ -116,7 +116,7 @@ class BuyButton extends React.Component {
     //console.log("productID " + this.state.product.key);
     //console.log("recipient:");
     //console.log(this.state.recipient);
-    var url = `http://stravakudos.herokuapp.com/buy`;
+    var url = `https://stravakudos.herokuapp.com/buy`;
     fetch(url, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "cors", // no-cors, cors, *same-origin
