@@ -114,7 +114,7 @@ class ProductForm extends Component {
       console.log("Validated");
       fs.addProduct(product);
       this.setState({
-        fields: "",
+        fields: {},
         errors: "",
         showingAlert: true
       });
