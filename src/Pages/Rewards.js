@@ -54,7 +54,7 @@ class Picture extends React.Component {
 class ProductPrice extends React.Component {
   render() {
     const price = this.props.price;
-    return <h6>{price} Kudos</h6>;
+    return `${price} Kudos`;
   }
 }
 
@@ -293,7 +293,7 @@ class Product extends React.Component {
                   {productName}
                 </h5>
                 <hr />
-                <h6 style={{ fontWeight: "bold", color: "dimgrey" }}>
+                <h6>
                   <ProductPrice price={price} />
                 </h6>
               </div>
