@@ -136,7 +136,7 @@ class ProductModal extends React.Component {
     const productName = product.name;
     const stock = product.stock;
     const productDescription = product.description;
-    const productPicture = product.picture;
+    const productPicture = product.picURL;
 
     const brandName = brand.name;
     const company = this.state.company;
