@@ -1,7 +1,6 @@
 import fire from "./firebase";
 import { Observable } from "rxjs";
 import firebase from "firebase";
-import { when } from "q";
 
 export default class FirebaseServices {
   constructor() {
@@ -302,7 +301,7 @@ export default class FirebaseServices {
           });
           //if the wishlist was empty, the callback function is never called
           //so i call it gets called in here
-          if (items.length == 0) {
+          if (items.length === 0) {
             observer.next([]);
           }
         });

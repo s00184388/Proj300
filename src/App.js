@@ -36,7 +36,6 @@ import Brand from "./Pages/Brand";
 import EmployeeUserProfile from "./Pages/EmployeeUserProfile";
 import CompanyProfile from "./Pages/CompanyProfile";
 import BrandProfile from "./Pages/BrandProfile";
-import Footer from "./Components/Footer";
 
 const fs = new FirebaseServices();
 const history = createHistory();
