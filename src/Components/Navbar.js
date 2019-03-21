@@ -49,7 +49,7 @@ export class Navbar extends React.Component {
     const User = props => {
       return (
         <div>
-          <li class="dropdown">
+          <li className="dropdown">
             <div
               className="dropdown-toggle text-white myAccount"
               data-toggle="dropdown"
