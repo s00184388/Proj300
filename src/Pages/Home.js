@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "./CssPages/Home.css";
+import "../Components/Footer.css";
 
 export class Home extends Component {
   constructor(props) {
