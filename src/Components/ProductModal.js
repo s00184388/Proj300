@@ -201,7 +201,7 @@ class ProductModal extends React.Component {
                   </p>
                 </div>
                 <div className="col-md text-right">
-                  Price to unlock: {priceToUnlock} Kudos
+                  Unlocking value: {priceToUnlock} Kudos
                   <FontAwesomeIcon
                     style={{ marginLeft: "5px" }}
                     data-tip="React-tooltip"

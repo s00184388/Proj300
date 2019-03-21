@@ -47,6 +47,7 @@ class ProductForm extends Component {
       });
     }
     fields[e.target.name] = e.target.value;
+    console.log(fields.tresholdPercentage);
     this.setState({ fields });
   };
 
@@ -96,7 +97,8 @@ class ProductForm extends Component {
     fields["quantity"] = this.state.fields.quantity;
     fields["price"] = this.state.fields.price;
     fields["category"] = this.state.fields.category;
-
+    fields["tresholdPercentage"] = this.state.fields.tresholdPercentage;
+    console.log(fields.tresholdPercentage);
     let product = {
       name: fields["name"],
       description: fields["description"],
@@ -107,7 +109,7 @@ class ProductForm extends Component {
       category: this.state.fields.category,
       sponsored: false,
       companyID: this.props.companyID,
-      tresholdPercentage: this.state.tresholdPercentage
+      tresholdPercentage: fields["tresholdPercentage"] / 100
     };
 
     if (this.validate()) {
@@ -316,6 +318,7 @@ class TableRow extends Component {
         <td key={index}>{index}</td>
         <td key={row.name}>{row.name}</td>
         <td key={row.price}>{row.price}</td>
+        <td key={row.tresholdPercentage}>{row.tresholdPercentage * 100}%</td>
         <td key={row.key}>{row.stock}</td>
         <td>
           <button
@@ -391,6 +394,7 @@ class CompanyInfo extends Component {
               <th>#</th>
               <th>Name</th>
               <th>Price</th>
+              <th>Treshold</th>
               <th>Stock</th>
               <th>Edit</th>
               <th>Delete</th>
