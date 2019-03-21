@@ -70,7 +70,7 @@ export class Navbar extends React.Component {
                 {this.props.userRole === "employee" && (
                   <p className="small ml-2 p-0">
                     <strong>Coins: </strong>
-                    {this.props.coins} K
+                    {this.props.coins} Kudos
                   </p>
                 )}
                 <p className="small ml-2">{this.props.userEmail}</p>

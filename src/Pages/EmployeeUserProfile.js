@@ -122,7 +122,7 @@ class Sidepage extends Component {
             <span className="pull-left">
               <strong>Coins: </strong>
             </span>
-            {coins} K
+            {coins} Kudos
           </li>
           <li className="list-group-item p ">
             <span className="pull-left ">

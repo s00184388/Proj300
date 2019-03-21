@@ -343,7 +343,16 @@ class Products extends React.Component {
                 <div className="col-sm-3">
                   <h6 className="h6text">{productName}</h6>
                 </div>
-                <div className="col-sm-3 ">{price} Kudos</div>
+                <div className="col-sm-3 ">
+                  <p
+                    style={{
+                      color: "#FFCB2D",
+                      textShadow: "2px 2px 4px #000000"
+                    }}
+                  >
+                    {price} Kudos
+                  </p>
+                </div>
                 <div className="col-sm-5">
                   <Title
                     brandName={brandName}
