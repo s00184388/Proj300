@@ -220,7 +220,7 @@ class App extends Component {
     };
 
     const MyWishlist = props => {
-      return <Wishlist user={this.state.user} />;
+      return <Wishlist user={this.state.user} showAlert={this.showAlert} />;
     };
 
     return (

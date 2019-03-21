@@ -130,7 +130,60 @@ class BuyButton extends React.Component {
       referrer: "no-referrer", // no-referrer, *client
       body: JSON.stringify(data) // body data type must match "Content-Type" header
     })
-      .then(response => console.log(response.status)) // parses response to JSON
+      .then(response => {
+        console.log(response.status);
+        switch (response.status) {
+          case 460:
+            this.props.showAlert(
+              "warning",
+              "Not enough coins",
+              "Could not buy product"
+            );
+            break;
+          case 461:
+            this.props.showAlert(
+              "warning",
+              "Not enough gained coins to unlock the product",
+              "Could not buy product"
+            );
+            break;
+          case 462:
+            this.props.showAlert(
+              "warning",
+              "Product out of stock",
+              "Could not buy product"
+            );
+            break;
+          case 463:
+            this.props.showAlert(
+              "warning",
+              "You were not approved by company",
+              "Could not buy product"
+            );
+            break;
+          case 464:
+            this.props.showAlert(
+              "warning",
+              "You have not verified your email",
+              "Could not buy product"
+            );
+            break;
+          case 200:
+            this.props.showAlert(
+              "success",
+              "An email was sent to the product owner. You will be contacted by him.",
+              "Product bought!"
+            );
+            break;
+          default:
+            this.props.showAlert(
+              "warning",
+              "An error occured",
+              "Could not buy product"
+            );
+            break;
+        }
+      }) // parses response to JSON
       .catch(err => console.log(err));
   }
   render() {
@@ -204,7 +257,7 @@ class Title extends React.Component {
 class Products extends React.Component {
   constructor(props) {
     super(props);
-
+    this.showAlert = this.showAlert.bind(this);
     this.state = { brand: {}, company: {}, avgOfCompetitors: 0 };
     this.subscriptions = [];
   }
@@ -244,6 +297,10 @@ class Products extends React.Component {
 
   componentWillUnmount() {
     this.subscriptions.forEach(obs => obs.unsubscribe());
+  }
+
+  showAlert(type, message, headline) {
+    this.props.showAlert(type, message, headline);
   }
 
   render() {
@@ -351,6 +408,7 @@ class Products extends React.Component {
                         recipient={recipient}
                         product={product}
                         user={user}
+                        showAlert={this.showAlert}
                       />
                     </div>
                   </div>
@@ -395,6 +453,7 @@ export class Wishlist extends React.Component {
       user: props.user,
       fetchInProgress: true
     };
+    this.showAlert = this.showAlert.bind(this);
   }
   componentDidMount() {
     this.setState({ fetchInProgress: true });
@@ -411,12 +470,21 @@ export class Wishlist extends React.Component {
     this.subscriptions.forEach(obs => obs.unsubscribe());
   }
 
+  showAlert(type, message, headline) {
+    this.props.showAlert(type, message, headline);
+  }
+
   render() {
     const user = this.state.user;
     const products = this.state.products;
     const fetchInProgress = this.state.fetchInProgress;
     const listProd = products.map(product => (
-      <Products product={product} key={product.key} user={user} />
+      <Products
+        product={product}
+        key={product.key}
+        user={user}
+        showAlert={this.showAlert}
+      />
     ));
     return (
       <div
